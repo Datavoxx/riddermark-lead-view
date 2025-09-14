@@ -20,11 +20,12 @@ export const ClaimButton = ({ leadId, onClaim }: ClaimButtonProps) => {
     setIsConflict(false);
 
     try {
-      const response = await fetch(`/api/leads/${leadId}/claim`, {
+      const response = await fetch('https://fjqsaixszaqceviqwboz.functions.supabase.co/api-leads-claim', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        body: JSON.stringify({ leadId }),
       });
 
       if (response.status === 200) {

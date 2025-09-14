@@ -1,0 +1,86 @@
+import { Home, FileText, Archive, LogOut } from "lucide-react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarHeader,
+  SidebarFooter,
+  SidebarSeparator,
+} from "@/components/ui/sidebar";
+
+const navigation = [
+  { title: "Hem", url: "/dashboard", icon: Home },
+  { title: "Rapporter", url: "/reports", icon: FileText },
+  { title: "Blocket", url: "/blocket", icon: Archive },
+];
+
+export function AppSidebar() {
+  const { signOut, user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate('/login');
+  };
+
+  const getNavClassName = ({ isActive }: { isActive: boolean }) =>
+    isActive ? "bg-accent text-accent-foreground font-medium" : "hover:bg-accent/50";
+
+  return (
+    <Sidebar className="border-r border-border">
+      <SidebarHeader className="p-4">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center">
+            <span className="text-primary-foreground font-bold text-sm">R</span>
+          </div>
+          <span className="font-semibold text-foreground">Riddermark</span>
+        </div>
+      </SidebarHeader>
+
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {navigation.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <NavLink 
+                      to={item.url} 
+                      end={item.url === '/dashboard'}
+                      className={getNavClassName}
+                    >
+                      <item.icon className="h-4 w-4" />
+                      <span>{item.title}</span>
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+
+      <SidebarFooter className="p-4">
+        <SidebarSeparator className="mb-4" />
+        
+        <div className="text-xs text-muted-foreground mb-2">
+          {user?.email}
+        </div>
+        
+        <SidebarMenuButton 
+          onClick={handleLogout}
+          className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
+        >
+          <LogOut className="h-4 w-4" />
+          <span>Logga ut</span>
+        </SidebarMenuButton>
+      </SidebarFooter>
+    </Sidebar>
+  );
+}

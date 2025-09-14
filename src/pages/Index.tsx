@@ -14,7 +14,7 @@ const Index = () => {
   const fetchLatestLead = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/leads?limit=1&order=created_at.desc');
+      const response = await fetch('https://fjqsaixszaqceviqwboz.functions.supabase.co/api-leads?limit=1&order=created_at.desc');
       
       if (!response.ok) {
         // Mock data for testing when API is not available

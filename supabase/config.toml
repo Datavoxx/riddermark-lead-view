@@ -1,1 +1,10 @@
 project_id = "fjqsaixszaqceviqwboz"
+
+[functions.api-leads]
+verify_jwt = false
+
+[functions.api-leads-claim]
+verify_jwt = false
+
+[functions.api-url-preview]
+verify_jwt = false

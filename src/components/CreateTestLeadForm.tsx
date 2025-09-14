@@ -30,7 +30,7 @@ export const CreateTestLeadForm = ({ onLeadCreated }: CreateTestLeadFormProps) =
 
     try {
       // First, get preview data from URL
-      const previewResponse = await fetch('/api/url/preview', {
+      const previewResponse = await fetch('https://fjqsaixszaqceviqwboz.functions.supabase.co/api-url-preview', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -45,7 +45,7 @@ export const CreateTestLeadForm = ({ onLeadCreated }: CreateTestLeadFormProps) =
       const previewData = await previewResponse.json();
 
       // Then create the lead
-      const leadResponse = await fetch('/api/leads/incoming', {
+      const leadResponse = await fetch('https://fjqsaixszaqceviqwboz.functions.supabase.co/api-leads/incoming', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -53,9 +53,11 @@ export const CreateTestLeadForm = ({ onLeadCreated }: CreateTestLeadFormProps) =
         body: JSON.stringify({
           ...formData,
           subject: `Test lead - ${formData.lead_namn}`,
-          preview_title: previewData.title || 'Blocket Annons',
-          preview_description: previewData.description || '',
-          preview_image_url: previewData.image || '',
+          preview: {
+            title: previewData.title || 'Blocket Annons',
+            description: previewData.description || '',
+            image_url: previewData.image_url || '',
+          }
         }),
       });
 
