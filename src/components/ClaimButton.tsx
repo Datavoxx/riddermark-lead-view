@@ -58,12 +58,12 @@ export const ClaimButton = ({ leadId, onClaim }: ClaimButtonProps) => {
 
   if (isClaimed) {
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 animate-fade-in">
         <Button variant="secondary" disabled className="flex items-center gap-2">
-          <CheckCircle className="h-4 w-4" />
+          <CheckCircle className="h-4 w-4 text-success animate-glow" />
           Ta över ärendet
         </Button>
-        <Badge variant="secondary" className="bg-success text-success-foreground">
+        <Badge variant="secondary" className="bg-success text-success-foreground animate-scale-in">
           Upplockat ✓
         </Badge>
       </div>
@@ -71,18 +71,18 @@ export const ClaimButton = ({ leadId, onClaim }: ClaimButtonProps) => {
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 animate-fade-in">
       <Button 
         onClick={handleClaim}
         disabled={isLoading}
-        className="flex items-center gap-2"
+        className="flex items-center gap-2 hover:scale-[1.02] active:scale-[0.98]"
       >
         {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
         Ta över ärendet
       </Button>
       
       {isConflict && (
-        <div className="bg-destructive/10 border border-destructive/20 rounded-md p-3">
+        <div className="bg-destructive/10 border border-destructive/20 rounded-md p-3 animate-slide-up">
           <p className="text-sm text-destructive">
             Redan plockad av annan säljare
           </p>

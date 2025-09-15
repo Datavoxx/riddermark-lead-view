@@ -102,12 +102,12 @@ export const CreateTestLeadForm = ({ onLeadCreated }: CreateTestLeadFormProps) =
           Skapa test-lead
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md animate-scale-in">
         <DialogHeader>
           <DialogTitle>Skapa test-lead</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
+          <div className="animate-slide-up" style={{ animationDelay: "0.1s" }}>
             <Label htmlFor="blocket_url">Blocket URL</Label>
             <Input
               id="blocket_url"
@@ -116,10 +116,11 @@ export const CreateTestLeadForm = ({ onLeadCreated }: CreateTestLeadFormProps) =
               onChange={(e) => updateFormData('blocket_url', e.target.value)}
               placeholder="https://www.blocket.se/..."
               required
+              disabled={isLoading}
             />
           </div>
           
-          <div>
+          <div className="animate-slide-up" style={{ animationDelay: "0.2s" }}>
             <Label htmlFor="lead_namn">Namn</Label>
             <Input
               id="lead_namn"
@@ -127,10 +128,11 @@ export const CreateTestLeadForm = ({ onLeadCreated }: CreateTestLeadFormProps) =
               onChange={(e) => updateFormData('lead_namn', e.target.value)}
               placeholder="John Doe"
               required
+              disabled={isLoading}
             />
           </div>
           
-          <div>
+          <div className="animate-slide-up" style={{ animationDelay: "0.3s" }}>
             <Label htmlFor="lead_email">E-post</Label>
             <Input
               id="lead_email"
@@ -139,10 +141,11 @@ export const CreateTestLeadForm = ({ onLeadCreated }: CreateTestLeadFormProps) =
               onChange={(e) => updateFormData('lead_email', e.target.value)}
               placeholder="john@example.com"
               required
+              disabled={isLoading}
             />
           </div>
           
-          <div>
+          <div className="animate-slide-up" style={{ animationDelay: "0.4s" }}>
             <Label htmlFor="regnr">Registreringsnummer</Label>
             <Input
               id="regnr"
@@ -150,10 +153,11 @@ export const CreateTestLeadForm = ({ onLeadCreated }: CreateTestLeadFormProps) =
               onChange={(e) => updateFormData('regnr', e.target.value)}
               placeholder="ABC123"
               required
+              disabled={isLoading}
             />
           </div>
           
-          <div>
+          <div className="animate-slide-up" style={{ animationDelay: "0.5s" }}>
             <Label htmlFor="summary">Sammanfattning</Label>
             <Textarea
               id="summary"
@@ -162,10 +166,16 @@ export const CreateTestLeadForm = ({ onLeadCreated }: CreateTestLeadFormProps) =
               placeholder="Kort beskrivning av leadet..."
               rows={3}
               required
+              disabled={isLoading}
             />
           </div>
           
-          <Button type="submit" disabled={isLoading} className="w-full">
+          <Button 
+            type="submit" 
+            disabled={isLoading} 
+            className="w-full animate-slide-up" 
+            style={{ animationDelay: "0.6s" }}
+          >
             {isLoading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
             Skapa lead
           </Button>

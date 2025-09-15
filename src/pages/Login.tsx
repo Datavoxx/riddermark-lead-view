@@ -36,20 +36,20 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md animate-fade-in shadow-xl">
         <CardHeader className="text-center">
-          <div className="w-12 h-12 bg-primary rounded-md flex items-center justify-center mx-auto mb-4">
+          <div className="w-12 h-12 bg-primary rounded-md flex items-center justify-center mx-auto mb-4 shadow-lg shadow-primary/20 animate-glow">
             <span className="text-primary-foreground font-bold text-lg">R</span>
           </div>
-          <CardTitle className="text-2xl font-bold">Riddermark</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-2xl font-bold animate-slide-up">Riddermark</CardTitle>
+          <CardDescription className="animate-slide-up" style={{ animationDelay: "0.1s" }}>
             Logga in för att fortsätta
           </CardDescription>
         </CardHeader>
         
-        <CardContent>
+        <CardContent className="animate-fade-in" style={{ animationDelay: "0.2s" }}>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
+            <div className="space-y-2 animate-slide-up" style={{ animationDelay: "0.3s" }}>
               <Label htmlFor="email">E-post</Label>
               <Input
                 id="email"
@@ -59,10 +59,11 @@ export default function Login() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={isLoading}
+                className="transition-all duration-200 focus:shadow-lg focus:shadow-primary/10"
               />
             </div>
             
-            <div className="space-y-2">
+            <div className="space-y-2 animate-slide-up" style={{ animationDelay: "0.4s" }}>
               <Label htmlFor="password">Lösenord</Label>
               <Input
                 id="password"
@@ -71,15 +72,24 @@ export default function Login() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={isLoading}
+                className="transition-all duration-200 focus:shadow-lg focus:shadow-primary/10"
               />
             </div>
             
             <Button 
               type="submit" 
-              className="w-full" 
+              className="w-full animate-slide-up" 
+              style={{ animationDelay: "0.5s" }}
               disabled={isLoading}
             >
-              {isLoading ? "Loggar in..." : "Fortsätt"}
+              {isLoading ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-primary-foreground/20 border-t-primary-foreground rounded-full animate-spin" />
+                  Loggar in...
+                </div>
+              ) : (
+                "Fortsätt"
+              )}
             </Button>
             
             <div className="text-center">
