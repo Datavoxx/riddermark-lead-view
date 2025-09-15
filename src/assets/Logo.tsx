@@ -1,7 +1,7 @@
-import logo from "https://imgur.com/W5UY8sa.png";
+import logoImg from "./riddermark-logo.png";
 
 export const RiddermarkLogo = () => {
-  return <img src={logo} alt="Riddermark" className="h-8 w-auto" />;
+  return <img src={logoImg} alt="Riddermark" className="h-8 w-auto" />;
 };
 
-export default logo;
+export default logoImg;
