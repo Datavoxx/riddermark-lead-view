@@ -1,13 +1,16 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { TopBar } from "@/components/TopBar";
 import { LeadCard } from "@/components/LeadCard";
 import { LeadCardSkeleton } from "@/components/LeadCardSkeleton";
 import { useToast } from "@/hooks/use-toast";
 import { Lead } from "@/types/lead";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 
 export default function ArendeDetail() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [lead, setLead] = useState<Lead | null>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
@@ -54,6 +57,17 @@ export default function ArendeDetail() {
       <TopBar title={lead ? `Ärende: ${lead.subject}` : "Ärende"} />
       
       <main className="p-6">
+        <div className="mb-6">
+          <Button 
+            variant="ghost" 
+            onClick={() => navigate('/blocket/arenden')}
+            className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Tillbaka till ärenden
+          </Button>
+        </div>
+        
         {loading ? (
           <LeadCardSkeleton />
         ) : lead ? (
