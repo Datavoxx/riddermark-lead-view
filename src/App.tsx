@@ -13,6 +13,10 @@ import Blocket from "./pages/Blocket";
 import ArendenList from "./pages/ArendenList";
 import ArendeDetail from "./pages/ArendeDetail";
 import Reports from "./pages/Reports";
+import TotalLeads from "./pages/TotalLeads";
+import ConversionRate from "./pages/ConversionRate";
+import ResponseTime from "./pages/ResponseTime";
+import ActiveLeads from "./pages/ActiveLeads";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
@@ -38,6 +42,10 @@ const App = () => (
                         <Route path="/" element={<Dashboard />} />
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/reports" element={<Reports />} />
+                        <Route path="/reports/total-leads" element={<TotalLeads />} />
+                        <Route path="/reports/conversion-rate" element={<ConversionRate />} />
+                        <Route path="/reports/response-time" element={<ResponseTime />} />
+                        <Route path="/reports/active-leads" element={<ActiveLeads />} />
                         <Route path="/blocket" element={<Blocket />} />
                         <Route path="/blocket/arenden" element={<ArendenList />} />
                         <Route path="/blocket/arenden/:id" element={<ArendeDetail />} />

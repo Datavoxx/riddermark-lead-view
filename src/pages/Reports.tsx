@@ -11,6 +11,7 @@ import {
   ArrowDownIcon
 } from "lucide-react";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
+import { useNavigate } from "react-router-dom";
 
 // Sample data - easily replaceable
 const kpiData = {
@@ -44,6 +45,8 @@ const chartConfig = {
 };
 
 export default function Reports() {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-background">
       <TopBar title="Rapporter" />
@@ -57,7 +60,10 @@ export default function Reports() {
         {/* KPI Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Total Leads */}
-          <Card className="relative overflow-hidden">
+          <Card 
+            className="relative overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
+            onClick={() => navigate("/reports/total-leads")}
+          >
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -99,7 +105,10 @@ export default function Reports() {
           </Card>
 
           {/* Conversion Rate */}
-          <Card className="relative overflow-hidden">
+          <Card 
+            className="relative overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
+            onClick={() => navigate("/reports/conversion-rate")}
+          >
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -159,7 +168,10 @@ export default function Reports() {
           </Card>
 
           {/* Average Response Time */}
-          <Card className="relative overflow-hidden">
+          <Card 
+            className="relative overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
+            onClick={() => navigate("/reports/response-time")}
+          >
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -213,7 +225,10 @@ export default function Reports() {
           </Card>
 
           {/* Active Leads */}
-          <Card className="relative overflow-hidden">
+          <Card 
+            className="relative overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
+            onClick={() => navigate("/reports/active-leads")}
+          >
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
