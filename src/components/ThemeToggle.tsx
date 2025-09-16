@@ -1,5 +1,5 @@
 import { Moon, Sun } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { useEffect, useState } from "react";
 
 export const ThemeToggle = () => {
@@ -17,13 +17,14 @@ export const ThemeToggle = () => {
   };
 
   return (
-    <Button
-      variant="outline"
-      size="sm"
-      onClick={toggleTheme}
-      className="fixed top-4 right-4 z-50"
-    >
-      {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-    </Button>
+    <div className="flex items-center gap-2">
+      <Sun className="h-4 w-4 text-muted-foreground" />
+      <Switch
+        checked={isDark}
+        onCheckedChange={toggleTheme}
+        className="data-[state=checked]:bg-primary"
+      />
+      <Moon className="h-4 w-4 text-muted-foreground" />
+    </div>
   );
 };
