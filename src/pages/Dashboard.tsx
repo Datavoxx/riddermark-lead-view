@@ -103,27 +103,6 @@ export default function Dashboard() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {/* Available Cases Display */}
-            <div className="bg-muted/20 rounded-lg p-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <Archive className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <div className="font-semibold">{availableCases} tillgängliga ärenden</div>
-                  <div className="text-sm text-muted-foreground">Redo att plockas upp</div>
-                </div>
-              </div>
-              <Button 
-                size="sm"
-                onClick={() => navigate('/blocket/arenden')}
-                className="flex items-center gap-2"
-              >
-                <ArrowRight className="h-4 w-4" />
-                Gå dit
-              </Button>
-            </div>
-
             <div className="flex flex-col sm:flex-row gap-4">
               <Button 
                 onClick={() => navigate('/reports')}
@@ -143,6 +122,27 @@ export default function Dashboard() {
               >
                 <Plus className="h-4 w-4" />
                 Skapa test-lead
+              </Button>
+            </div>
+
+            {/* Available Cases Display */}
+            <div className="bg-muted/20 rounded-lg p-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                  <Archive className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <div className="font-semibold">{availableCases} tillgängliga ärenden</div>
+                  <div className="text-sm text-muted-foreground">Redo att plockas upp</div>
+                </div>
+              </div>
+              <Button 
+                size="sm"
+                onClick={() => navigate('/blocket/arenden')}
+                className="flex items-center gap-2"
+              >
+                <ArrowRight className="h-4 w-4" />
+                Gå dit
               </Button>
             </div>
           </CardContent>
