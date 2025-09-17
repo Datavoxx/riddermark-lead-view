@@ -6,13 +6,15 @@ import { Button } from "@/components/ui/button";
 import { TopBar } from "@/components/TopBar";
 import { CreateTestLeadForm } from "@/components/CreateTestLeadForm";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowRight, Plus, Users, Clock, TrendingUp, BarChart3, Archive } from "lucide-react";
+import { useDashboardSimulation } from "@/hooks/useDashboardSimulation";
+import { ArrowRight, Plus, Users, Clock, TrendingUp, BarChart3, Archive, Loader2 } from "lucide-react";
 
 export default function Dashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [availableCases, setAvailableCases] = useState<number>(0);
+  const { metrics, isLoading } = useDashboardSimulation();
 
   const handleLeadCreated = () => {
     setShowCreateDialog(false);
@@ -60,9 +62,11 @@ export default function Dashboard() {
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">12</div>
+              <div className="text-2xl font-bold flex items-center gap-2">
+                {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : metrics.newLeadsToday}
+              </div>
               <p className="text-xs text-muted-foreground">
-                +20% från igår
+                {isLoading ? "Laddar..." : metrics.newLeadsChange + " från igår"}
               </p>
             </CardContent>
           </Card>
@@ -73,9 +77,11 @@ export default function Dashboard() {
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">8</div>
+              <div className="text-2xl font-bold flex items-center gap-2">
+                {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : metrics.claimedLeads}
+              </div>
               <p className="text-xs text-muted-foreground">
-                67% av alla leads
+                {isLoading ? "Laddar..." : `${metrics.claimedPercentage}% av alla leads`}
               </p>
             </CardContent>
           </Card>
@@ -86,9 +92,11 @@ export default function Dashboard() {
               <Clock className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">2.3h</div>
+              <div className="text-2xl font-bold flex items-center gap-2">
+                {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : metrics.averageResponseTime}
+              </div>
               <p className="text-xs text-muted-foreground">
-                -15 min från igår
+                {isLoading ? "Laddar..." : metrics.responseTimeChange}
               </p>
             </CardContent>
           </Card>
