@@ -36,9 +36,8 @@ export function AppSidebar() {
   return (
     <Sidebar className="border-r border-border">
       <SidebarHeader className="p-4">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-center">
           <Logo h={32} />
-          <span className="font-semibold text-foreground">Riddermark</span>
         </div>
       </SidebarHeader>
 
