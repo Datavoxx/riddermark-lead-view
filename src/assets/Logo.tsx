@@ -1,6 +1,6 @@
 // src/assets/Logo.tsx
 export default function Logo({ h = 28 }: { h?: number }) {
-  const LOGO_URL = "/branding/riddermark-logo.png"; // ändra datum vid byte
+  const LOGO_URL = "/branding/riddermark-logo.png?v=" + Date.now(); // ändra datum vid byte
   return (
     <img
       src={LOGO_URL}
