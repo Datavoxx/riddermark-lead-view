@@ -42,9 +42,6 @@ export default function Login() {
           <div className="flex justify-center mb-4">
             <Logo h={48} />
           </div>
-          <CardDescription className="animate-slide-up">
-            Logga in för att fortsätta
-          </CardDescription>
         </CardHeader>
         
         <CardContent className="animate-fade-in" style={{ animationDelay: "0.2s" }}>
