@@ -42,8 +42,7 @@ export default function Login() {
           <div className="flex justify-center mb-4">
             <Logo h={48} />
           </div>
-          <CardTitle className="text-2xl font-bold animate-slide-up">Riddermark</CardTitle>
-          <CardDescription className="animate-slide-up" style={{ animationDelay: "0.1s" }}>
+          <CardDescription className="animate-slide-up">
             Logga in för att fortsätta
           </CardDescription>
         </CardHeader>
