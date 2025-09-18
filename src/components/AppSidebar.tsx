@@ -1,6 +1,7 @@
 import { Home, FileText, Archive, LogOut } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import Logo from "@/assets/Logo";
 import {
   Sidebar,
   SidebarContent,
@@ -36,9 +37,7 @@ export function AppSidebar() {
     <Sidebar className="border-r border-border">
       <SidebarHeader className="p-4">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center">
-            <span className="text-primary-foreground font-bold text-sm">R</span>
-          </div>
+          <Logo h={32} />
           <span className="font-semibold text-foreground">Riddermark</span>
         </div>
       </SidebarHeader>
