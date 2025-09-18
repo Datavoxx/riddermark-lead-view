@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import Logo from "@/assets/Logo";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -38,8 +39,8 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md animate-fade-in shadow-xl">
         <CardHeader className="text-center">
-          <div className="w-12 h-12 bg-primary rounded-md flex items-center justify-center mx-auto mb-4 shadow-lg shadow-primary/20 animate-glow">
-            <span className="text-primary-foreground font-bold text-lg">R</span>
+          <div className="flex justify-center mb-4">
+            <Logo h={48} />
           </div>
           <CardTitle className="text-2xl font-bold animate-slide-up">Riddermark</CardTitle>
           <CardDescription className="animate-slide-up" style={{ animationDelay: "0.1s" }}>
