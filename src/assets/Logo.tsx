@@ -1,7 +1,13 @@
-import logoImg from "./riddermark-logo-new.png";
-
-export const RiddermarkLogo = () => {
-  return <img src={logoImg} alt="Riddermark" className="h-8 w-auto" />;
-};
-
-export default logoImg;
+// src/assets/Logo.tsx
+export default function Logo({ h = 28 }: { h?: number }) {
+  const LOGO_URL = "riddermark-logo.png"; // ändra datum vid byte
+  return (
+    <img
+      src={LOGO_URL}
+      alt="Riddermark"
+      style={{ height: h, width: "auto", display: "block" }}
+      loading="eager"
+      fetchPriority="high"
+    />
+  );
+}
