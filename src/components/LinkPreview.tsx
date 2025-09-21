@@ -14,7 +14,7 @@ export const LinkPreview = ({ lead }: LinkPreviewProps) => {
     <div className="border border-primary/20 rounded-lg overflow-hidden bg-slack-card hover:bg-slack-hover transition-colors cursor-pointer" onClick={openLink}>
       <div className="p-3 border-b border-primary/20">
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 bg-primary rounded-full"></div>
+          <div className="w-3 h-3 bg-red-500 rounded-full"></div>
           <span className="text-sm font-medium text-muted-foreground">Blocket</span>
         </div>
       </div>

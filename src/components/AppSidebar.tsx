@@ -54,12 +54,7 @@ export function AppSidebar() {
                       className={getNavClassName}
                     >
                       <item.icon className="h-4 w-4" />
-                      <span className="flex items-center gap-2">
-                        {item.title}
-                        {item.title === "Blocket" && (
-                          <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                        )}
-                      </span>
+                      <span>{item.title}</span>
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
