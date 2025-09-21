@@ -18,7 +18,7 @@ import {
 const navigation = [
   { title: "Hem", url: "/dashboard", icon: Home },
   { title: "Rapporter", url: "/reports", icon: FileText },
-  { title: "Blocket", url: "/blocket", icon: Archive },
+  { title: "Blocket", url: "/blocket/arenden", icon: Archive },
 ];
 
 export function AppSidebar() {

@@ -9,7 +9,7 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AppSidebar } from "@/components/AppSidebar";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
-import Blocket from "./pages/Blocket";
+
 import ArendenList from "./pages/ArendenList";
 import ArendeDetail from "./pages/ArendeDetail";
 import Reports from "./pages/Reports";
@@ -46,7 +46,6 @@ const App = () => (
                         <Route path="/reports/conversion-rate" element={<ConversionRate />} />
                         <Route path="/reports/response-time" element={<ResponseTime />} />
                         <Route path="/reports/active-leads" element={<ActiveLeads />} />
-                        <Route path="/blocket" element={<Blocket />} />
                         <Route path="/blocket/arenden" element={<ArendenList />} />
                         <Route path="/blocket/arenden/:id" element={<ArendeDetail />} />
                         <Route path="*" element={<NotFound />} />
