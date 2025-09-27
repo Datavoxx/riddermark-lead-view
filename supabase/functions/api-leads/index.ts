@@ -37,6 +37,7 @@ serve(async (req) => {
         });
       }
 
+      console.log('Returning single lead:', lead);
       return new Response(JSON.stringify(lead), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
