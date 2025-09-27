@@ -53,25 +53,42 @@ export const LeadCard = ({ lead, onClaim }: LeadCardProps) => {
             </button>
           </div>
           
+          {/* Debug info för preview_image_url */}
+          <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded text-xs">
+            <strong>Debug - Bild URL:</strong> {lead.preview_image_url || 'Ingen bild-URL hittades'}
+          </div>
+          
           {lead.preview_image_url && (
-            <div className="mt-2">
+            <div className="mt-2 p-2 border border-green-200 rounded bg-green-50">
+              <div className="text-xs text-green-700 mb-2">Försöker ladda bild från: {lead.preview_image_url}</div>
               <img
                 src={lead.preview_image_url}
                 alt={lead.preview_title || 'Blocket annons'}
-                className="w-full max-w-sm h-32 object-cover rounded-md border border-primary/20"
-                onLoad={() => console.log('Image loaded successfully:', lead.preview_image_url)}
+                className="w-full max-w-sm h-32 object-cover rounded-md border-2 border-primary/20 bg-gray-100"
+                style={{ minHeight: '128px', backgroundColor: '#f3f4f6', display: 'block' }}
+                onLoad={(e) => {
+                  console.log('✅ Image loaded successfully:', lead.preview_image_url);
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.parentElement.style.backgroundColor = '#dcfce7';
+                }}
                 onError={(e) => {
-                  console.error('Image failed to load:', lead.preview_image_url);
-                  // Don't hide the image, show a placeholder instead
-                  e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDIwMCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik04NSA0NEg1NVY3NEg4NVY0NFoiIGZpbGw9IiM5Q0E0QUYiLz4KPHN2Zz4K';
-                  e.currentTarget.alt = 'Bilden kunde inte laddas';
+                  console.error('❌ Image failed to load:', lead.preview_image_url);
+                  e.currentTarget.style.backgroundColor = '#fee2e2';
+                  e.currentTarget.style.display = 'flex';
+                  e.currentTarget.style.alignItems = 'center';
+                  e.currentTarget.style.justifyContent = 'center';
+                  e.currentTarget.style.color = '#dc2626';
+                  e.currentTarget.style.fontSize = '12px';
+                  e.currentTarget.innerHTML = '⚠️ Kunde inte ladda bilden';
+                  e.currentTarget.parentElement.style.backgroundColor = '#fef2f2';
                 }}
               />
             </div>
           )}
+          
           {!lead.preview_image_url && (
-            <div className="mt-2 text-xs text-muted-foreground">
-              Ingen bild tillgänglig
+            <div className="mt-2 p-2 border border-red-300 rounded bg-red-50 text-red-700 text-xs">
+              ⚠️ Ingen bild-URL hittades i databasen för detta lead
             </div>
           )}
           
