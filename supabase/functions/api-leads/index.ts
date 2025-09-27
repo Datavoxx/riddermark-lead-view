@@ -16,10 +16,18 @@ serve(async (req) => {
   const supabase = createClient(supabaseUrl, supabaseKey);
 
   const url = new URL(req.url);
-  const leadId = url.pathname.split('/')[3]; // /api/leads/{id}
+  const pathParts = url.pathname.split('/').filter(Boolean); // Remove empty parts
+  const leadId = pathParts[pathParts.length - 1]; // Get the last part as leadId
+  
+  console.log('URL:', req.url);
+  console.log('Path parts:', pathParts);
+  console.log('Extracted leadId:', leadId);
   
   try {
-    if (req.method === 'GET' && leadId && leadId !== 'incoming') {
+    // Check if this is a request for a single lead (UUID format)
+    const isUuidV4 = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    
+    if (req.method === 'GET' && leadId && isUuidV4.test(leadId)) {
       // Get specific lead by ID
       console.log(`Fetching lead with id: ${leadId}`);
       
