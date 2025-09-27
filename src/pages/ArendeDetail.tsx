@@ -20,7 +20,7 @@ export default function ArendeDetail() {
 
     try {
       setLoading(true);
-      const response = await fetch(`https://fjqsaixszaqceviqwboz.functions.supabase.co/api-leads/${id}`);
+      const response = await fetch(`https://fjqsaixszaqceviqwboz.functions.supabase.co/api-leads/${id}?t=${Date.now()}`);
       
       if (!response.ok) {
         if (response.status === 404) {
@@ -30,6 +30,8 @@ export default function ArendeDetail() {
       }
 
       const data = await response.json();
+      console.log('Received lead data:', data);
+      console.log('Summering field:', data.summering);
       setLead(data);
     } catch (error) {
       console.error('Error fetching lead:', error);
