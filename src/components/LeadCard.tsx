@@ -59,10 +59,17 @@ export const LeadCard = ({ lead, onClaim }: LeadCardProps) => {
                 src={lead.preview_image_url}
                 alt={lead.preview_title || 'Blocket annons'}
                 className="w-full max-w-sm h-32 object-cover rounded-md border border-primary/20"
+                onLoad={() => console.log('Image loaded successfully:', lead.preview_image_url)}
                 onError={(e) => {
+                  console.error('Image failed to load:', lead.preview_image_url);
                   e.currentTarget.style.display = 'none';
                 }}
               />
+            </div>
+          )}
+          {!lead.preview_image_url && (
+            <div className="mt-2 text-xs text-muted-foreground">
+              Ingen bild tillgänglig
             </div>
           )}
           
