@@ -53,57 +53,17 @@ export const LeadCard = ({ lead, onClaim }: LeadCardProps) => {
             </button>
           </div>
           
-          {/* Bilden från preview_image_url - TOTAL DEBUG VERSION */}
-          <div className="mt-3 p-4 border-2 border-red-500 bg-red-50">
-            <div className="text-sm font-bold text-red-700 mb-2">
-              🔍 BILDDEBUG - URL: {lead.preview_image_url}
-            </div>
-            <div className="text-xs text-red-600 mb-2">
-              Lead ID: {lead.id}
-            </div>
-            
-            {/* Testar olika bildvarianter */}
-            <div className="space-y-4">
-              {/* Version 1: Original URL */}
-              <div>
-                <div className="text-xs font-semibold mb-1">Test 1: Original URL</div>
-                <img
-                  src={lead.preview_image_url}
-                  alt="Test 1"
-                  className="w-full max-w-sm h-32 object-cover rounded border-2 border-blue-500"
-                  onLoad={() => console.log('✅ Test 1 LOADED:', lead.preview_image_url)}
-                  onError={(e) => {
-                    console.error('❌ Test 1 FAILED:', lead.preview_image_url);
-                    e.currentTarget.style.backgroundColor = '#fee2e2';
-                    e.currentTarget.innerHTML = 'FAILED';
-                  }}
-                />
-              </div>
-
-              {/* Version 2: Fallback URL */}
-              <div>
-                <div className="text-xs font-semibold mb-1">Test 2: Fallback URL</div>
-                <img
-                  src="https://images.unsplash.com/photo-1544829099-b9a0c5303bea?w=400&h=225&fit=crop"
-                  alt="Test 2"
-                  className="w-full max-w-sm h-32 object-cover rounded border-2 border-green-500"
-                  onLoad={() => console.log('✅ Test 2 LOADED: Fallback')}
-                  onError={() => console.error('❌ Test 2 FAILED: Fallback')}
-                />
-              </div>
-
-              {/* Version 3: Direkttest av Blocket URL */}
-              <div>
-                <div className="text-xs font-semibold mb-1">Test 3: Direkt Blocket URL</div>
-                <img
-                  src="https://i.blocketcdn.se/pictures/asl/1003063172/4100701146.jpg"
-                  alt="Test 3"
-                  className="w-full max-w-sm h-32 object-cover rounded border-2 border-purple-500"
-                  onLoad={() => console.log('✅ Test 3 LOADED: Direct Blocket')}
-                  onError={() => console.error('❌ Test 3 FAILED: Direct Blocket')}
-                />
-              </div>
-            </div>
+          {/* High Quality Image */}
+          <div className="mt-3">
+            <img
+              src={lead.preview_image_url}
+              alt="Fordon från Blocket"
+              className="w-full max-w-lg h-48 object-cover rounded-lg border border-primary/20 shadow-sm"
+              onError={(e) => {
+                // Fallback to high quality car image
+                e.currentTarget.src = "https://images.unsplash.com/photo-1544829099-b9a0c5303bea?w=800&h=450&fit=crop&auto=format&q=85";
+              }}
+            />
           </div>
           
           <div>
