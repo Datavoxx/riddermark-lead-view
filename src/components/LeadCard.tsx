@@ -31,7 +31,7 @@ export const LeadCard = ({ lead, onClaim }: LeadCardProps) => {
     <div className="w-full max-w-2xl mx-auto bg-slack-card border border-primary/20 rounded-lg shadow-sm hover:shadow-md transition-shadow">
       {/* Header */}
       <div className="px-4 py-3 border-b border-primary/20">
-        <div className="flex items-center gap-2 pl-3">
+        <div className="flex items-center gap-2 pl-6">
           <span className="text-lg">🧾</span>
           <h2 className="font-semibold text-foreground">Sammanfattning: "{lead.summering || ''}"</h2>
         </div>
