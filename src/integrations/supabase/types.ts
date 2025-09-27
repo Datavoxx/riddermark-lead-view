@@ -16,55 +16,67 @@ export type Database = {
     Tables: {
       leads: {
         Row: {
-          blocket_url: string
-          claimed: boolean
+          blocket_url: string | null
+          claimed: boolean | null
           claimed_at: string | null
           claimed_by: string | null
-          created_at: string
+          created_at: string | null
           id: string
-          lead_email: string
-          lead_namn: string
+          lead_email: string | null
+          lead_namn: string | null
+          link: string | null
+          message_id: string | null
+          metadata: Json | null
           preview_description: string | null
           preview_image_url: string | null
           preview_title: string | null
-          regnr: string
-          subject: string
-          summary: string
-          updated_at: string
+          regnr: string | null
+          subject: string | null
+          summary: string | null
+          summering: string | null
+          updated_at: string | null
         }
         Insert: {
-          blocket_url: string
-          claimed?: boolean
+          blocket_url?: string | null
+          claimed?: boolean | null
           claimed_at?: string | null
           claimed_by?: string | null
-          created_at?: string
+          created_at?: string | null
           id?: string
-          lead_email: string
-          lead_namn: string
+          lead_email?: string | null
+          lead_namn?: string | null
+          link?: string | null
+          message_id?: string | null
+          metadata?: Json | null
           preview_description?: string | null
           preview_image_url?: string | null
           preview_title?: string | null
-          regnr: string
-          subject: string
-          summary: string
-          updated_at?: string
+          regnr?: string | null
+          subject?: string | null
+          summary?: string | null
+          summering?: string | null
+          updated_at?: string | null
         }
         Update: {
-          blocket_url?: string
-          claimed?: boolean
+          blocket_url?: string | null
+          claimed?: boolean | null
           claimed_at?: string | null
           claimed_by?: string | null
-          created_at?: string
+          created_at?: string | null
           id?: string
-          lead_email?: string
-          lead_namn?: string
+          lead_email?: string | null
+          lead_namn?: string | null
+          link?: string | null
+          message_id?: string | null
+          metadata?: Json | null
           preview_description?: string | null
           preview_image_url?: string | null
           preview_title?: string | null
-          regnr?: string
-          subject?: string
-          summary?: string
-          updated_at?: string
+          regnr?: string | null
+          subject?: string | null
+          summary?: string | null
+          summering?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
