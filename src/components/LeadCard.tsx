@@ -53,6 +53,19 @@ export const LeadCard = ({ lead, onClaim }: LeadCardProps) => {
             </button>
           </div>
           
+          {lead.preview_image_url && (
+            <div className="mt-2">
+              <img
+                src={lead.preview_image_url}
+                alt={lead.preview_title || 'Blocket annons'}
+                className="w-full max-w-sm h-32 object-cover rounded-md border border-primary/20"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                }}
+              />
+            </div>
+          )}
+          
           <div>
             <strong>Datum/tid:</strong> {formatDate(lead.created_at)}
           </div>
