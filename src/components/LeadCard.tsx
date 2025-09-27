@@ -59,8 +59,9 @@ export const LeadCard = ({ lead, onClaim }: LeadCardProps) => {
               src={lead.preview_image_url}
               alt="Fordon från Blocket"
               className="w-full max-w-lg h-48 object-cover rounded-lg border border-primary/20 shadow-sm"
+              referrerPolicy="no-referrer"
+              loading="lazy"
               onError={(e) => {
-                // Fallback to high quality car image
                 e.currentTarget.src = "https://images.unsplash.com/photo-1544829099-b9a0c5303bea?w=800&h=450&fit=crop&auto=format&q=85";
               }}
             />
