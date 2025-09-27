@@ -80,7 +80,7 @@ serve(async (req) => {
     console.error('Error in api-url-preview function:', error);
     return new Response(JSON.stringify({ 
       error: 'Failed to fetch URL preview',
-      message: error.message,
+      message: error instanceof Error ? error.message : String(error),
       // Provide fallback data
       title: 'Preview not available',
       description: 'Could not fetch preview for this URL',
