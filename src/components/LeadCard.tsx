@@ -62,7 +62,9 @@ export const LeadCard = ({ lead, onClaim }: LeadCardProps) => {
                 onLoad={() => console.log('Image loaded successfully:', lead.preview_image_url)}
                 onError={(e) => {
                   console.error('Image failed to load:', lead.preview_image_url);
-                  e.currentTarget.style.display = 'none';
+                  // Don't hide the image, show a placeholder instead
+                  e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDIwMCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik04NSA0NEg1NVY3NEg4NVY0NFoiIGZpbGw9IiM5Q0E0QUYiLz4KPHN2Zz4K';
+                  e.currentTarget.alt = 'Bilden kunde inte laddas';
                 }}
               />
             </div>
