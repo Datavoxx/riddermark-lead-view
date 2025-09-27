@@ -12,6 +12,7 @@ export interface Lead {
   created_at: string;
   claimed?: boolean;
   claimed_by?: string;
+  summering?: string;
 }
 
 export interface CreateTestLeadRequest {

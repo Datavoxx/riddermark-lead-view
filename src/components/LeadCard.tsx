@@ -33,10 +33,7 @@ export const LeadCard = ({ lead, onClaim }: LeadCardProps) => {
       <div className="px-4 py-3 border-b border-primary/20">
         <div className="flex items-center gap-2">
           <span className="text-lg">🧾</span>
-          <h2 className="font-semibold text-foreground">Sammanfattning</h2>
-          <Badge variant="secondary" className="bg-slack-tag text-xs">
-            summering
-          </Badge>
+          <h2 className="font-semibold text-foreground">Sammanfattning: "{lead.summering || ''}"</h2>
         </div>
       </div>
 
