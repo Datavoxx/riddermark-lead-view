@@ -67,7 +67,11 @@ export const LeadCard = ({ lead, onClaim }: LeadCardProps) => {
           </div>
           
           <div>
-            <strong>Namn/Email:</strong> {lead.lead_namn}, {lead.lead_email}
+            <strong>Namn:</strong> {lead.lead_namn}
+          </div>
+          
+          <div>
+            <strong>Email:</strong> {lead.lead_email}
           </div>
         </div>
 
