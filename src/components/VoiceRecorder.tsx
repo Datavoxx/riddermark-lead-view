@@ -5,13 +5,16 @@ import { useToast } from "@/hooks/use-toast";
 
 interface VoiceRecorderProps {
   onRecordingComplete?: (audioBlob: Blob) => void;
+  leadId?: string;
 }
 
-export const VoiceRecorder = ({ onRecordingComplete }: VoiceRecorderProps) => {
+export const VoiceRecorder = ({ onRecordingComplete, leadId }: VoiceRecorderProps) => {
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const [audioURL, setAudioURL] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -40,10 +43,11 @@ export const VoiceRecorder = ({ onRecordingComplete }: VoiceRecorderProps) => {
       };
 
       mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(chunksRef.current, { type: "audio/webm" });
-        const url = URL.createObjectURL(audioBlob);
+        const blob = new Blob(chunksRef.current, { type: "audio/webm" });
+        const url = URL.createObjectURL(blob);
         setAudioURL(url);
-        onRecordingComplete?.(audioBlob);
+        setAudioBlob(blob);
+        onRecordingComplete?.(blob);
         stream.getTracks().forEach(track => track.stop());
         stopTimer();
       };
@@ -109,10 +113,78 @@ export const VoiceRecorder = ({ onRecordingComplete }: VoiceRecorderProps) => {
       URL.revokeObjectURL(audioURL);
     }
     setAudioURL(null);
+    setAudioBlob(null);
     setIsPlaying(false);
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
+    }
+  };
+
+  const sendRecording = async () => {
+    if (!audioBlob || !leadId) {
+      toast({
+        title: "Fel",
+        description: "Ingen inspelning att skicka",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSending(true);
+    console.log('Sending recording for lead:', leadId);
+
+    try {
+      const { supabase } = await import("@/integrations/supabase/client");
+      
+      const formData = new FormData();
+      formData.append('audio', audioBlob, 'recording.webm');
+      formData.append('lead_id', leadId);
+      formData.append('duration_ms', (recordingTime * 1000).toString());
+      formData.append('thread_id', leadId);
+      formData.append('wait_webhook', '');
+
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error('Not authenticated');
+      }
+
+      const response = await fetch(
+        'https://fjqsaixszaqceviqwboz.supabase.co/functions/v1/voice-upload',
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+          },
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to send recording');
+      }
+
+      const result = await response.json();
+      console.log('Recording sent successfully:', result);
+
+      toast({
+        title: "Skickat!",
+        description: "Röstinspelningen har skickats",
+      });
+
+      // Clear recording after successful send
+      deleteRecording();
+
+    } catch (error) {
+      console.error('Error sending recording:', error);
+      toast({
+        title: "Fel",
+        description: error instanceof Error ? error.message : "Kunde inte skicka inspelningen",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSending(false);
     }
   };
 
@@ -204,13 +276,14 @@ export const VoiceRecorder = ({ onRecordingComplete }: VoiceRecorderProps) => {
           </Button>
 
           <Button
-            onClick={() => {}}
+            onClick={sendRecording}
             variant="default"
             size="sm"
             className="flex items-center gap-2"
+            disabled={isSending}
           >
             <Send className="h-4 w-4" />
-            Skicka
+            {isSending ? 'Skickar...' : 'Skicka'}
           </Button>
         </div>
       )}

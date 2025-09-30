@@ -104,6 +104,68 @@ export type Database = {
         }
         Relationships: []
       }
+      recordings: {
+        Row: {
+          correlation_id: string
+          created_at: string | null
+          duration_ms: number | null
+          id: string
+          lang: string | null
+          storage_path: string
+          thread_id: string
+        }
+        Insert: {
+          correlation_id: string
+          created_at?: string | null
+          duration_ms?: number | null
+          id?: string
+          lang?: string | null
+          storage_path: string
+          thread_id: string
+        }
+        Update: {
+          correlation_id?: string
+          created_at?: string | null
+          duration_ms?: number | null
+          id?: string
+          lang?: string | null
+          storage_path?: string
+          thread_id?: string
+        }
+        Relationships: []
+      }
+      transcripts: {
+        Row: {
+          confidence: number | null
+          created_at: string | null
+          id: string
+          recording_id: string | null
+          text: string
+        }
+        Insert: {
+          confidence?: number | null
+          created_at?: string | null
+          id?: string
+          recording_id?: string | null
+          text: string
+        }
+        Update: {
+          confidence?: number | null
+          created_at?: string | null
+          id?: string
+          recording_id?: string | null
+          text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transcripts_recording_id_fkey"
+            columns: ["recording_id"]
+            isOneToOne: false
+            referencedRelation: "recordings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

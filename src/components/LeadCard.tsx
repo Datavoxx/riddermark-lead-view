@@ -90,9 +90,9 @@ export const LeadCard = ({ lead, onClaim }: LeadCardProps) => {
             <h3 className="font-semibold text-sm text-foreground">Röstinspelning</h3>
           </div>
           <VoiceRecorder
+            leadId={lead.id}
             onRecordingComplete={(audioBlob) => {
               console.log("Recording complete:", audioBlob);
-              // TODO: Send audio to backend
             }}
           />
         </div>

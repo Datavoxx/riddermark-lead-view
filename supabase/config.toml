@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.api-url-preview]
 verify_jwt = false
+
+[functions.voice-upload]
+verify_jwt = true
