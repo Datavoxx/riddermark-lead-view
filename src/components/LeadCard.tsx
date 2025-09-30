@@ -1,10 +1,11 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { ExternalLink, Mic } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { Lead } from "@/types/lead";
 import { ClaimButton } from "./ClaimButton";
 import { LinkPreview } from "./LinkPreview";
+import { VoiceRecorder } from "./VoiceRecorder";
 
 interface LeadCardProps {
   lead: Lead;
@@ -81,10 +82,12 @@ export const LeadCard = ({ lead, onClaim }: LeadCardProps) => {
         <div className="flex items-center gap-3">
           <ClaimButton leadId={lead.id} onClaim={onClaim} />
           
-          <Button variant="secondary" disabled className="flex items-center gap-2">
-            <Mic className="h-4 w-4" />
-            Skicka röstmeddelande 🎙️
-          </Button>
+          <VoiceRecorder
+            onRecordingComplete={(audioBlob) => {
+              console.log("Recording complete:", audioBlob);
+              // TODO: Send audio to backend
+            }}
+          />
         </div>
 
         {/* Link Preview */}
