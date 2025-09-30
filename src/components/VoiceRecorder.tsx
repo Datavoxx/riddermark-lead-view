@@ -39,7 +39,13 @@ export const VoiceRecorder = ({ onRecordingComplete }: VoiceRecorderProps) => {
   }, []);
 
   const visualizeAudio = useCallback(() => {
-    if (!analyserRef.current || !canvasRef.current) return;
+    console.log("visualizeAudio called");
+    console.log("analyserRef.current:", analyserRef.current);
+    console.log("canvasRef.current:", canvasRef.current);
+    if (!analyserRef.current || !canvasRef.current) {
+      console.log("Missing analyser or canvas ref, returning");
+      return;
+    }
 
     const canvas = canvasRef.current;
     const canvasCtx = canvas.getContext("2d");
@@ -85,7 +91,9 @@ export const VoiceRecorder = ({ onRecordingComplete }: VoiceRecorderProps) => {
 
   const startRecording = async () => {
     try {
+      console.log("Starting recording...");
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      console.log("Got media stream");
       
       // Set up audio visualization
       const audioContext = new AudioContext();
@@ -95,7 +103,9 @@ export const VoiceRecorder = ({ onRecordingComplete }: VoiceRecorderProps) => {
       const source = audioContext.createMediaStreamSource(stream);
       source.connect(analyser);
       analyser.fftSize = 2048;
+      console.log("Audio context and analyser set up");
 
+      console.log("Canvas ref:", canvasRef.current);
       visualizeAudio();
 
       const mediaRecorder = new MediaRecorder(stream);
