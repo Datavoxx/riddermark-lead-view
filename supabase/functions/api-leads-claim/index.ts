@@ -32,8 +32,8 @@ serve(async (req) => {
     userId = user?.id;
   }
 
-  const url = new URL(req.url);
-  const leadId = url.pathname.split('/')[3]; // /api/leads/{id}/claim
+  // Get leadId from request body
+  const { leadId } = await req.json();
 
   if (!leadId) {
     return new Response(JSON.stringify({ error: 'Lead ID is required' }), {

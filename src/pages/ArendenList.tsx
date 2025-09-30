@@ -94,10 +94,13 @@ export default function ArendenList() {
 
   const handleClaim = async (leadId: string) => {
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
       const response = await fetch(`https://fjqsaixszaqceviqwboz.functions.supabase.co/api-leads-claim`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token}`,
         },
         body: JSON.stringify({ leadId }),
       });
@@ -145,15 +148,8 @@ export default function ArendenList() {
   };
 
   const filteredLeads = useMemo(() => {
-    return leads.filter(lead => {
-      const matchesStatus = 
-        statusFilter === 'all' || 
-        (statusFilter === 'claimed' && lead.claimed) ||
-        (statusFilter === 'unclaimed' && !lead.claimed);
-      
-      return matchesStatus;
-    });
-  }, [leads, statusFilter]);
+    return leads;
+  }, [leads]);
 
   return (
     <div className="min-h-screen bg-background">

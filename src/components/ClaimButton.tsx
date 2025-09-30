@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { CheckCircle, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ClaimButtonProps {
   leadId: string;
@@ -20,10 +21,13 @@ export const ClaimButton = ({ leadId, onClaim }: ClaimButtonProps) => {
     setIsConflict(false);
 
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
       const response = await fetch('https://fjqsaixszaqceviqwboz.functions.supabase.co/api-leads-claim', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token}`,
         },
         body: JSON.stringify({ leadId }),
       });
