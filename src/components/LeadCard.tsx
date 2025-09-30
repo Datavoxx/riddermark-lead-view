@@ -79,10 +79,8 @@ export const LeadCard = ({ lead, onClaim }: LeadCardProps) => {
         <Separator />
 
         {/* Action Buttons */}
-        <div className="flex flex-col gap-3 w-full">
-          <div className="flex items-center gap-3">
-            <ClaimButton leadId={lead.id} onClaim={onClaim} />
-          </div>
+        <div className="flex items-center gap-3">
+          <ClaimButton leadId={lead.id} onClaim={onClaim} />
           
           <VoiceRecorder
             onRecordingComplete={(audioBlob) => {
