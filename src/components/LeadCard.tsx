@@ -91,6 +91,7 @@ export const LeadCard = ({ lead, onClaim }: LeadCardProps) => {
           </div>
           <VoiceRecorder
             leadId={lead.id}
+            resumeUrl={lead.resume_url || undefined}
             onRecordingComplete={(audioBlob) => {
               console.log("Recording complete:", audioBlob);
             }}

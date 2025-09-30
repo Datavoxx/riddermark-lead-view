@@ -6,9 +6,10 @@ import { useToast } from "@/hooks/use-toast";
 interface VoiceRecorderProps {
   onRecordingComplete?: (audioBlob: Blob) => void;
   leadId?: string;
+  resumeUrl?: string;
 }
 
-export const VoiceRecorder = ({ onRecordingComplete, leadId }: VoiceRecorderProps) => {
+export const VoiceRecorder = ({ onRecordingComplete, leadId, resumeUrl }: VoiceRecorderProps) => {
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const [audioURL, setAudioURL] = useState<string | null>(null);
@@ -142,7 +143,7 @@ export const VoiceRecorder = ({ onRecordingComplete, leadId }: VoiceRecorderProp
       formData.append('lead_id', leadId);
       formData.append('duration_ms', (recordingTime * 1000).toString());
       formData.append('thread_id', leadId);
-      formData.append('wait_webhook', '');
+      formData.append('wait_webhook', resumeUrl || '');
 
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {

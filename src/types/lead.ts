@@ -13,6 +13,7 @@ export interface Lead {
   claimed?: boolean;
   claimed_by?: string;
   summering?: string;
+  resume_url?: string | null;
 }
 
 export interface CreateTestLeadRequest {
