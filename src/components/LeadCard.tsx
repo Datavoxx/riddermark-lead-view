@@ -81,7 +81,14 @@ export const LeadCard = ({ lead, onClaim }: LeadCardProps) => {
         {/* Action Buttons */}
         <div className="flex items-center gap-3">
           <ClaimButton leadId={lead.id} onClaim={onClaim} />
-          
+        </div>
+
+        {/* Voice Recorder Section */}
+        <div className="bg-muted/20 p-4 rounded-lg border border-primary/10">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-lg">🎙️</span>
+            <h3 className="font-semibold text-sm text-foreground">Röstinspelning</h3>
+          </div>
           <VoiceRecorder
             onRecordingComplete={(audioBlob) => {
               console.log("Recording complete:", audioBlob);
