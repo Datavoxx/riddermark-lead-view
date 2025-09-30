@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Mic, Square, Play, Pause, Trash2 } from "lucide-react";
+import { Mic, Square, Play, Pause, Trash2, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface VoiceRecorderProps {
@@ -201,6 +201,16 @@ export const VoiceRecorder = ({ onRecordingComplete }: VoiceRecorderProps) => {
           >
             <Trash2 className="h-4 w-4" />
             Ta bort
+          </Button>
+
+          <Button
+            onClick={() => {}}
+            variant="default"
+            size="sm"
+            className="flex items-center gap-2"
+          >
+            <Send className="h-4 w-4" />
+            Skicka
           </Button>
         </div>
       )}
