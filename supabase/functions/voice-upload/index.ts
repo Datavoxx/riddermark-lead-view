@@ -92,7 +92,7 @@ serve(async (req) => {
 
     console.log('Sending to n8n webhook:', webhookPayload);
 
-    const webhookResponse = await fetch("https://dataavx.app.n8n.cloud/webhook/voice-intake", {
+    const webhookResponse = await fetch("https://datavox.app.n8n.cloud/webhook/voice-intake", {
       method: "POST",
       headers: { 
         "Content-Type": "application/json"
