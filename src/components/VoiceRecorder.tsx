@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Mic, Square } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -12,15 +12,15 @@ export const VoiceRecorder = ({ onRecordingComplete }: VoiceRecorderProps) => {
   const [recordingTime, setRecordingTime] = useState(0);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
-  const timerRef = useRef<number | null>(null);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const startTimeRef = useRef<number>(0);
   const { toast } = useToast();
 
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-      }
-    };
+  const stopTimer = useCallback(() => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
   }, []);
 
   const startRecording = async () => {
@@ -40,16 +40,19 @@ export const VoiceRecorder = ({ onRecordingComplete }: VoiceRecorderProps) => {
         const audioBlob = new Blob(chunksRef.current, { type: "audio/webm" });
         onRecordingComplete?.(audioBlob);
         stream.getTracks().forEach(track => track.stop());
+        stopTimer();
       };
 
       mediaRecorder.start();
       setIsRecording(true);
       setRecordingTime(0);
+      startTimeRef.current = Date.now();
 
-      // Start timer
-      timerRef.current = window.setInterval(() => {
-        setRecordingTime(prev => prev + 1);
-      }, 1000);
+      // Start timer with precise timing
+      timerRef.current = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - startTimeRef.current) / 1000);
+        setRecordingTime(elapsed);
+      }, 100); // Update more frequently for smoother display
 
       toast({
         title: "Inspelning startad",
@@ -69,11 +72,7 @@ export const VoiceRecorder = ({ onRecordingComplete }: VoiceRecorderProps) => {
     if (mediaRecorderRef.current && isRecording) {
       mediaRecorderRef.current.stop();
       setIsRecording(false);
-      
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
+      stopTimer();
 
       toast({
         title: "Inspelning stoppad",
@@ -94,23 +93,26 @@ export const VoiceRecorder = ({ onRecordingComplete }: VoiceRecorderProps) => {
         <Button
           onClick={startRecording}
           variant="secondary"
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 hover:scale-105 transition-transform"
         >
           <Mic className="h-4 w-4" />
           Spela in röstmeddelande 🎙️
         </Button>
       ) : (
-        <Button
-          onClick={stopRecording}
-          variant="destructive"
-          className="flex items-center gap-3 animate-pulse"
-        >
-          <div className="relative flex items-center gap-2">
-            <div className="w-3 h-3 bg-white rounded-full animate-pulse" />
-            <span className="font-semibold">Spelar in... {formatTime(recordingTime)}</span>
-          </div>
-          <Square className="h-4 w-4 fill-current" />
-        </Button>
+        <div className="relative">
+          <div className="absolute -inset-1 bg-destructive/20 rounded-lg animate-pulse" />
+          <Button
+            onClick={stopRecording}
+            variant="destructive"
+            className="relative flex items-center gap-3"
+          >
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
+              <span className="font-mono font-semibold tabular-nums">{formatTime(recordingTime)}</span>
+            </div>
+            <Square className="h-4 w-4 fill-current" />
+          </Button>
+        </div>
       )}
     </div>
   );
