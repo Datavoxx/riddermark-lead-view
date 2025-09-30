@@ -1,6 +1,6 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Mic, Square } from "lucide-react";
+import { Mic, Square, Play, Pause, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface VoiceRecorderProps {
@@ -10,10 +10,13 @@ interface VoiceRecorderProps {
 export const VoiceRecorder = ({ onRecordingComplete }: VoiceRecorderProps) => {
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
+  const [audioURL, setAudioURL] = useState<string | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const startTimeRef = useRef<number>(0);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const { toast } = useToast();
 
   const stopTimer = useCallback(() => {
@@ -38,6 +41,8 @@ export const VoiceRecorder = ({ onRecordingComplete }: VoiceRecorderProps) => {
 
       mediaRecorder.onstop = () => {
         const audioBlob = new Blob(chunksRef.current, { type: "audio/webm" });
+        const url = URL.createObjectURL(audioBlob);
+        setAudioURL(url);
         onRecordingComplete?.(audioBlob);
         stream.getTracks().forEach(track => track.stop());
         stopTimer();
@@ -87,30 +92,115 @@ export const VoiceRecorder = ({ onRecordingComplete }: VoiceRecorderProps) => {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
+  const togglePlayback = () => {
+    if (!audioRef.current) return;
+
+    if (isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      audioRef.current.play();
+      setIsPlaying(true);
+    }
+  };
+
+  const deleteRecording = () => {
+    if (audioURL) {
+      URL.revokeObjectURL(audioURL);
+    }
+    setAudioURL(null);
+    setIsPlaying(false);
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (audioURL) {
+        URL.revokeObjectURL(audioURL);
+      }
+    };
+  }, [audioURL]);
+
   return (
-    <div className="flex items-center gap-3">
-      {!isRecording ? (
-        <Button
-          onClick={startRecording}
-          variant="secondary"
-          className="flex items-center gap-2 hover:scale-105 transition-transform"
-        >
-          <Mic className="h-4 w-4" />
-          Spela in röstmeddelande 🎙️
-        </Button>
-      ) : (
-        <div className="relative">
-          <div className="absolute -inset-1 bg-destructive/20 rounded-lg animate-pulse" />
+    <div className="space-y-3">
+      <div className="flex items-center gap-3">
+        {!isRecording && !audioURL ? (
           <Button
-            onClick={stopRecording}
-            variant="destructive"
-            className="relative flex items-center gap-3"
+            onClick={startRecording}
+            variant="secondary"
+            className="flex items-center gap-2 hover:scale-105 transition-transform"
           >
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
-              <span className="font-mono font-semibold tabular-nums">{formatTime(recordingTime)}</span>
-            </div>
-            <Square className="h-4 w-4 fill-current" />
+            <Mic className="h-4 w-4" />
+            Spela in röstmeddelande 🎙️
+          </Button>
+        ) : isRecording ? (
+          <div className="relative">
+            <div className="absolute -inset-1 bg-destructive/20 rounded-lg animate-pulse" />
+            <Button
+              onClick={stopRecording}
+              variant="destructive"
+              className="relative flex items-center gap-3"
+            >
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
+                <span className="font-mono font-semibold tabular-nums">{formatTime(recordingTime)}</span>
+              </div>
+              <Square className="h-4 w-4 fill-current" />
+            </Button>
+          </div>
+        ) : null}
+      </div>
+
+      {audioURL && (
+        <div className="flex items-center gap-3 bg-muted/30 p-3 rounded-md">
+          <audio
+            ref={audioRef}
+            src={audioURL}
+            onEnded={() => setIsPlaying(false)}
+            onPlay={() => setIsPlaying(true)}
+            onPause={() => setIsPlaying(false)}
+          />
+          
+          <Button
+            onClick={togglePlayback}
+            variant="secondary"
+            size="sm"
+            className="flex items-center gap-2"
+          >
+            {isPlaying ? (
+              <>
+                <Pause className="h-4 w-4" />
+                Pausa
+              </>
+            ) : (
+              <>
+                <Play className="h-4 w-4" />
+                Spela upp
+              </>
+            )}
+          </Button>
+
+          <Button
+            onClick={startRecording}
+            variant="outline"
+            size="sm"
+            className="flex items-center gap-2"
+          >
+            <Mic className="h-4 w-4" />
+            Spela in igen
+          </Button>
+
+          <Button
+            onClick={deleteRecording}
+            variant="ghost"
+            size="sm"
+            className="flex items-center gap-2 text-destructive hover:text-destructive"
+          >
+            <Trash2 className="h-4 w-4" />
+            Ta bort
           </Button>
         </div>
       )}
