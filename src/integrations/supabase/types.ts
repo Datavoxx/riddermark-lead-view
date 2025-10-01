@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      email_drafts: {
+        Row: {
+          correlation_id: string
+          created_at: string | null
+          id: string
+          lead_id: string | null
+          status: string
+          text: string
+        }
+        Insert: {
+          correlation_id: string
+          created_at?: string | null
+          id?: string
+          lead_id?: string | null
+          status?: string
+          text: string
+        }
+        Update: {
+          correlation_id?: string
+          created_at?: string | null
+          id?: string
+          lead_id?: string | null
+          status?: string
+          text?: string
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           blocket_url: string | null
@@ -31,6 +58,7 @@ export type Database = {
           preview_image_url: string | null
           preview_title: string | null
           regnr: string | null
+          resume_url: string | null
           subject: string | null
           summary: string | null
           summering: string | null
@@ -52,6 +80,7 @@ export type Database = {
           preview_image_url?: string | null
           preview_title?: string | null
           regnr?: string | null
+          resume_url?: string | null
           subject?: string | null
           summary?: string | null
           summering?: string | null
@@ -73,6 +102,7 @@ export type Database = {
           preview_image_url?: string | null
           preview_title?: string | null
           regnr?: string | null
+          resume_url?: string | null
           subject?: string | null
           summary?: string | null
           summering?: string | null
