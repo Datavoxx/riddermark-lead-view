@@ -10,6 +10,8 @@ interface EmailDraft {
   text: string;
   lead_id: string | null;
   status: string;
+  correlation_id?: string | null;
+  resume_url?: string | null;
 }
 
 export const EmailDraftModal = () => {
@@ -44,21 +46,26 @@ export const EmailDraftModal = () => {
   }, []);
 
   const handleAction = async (action: 'send' | 'redo') => {
-    if (!draft) return;
+    if (!draft || !draft.resume_url) {
+      toast.error("Ingen resume URL hittades");
+      return;
+    }
 
     setIsSending(true);
 
     try {
-      const response = await fetch('https://datavox.app.n8n.cloud/webhook/draft-action', {
+      const response = await fetch(draft.resume_url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          draft_id: draft.id,
-          lead_id: draft.lead_id,
+          event: "DRAFT_ACTION",
           action,
           text: draftText,
+          lead_id: draft.lead_id,
+          draft_id: draft.id,
+          correlation_id: draft.correlation_id,
         }),
       });
 
