@@ -7,7 +7,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AppSidebar } from "@/components/AppSidebar";
-import { EmailDraftModal } from "@/components/EmailDraftModal";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 
@@ -29,7 +28,6 @@ const App = () => (
       <AuthProvider>
         <Toaster />
         <Sonner />
-        <EmailDraftModal />
         <BrowserRouter>
           <Routes>
             <Route path="/test" element={<Index />} />

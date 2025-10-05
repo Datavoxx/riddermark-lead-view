@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogPortal, DialogOverlay } from "@/components/ui/dialog";
+import { Dialog, DialogHeader, DialogTitle, DialogFooter, DialogPortal, DialogOverlay } from "@/components/ui/dialog";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -11,39 +10,24 @@ interface EmailDraft {
   id: string;
   text: string;
   lead_id: string | null;
-  status: string;
+  correlation_id?: string | null;
 }
 
-export const EmailDraftModal = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [draft, setDraft] = useState<EmailDraft | null>(null);
+interface EmailDraftModalProps {
+  resumeUrl: string;
+  draft: EmailDraft | null;
+  onClose: () => void;
+}
+
+export const EmailDraftModal = ({ resumeUrl, draft, onClose }: EmailDraftModalProps) => {
   const [draftText, setDraftText] = useState("");
   const [isSending, setIsSending] = useState(false);
 
   useEffect(() => {
-    const channel = supabase
-      .channel('email-drafts-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'email_drafts',
-          filter: 'status=eq.pending'
-        },
-        (payload) => {
-          const newDraft = payload.new as EmailDraft;
-          setDraft(newDraft);
-          setDraftText(newDraft.text);
-          setIsOpen(true);
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
+    if (draft) {
+      setDraftText(draft.text);
+    }
+  }, [draft]);
 
   const handleAction = async (action: 'send' | 'redo') => {
     if (!draft) return;
@@ -51,15 +35,17 @@ export const EmailDraftModal = () => {
     setIsSending(true);
 
     try {
-      const response = await fetch('https://datavox.app.n8n.cloud/webhook/draft-action', {
+      const response = await fetch(resumeUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          event: "DRAFT_ACTION",
+          action,
           draft_id: draft.id,
           lead_id: draft.lead_id,
-          action,
+          correlation_id: draft.correlation_id || null,
           text: draftText,
         }),
       });
@@ -69,9 +55,7 @@ export const EmailDraftModal = () => {
       }
 
       if (action === 'send') {
-        setIsOpen(false);
-        setDraft(null);
-        setDraftText("");
+        onClose();
         toast.success("Meddelandet skickat!");
       } else {
         toast.info("Begär nytt utkast...");
@@ -85,12 +69,12 @@ export const EmailDraftModal = () => {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={() => {}}>
+    <Dialog open={!!draft} onOpenChange={() => {}}>
       <DialogPortal>
         <DialogOverlay />
         <DialogPrimitive.Content
           className={cn(
-            "fixed left-[50%] top-[50%] z-50 grid w-full max-w-[600px] translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg"
+            "fixed left-[50%] top-[50%] z-50 grid w-full max-w-xl translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg rounded-2xl duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]"
           )}
           onInteractOutside={(e) => e.preventDefault()}
           onEscapeKeyDown={(e) => e.preventDefault()}
@@ -104,23 +88,23 @@ export const EmailDraftModal = () => {
             value={draftText}
             onChange={(e) => setDraftText(e.target.value)}
             placeholder="E-postmeddelande..."
-            className="min-h-[200px] resize-none"
+            className="min-h-[240px] w-full resize-none"
           />
         </div>
 
-          <DialogFooter className="gap-2 sm:gap-0">
+          <DialogFooter className="gap-2 sm:gap-0 sm:justify-end">
             <Button
-              variant="outline"
+              variant="secondary"
               onClick={() => handleAction('redo')}
               disabled={isSending}
             >
-              Gör om
+              {isSending ? 'Skickar...' : 'Gör om'}
             </Button>
             <Button
               onClick={() => handleAction('send')}
               disabled={isSending}
             >
-              Skicka
+              {isSending ? 'Skickar...' : 'Skicka'}
             </Button>
           </DialogFooter>
         </DialogPrimitive.Content>
