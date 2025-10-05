@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.voice-upload]
 verify_jwt = true
+
+[functions.draft-action]
+verify_jwt = false

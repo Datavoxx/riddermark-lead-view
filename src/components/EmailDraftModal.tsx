@@ -54,23 +54,25 @@ export const EmailDraftModal = () => {
     setIsSending(true);
 
     try {
-      const response = await fetch(draft.resume_url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      const response = await supabase.functions.invoke('draft-action', {
+        body: {
           event: "DRAFT_ACTION",
           action,
           text: draftText,
           lead_id: draft.lead_id,
           draft_id: draft.id,
           correlation_id: draft.correlation_id,
-        }),
+          resume_url: draft.resume_url,
+        },
+        headers: session?.access_token ? {
+          Authorization: `Bearer ${session.access_token}`,
+        } : {},
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to process action');
+      if (response.error) {
+        throw new Error(response.error.message || 'Failed to process action');
       }
 
       if (action === 'send') {
