@@ -77,7 +77,8 @@ serve(async (req) => {
       });
     }
 
-    if (lead.claimed) {
+    // Check if lead is already claimed (claimed = true, not NULL)
+    if (lead.claimed === true) {
       console.log(`Lead ${leadId} already claimed by ${lead.claimed_by}`);
       return new Response(JSON.stringify({ 
         error: 'Lead already claimed',
@@ -88,7 +89,7 @@ serve(async (req) => {
       });
     }
 
-    // Attempt to claim the lead
+    // Attempt to claim the lead (remove WHERE clause, let pre-check handle it)
     const { data: updatedLead, error: updateError } = await supabase
       .from('leads')
       .update({
@@ -98,7 +99,6 @@ serve(async (req) => {
         claimed_at: new Date().toISOString(),
       })
       .eq('id', leadId)
-      .or('claimed.is.null,claimed.eq.false') // Accept both NULL and false
       .select()
       .single();
 
