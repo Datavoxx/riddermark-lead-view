@@ -31,12 +31,13 @@ export default function ArendenList() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [newLeadIds, setNewLeadIds] = useState<Set<string>>(new Set());
   const { toast } = useToast();
   const navigate = useNavigate();
 
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
-  const fetchLeads = async () => {
+  const fetchLeads = async (detectNew = false) => {
     try {
       const params = new URLSearchParams({
         order: 'created_at.desc',
@@ -58,6 +59,21 @@ export default function ArendenList() {
       }
 
       const data = await response.json();
+      
+      // Detect new leads
+      if (detectNew && leads.length > 0) {
+        const existingIds = new Set(leads.map(l => l.id));
+        const newIds = data.filter((lead: Lead) => !existingIds.has(lead.id)).map((l: Lead) => l.id);
+        
+        if (newIds.length > 0) {
+          setNewLeadIds(new Set(newIds));
+          // Remove highlight after 3 seconds
+          setTimeout(() => {
+            setNewLeadIds(new Set());
+          }, 3000);
+        }
+      }
+      
       setLeads(data);
     } catch (error) {
       console.error('Error fetching leads:', error);
@@ -88,7 +104,7 @@ export default function ArendenList() {
         },
         () => {
           console.log('Leads updated, refetching...');
-          fetchLeads();
+          fetchLeads(true); // Detect new leads
         }
       )
       .subscribe();
@@ -96,7 +112,7 @@ export default function ArendenList() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [statusFilter, debouncedSearchQuery]);
+  }, [statusFilter, debouncedSearchQuery, leads]);
 
   const handleClaim = async (leadId: string) => {
     try {
@@ -264,17 +280,26 @@ export default function ArendenList() {
           </motion.div>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {filteredLeads.map((lead, index) => (
-              <motion.div
-                key={lead.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-              >
-                <Card 
-                  className="group hover:shadow-lg transition-all duration-200 cursor-pointer border hover:border-primary/50 overflow-hidden h-full flex flex-col"
-                  onClick={() => navigate(`/blocket/arenden/${lead.id}`)}
+            {filteredLeads.map((lead, index) => {
+              const isNew = newLeadIds.has(lead.id);
+              return (
+                <motion.div
+                  key={lead.id}
+                  initial={isNew ? { opacity: 0, y: -20, scale: 0.95 } : { opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ 
+                    delay: isNew ? 0 : index * 0.05,
+                    type: "spring",
+                    stiffness: isNew ? 300 : 200,
+                    damping: isNew ? 20 : 25
+                  }}
                 >
+                  <Card 
+                    className={`group hover:shadow-lg transition-all duration-200 cursor-pointer border hover:border-primary/50 overflow-hidden h-full flex flex-col ${
+                      isNew ? 'animate-pulse border-primary shadow-[0_0_30px_rgba(0,0,0,0.3)] dark:shadow-[0_0_30px_rgba(255,255,255,0.2)] bg-primary/5' : ''
+                    }`}
+                    onClick={() => navigate(`/blocket/arenden/${lead.id}`)}
+                  >
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between gap-2 mb-2">
                       <Badge 
@@ -383,7 +408,8 @@ export default function ArendenList() {
                   </CardFooter>
                 </Card>
               </motion.div>
-            ))}
+            );
+            })}
           </div>
         )}
       </main>
