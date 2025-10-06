@@ -12,6 +12,7 @@ export interface Lead {
   created_at: string;
   claimed?: boolean;
   claimed_by?: string;
+  claimed_by_name?: string;
   summering?: string;
   resume_url?: string | null;
 }

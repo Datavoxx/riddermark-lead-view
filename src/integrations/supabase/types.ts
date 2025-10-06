@@ -50,6 +50,7 @@ export type Database = {
           claimed: boolean | null
           claimed_at: string | null
           claimed_by: string | null
+          claimed_by_name: string | null
           created_at: string | null
           id: string
           lead_email: string | null
@@ -72,6 +73,7 @@ export type Database = {
           claimed?: boolean | null
           claimed_at?: string | null
           claimed_by?: string | null
+          claimed_by_name?: string | null
           created_at?: string | null
           id?: string
           lead_email?: string | null
@@ -94,6 +96,7 @@ export type Database = {
           claimed?: boolean | null
           claimed_at?: string | null
           claimed_by?: string | null
+          claimed_by_name?: string | null
           created_at?: string | null
           id?: string
           lead_email?: string | null
@@ -118,6 +121,7 @@ export type Database = {
           created_at: string
           email: string | null
           id: string
+          name: string | null
           updated_at: string
           user_id: string
         }
@@ -125,6 +129,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: string
+          name?: string | null
           updated_at?: string
           user_id: string
         }
@@ -132,6 +137,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: string
+          name?: string | null
           updated_at?: string
           user_id?: string
         }

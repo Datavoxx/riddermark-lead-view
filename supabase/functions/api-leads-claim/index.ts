@@ -45,7 +45,24 @@ serve(async (req) => {
   try {
     console.log(`Attempting to claim lead ${leadId} for user ${userId}`);
 
-    // First, check if the lead exists and is unclaimed
+    // First, fetch the user's name from profiles
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('name')
+      .eq('user_id', userId)
+      .single();
+
+    if (profileError || !profile) {
+      console.error('Error fetching user profile:', profileError);
+      return new Response(JSON.stringify({ error: 'User profile not found' }), {
+        status: 404,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const userName = profile.name || 'Okänd användare';
+
+    // Then, check if the lead exists and is unclaimed
     const { data: lead, error: fetchError } = await supabase
       .from('leads')
       .select('id, claimed, claimed_by')
@@ -77,6 +94,7 @@ serve(async (req) => {
       .update({
         claimed: true,
         claimed_by: userId,
+        claimed_by_name: userName,
         claimed_at: new Date().toISOString(),
       })
       .eq('id', leadId)
