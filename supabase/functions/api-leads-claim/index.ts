@@ -98,7 +98,7 @@ serve(async (req) => {
         claimed_at: new Date().toISOString(),
       })
       .eq('id', leadId)
-      .eq('claimed', false) // Ensure it's still unclaimed (race condition protection)
+      .or('claimed.is.null,claimed.eq.false') // Accept both NULL and false
       .select()
       .single();
 
