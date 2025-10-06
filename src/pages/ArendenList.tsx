@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -32,6 +32,7 @@ export default function ArendenList() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [newLeadIds, setNewLeadIds] = useState<Set<string>>(new Set());
+  const previousLeadsRef = useRef<Lead[]>([]);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -60,12 +61,13 @@ export default function ArendenList() {
 
       const data = await response.json();
       
-      // Detect new leads
-      if (detectNew && leads.length > 0) {
-        const existingIds = new Set(leads.map(l => l.id));
+      // Detect new leads using ref to avoid stale closure
+      if (detectNew && previousLeadsRef.current.length > 0) {
+        const existingIds = new Set(previousLeadsRef.current.map(l => l.id));
         const newIds = data.filter((lead: Lead) => !existingIds.has(lead.id)).map((l: Lead) => l.id);
         
         if (newIds.length > 0) {
+          console.log('🆕 New leads detected:', newIds);
           setNewLeadIds(new Set(newIds));
           // Remove highlight after 3 seconds
           setTimeout(() => {
@@ -74,6 +76,7 @@ export default function ArendenList() {
         }
       }
       
+      previousLeadsRef.current = data;
       setLeads(data);
     } catch (error) {
       console.error('Error fetching leads:', error);
@@ -102,8 +105,8 @@ export default function ArendenList() {
           schema: 'public',
           table: 'leads'
         },
-        () => {
-          console.log('Leads updated, refetching...');
+        (payload) => {
+          console.log('🔔 Realtime event:', payload.eventType, payload.new);
           fetchLeads(true); // Detect new leads
         }
       )
@@ -112,7 +115,7 @@ export default function ArendenList() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [statusFilter, debouncedSearchQuery, leads]);
+  }, [statusFilter, debouncedSearchQuery]);
 
   const handleClaim = async (leadId: string) => {
     try {
