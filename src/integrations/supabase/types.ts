@@ -20,6 +20,7 @@ export type Database = {
           created_at: string | null
           id: string
           lead_id: string | null
+          resume_url: string | null
           status: string
           text: string
         }
@@ -28,6 +29,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           lead_id?: string | null
+          resume_url?: string | null
           status?: string
           text: string
         }
@@ -36,6 +38,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           lead_id?: string | null
+          resume_url?: string | null
           status?: string
           text?: string
         }
