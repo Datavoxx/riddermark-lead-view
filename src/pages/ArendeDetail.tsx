@@ -378,7 +378,7 @@ export default function ArendeDetail() {
                         <img
                           src={lead.preview_image_url}
                           alt={lead.preview_title || "Fordonsannons"}
-                          className="w-full h-auto transition group-hover:scale-[1.02]"
+                          className="w-full h-auto"
                           loading="eager"
                         />
                       </motion.div>
