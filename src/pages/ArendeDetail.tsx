@@ -373,12 +373,12 @@ export default function ArendeDetail() {
                       <motion.div
                         initial={{ scale: 0.98 }}
                         animate={{ scale: 1 }}
-                        className="overflow-hidden rounded-xl border"
+                        className="overflow-hidden rounded-xl border bg-muted/20"
                       >
                         <img
                           src={lead.preview_image_url}
                           alt={lead.preview_title || "Fordonsannons"}
-                          className="aspect-video w-full object-cover transition group-hover:scale-105"
+                          className="w-full h-auto object-contain transition group-hover:scale-[1.02] min-h-[300px]"
                         />
                       </motion.div>
                     </a>
