@@ -12,8 +12,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { VoiceRecorder } from "@/components/VoiceRecorder";
 import { 
-  ArrowLeft, Clock, Car, Store, CheckCircle2, User, 
-  Mail, Phone, ExternalLink, FileText, MapPin, 
+  ArrowLeft, Clock, Car, Store, CheckCircle2, 
+  Mail, ExternalLink, FileText, MapPin, 
   Globe, Paperclip, MoreVertical, Building2
 } from "lucide-react";
 import {
@@ -28,6 +28,8 @@ export default function ArendeDetail() {
   const navigate = useNavigate();
   const [lead, setLead] = useState<Lead | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showEmailForm, setShowEmailForm] = useState(false);
+  const [emailText, setEmailText] = useState("");
   const { toast } = useToast();
 
   const fetchLead = async () => {
@@ -228,44 +230,94 @@ export default function ArendeDetail() {
                     {lead.summering || lead.summary}
                   </p>
                 </CardContent>
-                <CardFooter className="flex flex-wrap gap-2 pt-0">
-                  <Button 
-                    className="gap-2"
-                    onClick={handleClaim}
-                    disabled={lead.claimed}
-                  >
-                    <CheckCircle2 className="h-4 w-4" />
-                    Ta över ärendet
-                  </Button>
-                  <Button variant="secondary" className="gap-2">
-                    <User className="h-4 w-4" />
-                    Tilldela...
-                  </Button>
-                  <Button variant="outline" className="gap-2">
-                    <Phone className="h-4 w-4" />
-                    Ringa
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="gap-2"
-                    onClick={() => window.location.href = `mailto:${lead.lead_email}`}
-                  >
-                    <Mail className="h-4 w-4" />
-                    Mejla
-                  </Button>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="gap-2">
-                        <MoreVertical className="h-4 w-4" />
-                        Mer
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem>Skapa uppgift</DropdownMenuItem>
-                      <DropdownMenuItem>Markera som spam</DropdownMenuItem>
-                      <DropdownMenuItem>Stäng ärende</DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                <CardFooter className="flex flex-col gap-4 pt-0">
+                  <div className="flex flex-wrap gap-2 w-full">
+                    <Button 
+                      className="gap-2"
+                      onClick={handleClaim}
+                      disabled={lead.claimed}
+                    >
+                      <CheckCircle2 className="h-4 w-4" />
+                      Ta över ärendet
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      className="gap-2"
+                      onClick={() => setShowEmailForm(!showEmailForm)}
+                    >
+                      <Mail className="h-4 w-4" />
+                      Skriv mejl
+                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="gap-2">
+                          <MoreVertical className="h-4 w-4" />
+                          Mer
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem>Skapa uppgift</DropdownMenuItem>
+                        <DropdownMenuItem>Markera som spam</DropdownMenuItem>
+                        <DropdownMenuItem>Stäng ärende</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+
+                  {/* Voice Recording Section */}
+                  <div className="w-full border-t pt-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-sm font-medium">🎙️ Spela röstmeddelande</span>
+                    </div>
+                    <VoiceRecorder
+                      leadId={lead.id}
+                      resumeUrl={lead.resume_url || undefined}
+                      onRecordingComplete={(audioBlob) => {
+                        console.log("Recording complete:", audioBlob);
+                      }}
+                    />
+                  </div>
+
+                  {/* Email Form Section */}
+                  {showEmailForm && (
+                    <div className="w-full border-t pt-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-sm font-medium">✉️ Skriv mejl</span>
+                      </div>
+                      <Textarea
+                        value={emailText}
+                        onChange={(e) => setEmailText(e.target.value)}
+                        placeholder="Skriv ditt mejl här..."
+                        className="min-h-[120px] mb-2"
+                      />
+                      <div className="flex gap-2">
+                        <Button 
+                          size="sm"
+                          onClick={() => {
+                            // TODO: Implement send email functionality
+                            toast({
+                              title: "Mejl skickat",
+                              description: "Ditt mejl har skickats till kunden.",
+                            });
+                            setEmailText("");
+                            setShowEmailForm(false);
+                          }}
+                          disabled={!emailText.trim()}
+                        >
+                          Skicka mejl
+                        </Button>
+                        <Button 
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            setEmailText("");
+                            setShowEmailForm(false);
+                          }}
+                        >
+                          Avbryt
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </CardFooter>
               </Card>
 
@@ -334,20 +386,6 @@ export default function ArendeDetail() {
                     </div>
                   </div>
                 </CardContent>
-                <CardFooter className="flex flex-wrap gap-2 pt-0">
-                  <div className="w-full">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-sm font-medium">🎙️ Röstinspelning</span>
-                    </div>
-                    <VoiceRecorder
-                      leadId={lead.id}
-                      resumeUrl={lead.resume_url || undefined}
-                      onRecordingComplete={(audioBlob) => {
-                        console.log("Recording complete:", audioBlob);
-                      }}
-                    />
-                  </div>
-                </CardFooter>
               </Card>
             </div>
 
