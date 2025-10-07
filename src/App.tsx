@@ -20,6 +20,7 @@ import ResponseTime from "./pages/ResponseTime";
 import ActiveLeads from "./pages/ActiveLeads";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import BilAnnonsgenerator from "./pages/BilAnnonsgenerator";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +51,7 @@ const App = () => (
                         <Route path="/reports/active-leads" element={<ActiveLeads />} />
                         <Route path="/blocket/arenden" element={<ArendenList />} />
                         <Route path="/blocket/arenden/:id" element={<ArendeDetail />} />
+                        <Route path="/bil-annonsgenerator" element={<BilAnnonsgenerator />} />
                         <Route path="*" element={<NotFound />} />
                       </Routes>
                     </main>
