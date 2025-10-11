@@ -35,13 +35,15 @@ export const LinkPreview = ({ lead }: LinkPreviewProps) => {
           </div>
           
           {lead.preview_image_url && (
-            <div className="w-32 h-24 flex-shrink-0">
+            <div className="w-60 h-40 flex-shrink-0">
               <img
                 src={lead.preview_image_url}
                 alt={lead.preview_title}
-                className="w-full h-full object-cover rounded-md"
-                style={{ imageRendering: '-webkit-optimize-contrast' }}
-                loading="lazy"
+                className="w-full h-full object-cover rounded-lg"
+                style={{ 
+                  imageRendering: 'crisp-edges',
+                }}
+                loading="eager"
                 onError={(e) => {
                   e.currentTarget.style.display = 'none';
                 }}
