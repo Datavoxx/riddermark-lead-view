@@ -65,7 +65,7 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarSeparator className="my-2" />
+      <SidebarSeparator className="my-4 bg-border" />
 
       <SidebarFooter className="p-4">
         
