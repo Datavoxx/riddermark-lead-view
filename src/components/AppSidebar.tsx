@@ -65,8 +65,9 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
+      <SidebarSeparator className="my-2" />
+
       <SidebarFooter className="p-4">
-        <SidebarSeparator className="mb-4" />
         
         <div className="text-xs text-muted-foreground mb-2">
           {user?.email}
