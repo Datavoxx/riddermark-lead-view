@@ -1,26 +1,32 @@
 import React, { useEffect, useRef, useState } from "react";
 
-// tillåt web-komponenten i TSX
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      "openai-chatkit": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
+      "openai-chatkit": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
+        "agent-workflow-id"?: string;
+        "domain-api-key"?: string;
+        layout?: string;
+      };
     }
   }
 }
 
-const BAS_URL = "https://chatkit-uii.onrender.com"; // din Render-URL
+const BAS_URL = "https://chatkit-uii.onrender.com"; // <-- Render-URL
+const WORKFLOW_ID = "wf_68eaeb8ac54481909e822336a91727b60297fb9b627b27f0"; // <-- ditt workflow-id
+const DOMAIN_API_KEY = "domain_pk_68f5695c0778819093887a3935edd86d014c5cdba1e5dc2d"; // <-- din domain key
 
 export default function Agent() {
-  // <-- DEFAULT EXPORT
   const hostRef = useRef<HTMLDivElement | null>(null);
   const [status, setStatus] = useState("Laddar…");
 
   useEffect(() => {
     let cancelled = false;
-    (async () => {
+
+    async function mount() {
       try {
-        // ladda SDK
+        setStatus("Laddar SDK…");
+        // 1) Ladda SDK
         if (!document.querySelector("#chatkit-sdk")) {
           const s = document.createElement("script");
           s.id = "chatkit-sdk";
@@ -32,34 +38,64 @@ export default function Agent() {
             s.onerror = (e) => rej(e);
           });
         }
+
+        // Debug: är komponenten registrerad?
+        // @ts-ignore
+        console.log("openai-chatkit registered?", !!customElements.get("openai-chatkit"));
+
         if (cancelled || !hostRef.current) return;
 
-        // skapa element och sätt options
+        // 2) Skapa elementet och sätt nödvändiga attribut
         const el = document.createElement("openai-chatkit");
-        el.classList.add("w-full", "h-full");
+        el.setAttribute("agent-workflow-id", WORKFLOW_ID);
+        el.setAttribute("domain-api-key", DOMAIN_API_KEY);
+        el.setAttribute("layout", "full");
+
         hostRef.current.innerHTML = "";
         hostRef.current.appendChild(el);
 
+        // Vänta ett mikrosteg
         await new Promise((r) => setTimeout(r, 0));
-        (el as any).setOptions?.({
+
+        // 3) Sätt options → client_secret via backend
+        // @ts-ignore
+        el.setOptions?.({
           api: {
             async getClientSecret(current?: string) {
-              if (!current) {
-                const r = await fetch(`${BAS_URL}/chatkit/start`, { method: "POST" });
-                const { client_secret } = await r.json();
-                return client_secret;
+              try {
+                if (!current) {
+                  const r = await fetch(`${BAS_URL}/chatkit/start`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    // mode: "cors" // (behövs sällan men går att tvinga)
+                  });
+                  const text = await r.text();
+                  if (!r.ok) {
+                    console.error("start failed:", r.status, text);
+                    throw new Error(text);
+                  }
+                  const { client_secret } = JSON.parse(text);
+                  console.log("client_secret OK");
+                  return client_secret;
+                }
+                return current;
+              } catch (e) {
+                console.error("getClientSecret error:", e);
+                throw e;
               }
-              return current;
             },
           },
           ui: { layout: "full" },
         });
+
         setStatus("");
       } catch (e) {
-        console.error(e);
+        console.error("Mount error:", e);
         setStatus("Kunde inte ladda ChatKit. Se konsolen.");
       }
-    })();
+    }
+
+    mount();
     return () => {
       cancelled = true;
     };
