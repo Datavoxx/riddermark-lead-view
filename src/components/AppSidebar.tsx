@@ -1,4 +1,4 @@
-import { Home, FileText, Archive, LogOut, Car } from "lucide-react";
+import { Home, FileText, Archive, LogOut, Car, Bot } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import Logo from "@/assets/Logo";
@@ -20,6 +20,7 @@ const navigation = [
   { title: "Rapporter", url: "/reports", icon: FileText },
   { title: "Blocket", url: "/blocket/arenden", icon: Archive },
   { title: "Bil annonsgenerator", url: "/bil-annonsgenerator", icon: Car },
+  { title: "Agent", url: "/agent", icon: Bot },
 ];
 
 export function AppSidebar() {

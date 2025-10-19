@@ -21,6 +21,7 @@ import ActiveLeads from "./pages/ActiveLeads";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import BilAnnonsgenerator from "./pages/BilAnnonsgenerator";
+import Agent from "./pages/Agent";
 
 const queryClient = new QueryClient();
 
@@ -52,6 +53,7 @@ const App = () => (
                         <Route path="/blocket/arenden" element={<ArendenList />} />
                         <Route path="/blocket/arenden/:id" element={<ArendeDetail />} />
                         <Route path="/bil-annonsgenerator" element={<BilAnnonsgenerator />} />
+                        <Route path="/agent" element={<Agent />} />
                         <Route path="*" element={<NotFound />} />
                       </Routes>
                     </main>
