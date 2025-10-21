@@ -12,7 +12,7 @@ declare global {
   }
 }
 
-const BAS_URL = "https://chatkit-uii.onrender.com"; // <-- Render-URL
+const BAS_URL = "https://riddermark-lead-view.vercel.app/"; // <-- Render-URL
 const WORKFLOW_ID = "wf_68eaeb8ac54481909e822336a91727b60297fb9b627b27f0"; // <-- ditt workflow-id
 const DOMAIN_API_KEY = "domain_pk_68f76d57ae2c819082db402cd8dde0fb0c2d5dfb0d20a63a"; // <-- din domain key
 
