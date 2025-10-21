@@ -14,7 +14,7 @@ declare global {
 
 const BAS_URL = "https://chatkit-uii.onrender.com"; // <-- Render-URL
 const WORKFLOW_ID = "wf_68eaeb8ac54481909e822336a91727b60297fb9b627b27f0"; // <-- ditt workflow-id
-const DOMAIN_API_KEY = "domain_pk_68f5695c0778819093887a3935edd86d014c5cdba1e5dc2d"; // <-- din domain key
+const DOMAIN_API_KEY = "domain_pk_68f762ca43e081909b5b94814492f72a00396b4260158d1f"; // <-- din domain key
 
 export default function Agent() {
   const hostRef = useRef<HTMLDivElement | null>(null);
