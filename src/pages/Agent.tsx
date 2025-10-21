@@ -1,114 +1,82 @@
-import React, { useEffect, useRef, useState } from "react";
+import { ChatKit, useChatKit } from '@openai/chatkit-react';
+import { useState } from 'react';
 
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      "openai-chatkit": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
-        "agent-workflow-id"?: string;
-        "domain-api-key"?: string;
-        layout?: string;
-      };
-    }
-  }
-}
-
-const BAS_URL = "https://riddermark-lead-view.vercel.app/"; // <-- Render-URL
-const WORKFLOW_ID = "wf_68eaeb8ac54481909e822336a91727b60297fb9b627b27f0"; // <-- ditt workflow-id
-const DOMAIN_API_KEY = "domain_pk_68f76d57ae2c819082db402cd8dde0fb0c2d5dfb0d20a63a"; // <-- din domain key
+const BAS_URL = "https://riddermark-lead-view.vercel.app";
 
 export default function Agent() {
-  const hostRef = useRef<HTMLDivElement | null>(null);
-  const [status, setStatus] = useState("Laddar…");
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    let cancelled = false;
+  const { control } = useChatKit({
+    api: {
+      async getClientSecret(existing) {
+        try {
+          // Om vi redan har en token, returnera den
+          if (existing) {
+            console.log("Återanvänder befintlig client_secret");
+            return existing;
+          }
 
-    async function mount() {
-      try {
-        setStatus("Laddar SDK…");
-        // 1) Ladda SDK
-        if (!document.querySelector("#chatkit-sdk")) {
-          const s = document.createElement("script");
-          s.id = "chatkit-sdk";
-          s.type = "module";
-          s.src = "https://js.chatkit.openai.com/v1";
-          document.head.appendChild(s);
-          await new Promise<void>((res, rej) => {
-            s.onload = () => res();
-            s.onerror = (e) => rej(e);
-          });
-        }
-
-        // Debug: är komponenten registrerad?
-        // @ts-ignore
-        console.log("openai-chatkit registered?", !!customElements.get("openai-chatkit"));
-
-        if (cancelled || !hostRef.current) return;
-
-        // 2) Skapa elementet och sätt nödvändiga attribut
-        const el = document.createElement("openai-chatkit");
-        el.setAttribute("agent-workflow-id", WORKFLOW_ID);
-        el.setAttribute("domain-api-key", DOMAIN_API_KEY);
-        el.setAttribute("layout", "full");
-
-        hostRef.current.innerHTML = "";
-        hostRef.current.appendChild(el);
-
-        // Vänta ett mikrosteg
-        await new Promise((r) => setTimeout(r, 0));
-
-        // 3) Sätt options → client_secret via backend
-        // @ts-ignore
-        el.setOptions?.({
-          api: {
-            async getClientSecret(current?: string) {
-              try {
-                if (!current) {
-                  const r = await fetch(`${BAS_URL}/chatkit/start`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    // mode: "cors" // (behövs sällan men går att tvinga)
-                  });
-                  const text = await r.text();
-                  if (!r.ok) {
-                    console.error("start failed:", r.status, text);
-                    throw new Error(text);
-                  }
-                  const { client_secret } = JSON.parse(text);
-                  console.log("client_secret OK");
-                  return client_secret;
-                }
-                return current;
-              } catch (e) {
-                const errorMsg = e instanceof Error ? e.message : "Nätverksfel vid hämtning av client_secret";
-                console.error("getClientSecret error:", errorMsg);
-                throw new Error(errorMsg);
-              }
+          console.log("Hämtar ny client_secret från backend...");
+          
+          // Anropa din Vercel backend
+          const res = await fetch(`${BAS_URL}/api/chatkit-start`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
             },
-          },
-          ui: { layout: "full" },
-        });
+          });
 
-        setStatus("");
-      } catch (e) {
-        const errorMsg = e instanceof Error ? e.message : "Okänt fel uppstod";
-        console.error("Mount error:", errorMsg, e);
-        setStatus(`Kunde inte ladda ChatKit: ${errorMsg}`);
-      }
-    }
+          if (!res.ok) {
+            const errorText = await res.text();
+            console.error("Backend error:", res.status, errorText);
+            throw new Error(`Backend returnerade ${res.status}: ${errorText}`);
+          }
 
-    mount();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+          const data = await res.json();
+          console.log("Backend response:", data);
+
+          if (!data.client_secret) {
+            throw new Error("Backend returnerade ingen client_secret");
+          }
+
+          console.log("✅ client_secret mottagen");
+          return data.client_secret;
+          
+        } catch (e) {
+          const errorMsg = e instanceof Error ? e.message : "Okänt fel vid hämtning av client_secret";
+          console.error("❌ getClientSecret error:", errorMsg);
+          setError(errorMsg);
+          throw new Error(errorMsg);
+        }
+      },
+    },
+  });
+
+  if (error) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center p-8">
+        <div className="max-w-2xl w-full bg-destructive/10 border border-destructive rounded-lg p-6">
+          <h2 className="text-lg font-semibold text-destructive mb-2">ChatKit kunde inte laddas</h2>
+          <p className="text-sm text-muted-foreground mb-4">{error}</p>
+          <div className="text-xs text-muted-foreground space-y-2">
+            <p>Kontrollera att:</p>
+            <ul className="list-disc list-inside space-y-1 ml-2">
+              <li>Din backend endpoint <code className="bg-muted px-1 py-0.5 rounded">{BAS_URL}/api/chatkit-start</code> är tillgänglig</li>
+              <li>Backend anropar OpenAI's ChatKit API korrekt</li>
+              <li>Domänen är tillagd i ChatKit's allowlist</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="w-full h-[calc(100vh-0px)] relative overflow-hidden">
-      {status && (
-        <div className="absolute inset-0 flex items-center justify-center text-sm text-gray-500">{status}</div>
-      )}
-      <div ref={hostRef} className="w-full h-full" />
+    <div className="w-full h-screen">
+      <ChatKit 
+        control={control} 
+        className="w-full h-full"
+      />
     </div>
   );
 }
