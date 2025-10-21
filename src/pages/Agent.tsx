@@ -80,8 +80,9 @@ export default function Agent() {
                 }
                 return current;
               } catch (e) {
-                console.error("getClientSecret error:", e);
-                throw e;
+                const errorMsg = e instanceof Error ? e.message : "Nätverksfel vid hämtning av client_secret";
+                console.error("getClientSecret error:", errorMsg);
+                throw new Error(errorMsg);
               }
             },
           },
@@ -90,8 +91,9 @@ export default function Agent() {
 
         setStatus("");
       } catch (e) {
-        console.error("Mount error:", e);
-        setStatus("Kunde inte ladda ChatKit. Se konsolen.");
+        const errorMsg = e instanceof Error ? e.message : "Okänt fel uppstod";
+        console.error("Mount error:", errorMsg, e);
+        setStatus(`Kunde inte ladda ChatKit: ${errorMsg}`);
       }
     }
 
