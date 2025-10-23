@@ -32,7 +32,6 @@ const channels = [
 ];
 
 const agents = [
-  { name: "Notiser", id: "notiser", url: "/notiser", icon: Bell },
   { name: "Agent 1", id: "agent-1", url: "/agent/agent-1", icon: Bot },
   { name: "Agent 2", id: "agent-2", url: "/agent/agent-2", icon: Bot },
   { name: "Agent 3", id: "agent-3", url: "/agent/agent-3", icon: Bot },
@@ -147,6 +146,26 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
           )}
+        </SidebarGroup>
+
+        <SidebarSeparator className="my-2" />
+
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton 
+                  asChild
+                  className={location.pathname === '/notiser' ? "bg-accent text-accent-foreground font-medium hover:bg-accent" : ""}
+                >
+                  <NavLink to="/notiser">
+                    <Bell className="h-4 w-4" />
+                    <span>Notiser</span>
+                  </NavLink>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
 
