@@ -135,7 +135,7 @@ export function AppSidebar() {
                       to={`/agent/${agent.id}`}
                       className={getNavClassName}
                     >
-                      <Hash className="h-4 w-4" />
+                      <Bot className="h-4 w-4" />
                       <span>{agent.name}</span>
                     </NavLink>
                   </SidebarMenuButton>
