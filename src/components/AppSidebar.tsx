@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Home, FileText, Archive, LogOut, Car, Bot, Hash, ChevronDown } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -42,6 +43,8 @@ const agents = [
 export function AppSidebar() {
   const { signOut, user } = useAuth();
   const navigate = useNavigate();
+  const [channelsOpen, setChannelsOpen] = useState(true);
+  const [agentsOpen, setAgentsOpen] = useState(true);
 
   const handleLogout = async () => {
     await signOut();
@@ -84,10 +87,14 @@ export function AppSidebar() {
         <SidebarSeparator className="my-2" />
 
         <SidebarGroup>
-          <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground px-2 flex items-center gap-1">
-            <ChevronDown className="h-3 w-3" />
+          <SidebarGroupLabel 
+            className="text-xs font-semibold text-muted-foreground px-2 flex items-center gap-1 cursor-pointer hover:bg-accent/50 rounded-md"
+            onClick={() => setChannelsOpen(!channelsOpen)}
+          >
+            <ChevronDown className={`h-3 w-3 transition-transform ${channelsOpen ? '' : '-rotate-90'}`} />
             Kanaler
           </SidebarGroupLabel>
+          {channelsOpen && (
           <SidebarGroupContent>
             <SidebarMenu>
               {channels.map((channel) => (
@@ -105,15 +112,20 @@ export function AppSidebar() {
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
+          )}
         </SidebarGroup>
 
         <SidebarSeparator className="my-2" />
 
         <SidebarGroup>
-          <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground px-2 flex items-center gap-1">
-            <ChevronDown className="h-3 w-3" />
+          <SidebarGroupLabel 
+            className="text-xs font-semibold text-muted-foreground px-2 flex items-center gap-1 cursor-pointer hover:bg-accent/50 rounded-md"
+            onClick={() => setAgentsOpen(!agentsOpen)}
+          >
+            <ChevronDown className={`h-3 w-3 transition-transform ${agentsOpen ? '' : '-rotate-90'}`} />
             Agents
           </SidebarGroupLabel>
+          {agentsOpen && (
           <SidebarGroupContent>
             <SidebarMenu>
               {agents.map((agent) => (
@@ -131,6 +143,7 @@ export function AppSidebar() {
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
+          )}
         </SidebarGroup>
       </SidebarContent>
 
