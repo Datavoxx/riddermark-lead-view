@@ -49,7 +49,7 @@ export function AppSidebar() {
   };
 
   const getNavClassName = ({ isActive }: { isActive: boolean }) =>
-    isActive ? "bg-accent text-accent-foreground font-semibold border-l-2 border-primary" : "hover:bg-accent/50";
+    isActive ? "bg-primary text-primary-foreground font-medium" : "hover:bg-accent/50";
 
   return (
     <Sidebar className="border-r border-border">
