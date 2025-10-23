@@ -13,14 +13,17 @@ interface ChatContainerProps {
 
 export const ChatContainer = ({ channelId }: ChatContainerProps) => {
   const storageKey = channelId ? `chat-messages-${channelId}` : 'chat-messages-agent';
-  const [messages, setMessages] = useState<Message[]>(() => {
-    const saved = localStorage.getItem(storageKey);
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [isAnimating, setIsAnimating] = useState(false);
   const { toast } = useToast();
+
+  // Ladda meddelanden när channelId ändras
+  useEffect(() => {
+    const saved = localStorage.getItem(storageKey);
+    setMessages(saved ? JSON.parse(saved) : []);
+  }, [storageKey]);
 
   useEffect(() => {
     localStorage.setItem(storageKey, JSON.stringify(messages));
