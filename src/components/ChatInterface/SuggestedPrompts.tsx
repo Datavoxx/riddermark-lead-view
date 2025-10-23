@@ -4,6 +4,7 @@ import { SuggestedPrompt } from './types';
 
 interface SuggestedPromptsProps {
   onSelectPrompt: (prompt: string) => void;
+  isAnimating?: boolean;
 }
 
 const prompts: SuggestedPrompt[] = [
@@ -26,13 +27,16 @@ const getIcon = (iconName: string) => {
   return <Icon className="w-5 h-5" />;
 };
 
-export const SuggestedPrompts = ({ onSelectPrompt }: SuggestedPromptsProps) => {
+export const SuggestedPrompts = ({ onSelectPrompt, isAnimating }: SuggestedPromptsProps) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 px-4 py-6">
-      {prompts.map((prompt) => (
+      {prompts.map((prompt, index) => (
         <Card
           key={prompt.id}
-          className="p-4 cursor-pointer hover:bg-accent/50 transition-colors border-border hover:border-primary/20 rounded-xl"
+          className={`p-4 cursor-pointer hover:bg-accent/50 transition-all duration-300 border-border hover:border-primary/20 rounded-xl hover-scale animate-fade-in ${
+            isAnimating ? 'opacity-0 translate-y-2' : 'opacity-100'
+          }`}
+          style={{ animationDelay: `${index * 0.05}s` }}
           onClick={() => onSelectPrompt(prompt.text)}
         >
           <div className="flex items-center gap-3">

@@ -11,9 +11,15 @@ export const ChatContainer = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [inputValue, setInputValue] = useState('');
+  const [isAnimating, setIsAnimating] = useState(false);
   const { toast } = useToast();
 
   const sendMessage = async (content: string) => {
+    setIsAnimating(true);
+    
+    // Kort delay för att låta fade-out animation spelas
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
     const userMessage: Message = {
       id: crypto.randomUUID(),
       role: 'user',
@@ -53,6 +59,7 @@ export const ChatContainer = () => {
       });
     } finally {
       setIsLoading(false);
+      setIsAnimating(false);
     }
   };
 
@@ -65,13 +72,13 @@ export const ChatContainer = () => {
       <ChatHeader />
       
       {messages.length === 0 ? (
-        <div className="flex-1 flex items-center justify-center">
+        <div className={`flex-1 flex items-center justify-center transition-opacity duration-300 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}>
           <div className="max-w-4xl w-full">
-            <div className="text-center mb-8">
+            <div className="text-center mb-8 animate-fade-in">
               <h1 className="text-3xl font-bold mb-2">Hur kan jag hjälpa dig idag?</h1>
               <p className="text-muted-foreground">Välj ett förslag eller skriv din egen fråga</p>
             </div>
-            <SuggestedPrompts onSelectPrompt={handlePromptSelect} />
+            <SuggestedPrompts onSelectPrompt={handlePromptSelect} isAnimating={isAnimating} />
           </div>
         </div>
       ) : (
