@@ -55,14 +55,14 @@ serve(async (req) => {
     const data = await response.json();
     console.log('OpenAI response:', data);
     
-    if (!data.client_secret?.value) {
-      throw new Error('OpenAI returnerade ingen client_secret.value');
+    if (!data.client_secret) {
+      throw new Error('OpenAI returnerade ingen client_secret');
     }
 
     console.log('✅ client_secret framgångsrikt hämtad');
 
     return new Response(
-      JSON.stringify({ client_secret: data.client_secret.value }), 
+      JSON.stringify({ client_secret: data.client_secret }), 
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
       }
