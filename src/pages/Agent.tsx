@@ -1,24 +1,24 @@
 import { ChatKit, useChatKit } from '@openai/chatkit-react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 const CHATKIT_URL = "https://fjqsaixszaqceviqwboz.supabase.co/functions/v1/chatkit-start";
 
 export default function Agent() {
   const [error, setError] = useState<string | null>(null);
-  const [isReady, setIsReady] = useState(false);
 
   const { control } = useChatKit({
     api: {
       async getClientSecret(existing) {
         try {
+          // Om vi redan har en token, returnera den
           if (existing) {
-            console.log("✅ Återanvänder befintlig client_secret");
+            console.log("Återanvänder befintlig client_secret");
             return existing;
           }
 
-          console.log("🔄 Hämtar ny client_secret från Supabase edge function...");
-          console.log("📡 URL:", CHATKIT_URL);
+          console.log("Hämtar ny client_secret från Supabase edge function...");
           
+          // Anropa Supabase edge function
           const res = await fetch(CHATKIT_URL, {
             method: 'POST',
             headers: {
@@ -26,41 +26,31 @@ export default function Agent() {
             },
           });
 
-          console.log("📥 Response status:", res.status);
-
           if (!res.ok) {
             const errorText = await res.text();
-            console.error("❌ Backend error:", res.status, errorText);
+            console.error("Backend error:", res.status, errorText);
             throw new Error(`Backend returnerade ${res.status}: ${errorText}`);
           }
 
           const data = await res.json();
-          console.log("📦 Backend response:", data);
+          console.log("Backend response:", data);
 
           if (!data.client_secret) {
             throw new Error("Backend returnerade ingen client_secret");
           }
 
-          console.log("✅ client_secret mottagen, längd:", data.client_secret.length);
+          console.log("✅ client_secret mottagen");
           return data.client_secret;
           
         } catch (e) {
           const errorMsg = e instanceof Error ? e.message : "Okänt fel vid hämtning av client_secret";
           console.error("❌ getClientSecret error:", errorMsg);
           setError(errorMsg);
-          throw e;
+          throw new Error(errorMsg);
         }
       },
     },
   });
-
-  useEffect(() => {
-    console.log("🔍 Control state:", control ? "initialized" : "null");
-    if (control) {
-      console.log("✅ ChatKit control är redo");
-      setIsReady(true);
-    }
-  }, [control]);
 
   if (error) {
     return (
@@ -71,10 +61,10 @@ export default function Agent() {
           <div className="text-xs text-muted-foreground space-y-2">
             <p>Kontrollera att:</p>
             <ul className="list-disc list-inside space-y-1 ml-2">
-              <li>Supabase edge function är tillgänglig</li>
+              <li>Supabase edge function <code className="bg-muted px-1 py-0.5 rounded">{CHATKIT_URL}</code> är tillgänglig</li>
               <li>Edge function anropar OpenAI's ChatKit API korrekt</li>
               <li>Domänen är tillagd i ChatKit's allowlist</li>
-              <li>OPENAI_API_KEY är korrekt konfigurerad</li>
+              <li>OPENAI_API_KEY är korrekt konfigurerad i Supabase</li>
             </ul>
           </div>
         </div>
@@ -82,19 +72,8 @@ export default function Agent() {
     );
   }
 
-  if (!isReady) {
-    return (
-      <div className="w-full h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Initialiserar ChatKit...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="w-full h-screen overflow-hidden">
+    <div className="w-full h-screen">
       <ChatKit 
         control={control} 
         className="w-full h-full"
