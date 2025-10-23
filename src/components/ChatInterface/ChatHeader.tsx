@@ -8,12 +8,9 @@ interface ChatHeaderProps {
 }
 
 const channelNames: Record<string, string> = {
-  '1': 'röstmeddelande-oliver',
-  '2': 'röstmeddelande-säljare-1',
-  '3': 'röstmeddelande-säljare-2',
-  '4': 'sälj-1',
-  '5': 'sälj-2',
-  '6': 'sälj-3',
+  '1': 'johan',
+  '2': 'hanna',
+  '3': 'mahad',
 };
 
 export const ChatHeader = ({ channelId, onClearMessages }: ChatHeaderProps) => {

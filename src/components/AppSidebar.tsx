@@ -26,9 +26,9 @@ const navigation = [
 ];
 
 const channels = [
-  { name: "röstmeddelande-oliver", id: "1" },
-  { name: "röstmeddelande-säljare-1", id: "2" },
-  { name: "röstmeddelande-säljare-2", id: "3" },
+  { name: "johan", id: "1" },
+  { name: "hanna", id: "2" },
+  { name: "mahad", id: "3" },
 ];
 
 const agents = [
