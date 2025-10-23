@@ -64,7 +64,7 @@ export const ChatContainer = () => {
   };
 
   const handlePromptSelect = (prompt: string) => {
-    setInputValue(prompt);
+    sendMessage(prompt);
   };
 
   return (
