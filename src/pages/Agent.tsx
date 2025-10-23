@@ -1,7 +1,7 @@
 import { ChatKit, useChatKit } from '@openai/chatkit-react';
 import { useState } from 'react';
 
-const BAS_URL = "https://riddermark-lead-view.vercel.app";
+const CHATKIT_URL = "https://fjqsaixszaqceviqwboz.supabase.co/functions/v1/chatkit-start";
 
 export default function Agent() {
   const [error, setError] = useState<string | null>(null);
@@ -16,10 +16,10 @@ export default function Agent() {
             return existing;
           }
 
-          console.log("Hämtar ny client_secret från backend...");
+          console.log("Hämtar ny client_secret från Supabase edge function...");
           
-          // Anropa din Vercel backend
-          const res = await fetch(`${BAS_URL}/api/chatkit-start`, {
+          // Anropa Supabase edge function
+          const res = await fetch(CHATKIT_URL, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -61,9 +61,10 @@ export default function Agent() {
           <div className="text-xs text-muted-foreground space-y-2">
             <p>Kontrollera att:</p>
             <ul className="list-disc list-inside space-y-1 ml-2">
-              <li>Din backend endpoint <code className="bg-muted px-1 py-0.5 rounded">{BAS_URL}/api/chatkit-start</code> är tillgänglig</li>
-              <li>Backend anropar OpenAI's ChatKit API korrekt</li>
+              <li>Supabase edge function <code className="bg-muted px-1 py-0.5 rounded">{CHATKIT_URL}</code> är tillgänglig</li>
+              <li>Edge function anropar OpenAI's ChatKit API korrekt</li>
               <li>Domänen är tillagd i ChatKit's allowlist</li>
+              <li>OPENAI_API_KEY är korrekt konfigurerad i Supabase</li>
             </ul>
           </div>
         </div>
