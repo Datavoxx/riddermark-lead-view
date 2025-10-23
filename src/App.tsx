@@ -23,6 +23,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import BilAnnonsgenerator from "./pages/BilAnnonsgenerator";
 import Agent from "./pages/Agent";
+import Notiser from "./pages/Notiser";
 
 const queryClient = new QueryClient();
 
@@ -55,6 +56,7 @@ const App = () => (
                         <Route path="/blocket/arenden/:id" element={<ArendeDetail />} />
                         <Route path="/bil-annonsgenerator" element={<BilAnnonsgenerator />} />
                         <Route path="/agent" element={<Agent />} />
+                        <Route path="/notiser" element={<Notiser />} />
                         <Route path="/channel/:id" element={<Channel />} />
                         <Route path="*" element={<NotFound />} />
                       </Routes>

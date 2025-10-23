@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Home, FileText, Archive, LogOut, Car, Bot, Hash, ChevronDown } from "lucide-react";
+import { Home, FileText, Archive, LogOut, Car, Bot, Hash, ChevronDown, Bell } from "lucide-react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import Logo from "@/assets/Logo";
@@ -32,9 +32,10 @@ const channels = [
 ];
 
 const agents = [
-  { name: "Agent 1", id: "agent-1" },
-  { name: "Agent 2", id: "agent-2" },
-  { name: "Agent 3", id: "agent-3" },
+  { name: "Notiser", id: "notiser", url: "/notiser", icon: Bell },
+  { name: "Agent 1", id: "agent-1", url: "/agent/agent-1", icon: Bot },
+  { name: "Agent 2", id: "agent-2", url: "/agent/agent-2", icon: Bot },
+  { name: "Agent 3", id: "agent-3", url: "/agent/agent-3", icon: Bot },
 ];
 
 export function AppSidebar() {
@@ -132,12 +133,12 @@ export function AppSidebar() {
                 <SidebarMenuItem key={agent.id}>
                   <SidebarMenuButton 
                     asChild
-                    className={location.pathname === `/agent/${agent.id}` ? "bg-accent text-accent-foreground font-medium hover:bg-accent" : ""}
+                    className={location.pathname === agent.url ? "bg-accent text-accent-foreground font-medium hover:bg-accent" : ""}
                   >
                     <NavLink 
-                      to={`/agent/${agent.id}`}
+                      to={agent.url}
                     >
-                      <Bot className="h-4 w-4" />
+                      <agent.icon className="h-4 w-4" />
                       <span>{agent.name}</span>
                     </NavLink>
                   </SidebarMenuButton>
