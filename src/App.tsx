@@ -36,11 +36,6 @@ const App = () => (
           <Routes>
             <Route path="/test" element={<Index />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/agent" element={
-              <ProtectedRoute>
-                <Agent />
-              </ProtectedRoute>
-            } />
             <Route path="/*" element={
               <ProtectedRoute>
                 <SidebarProvider>
@@ -58,6 +53,7 @@ const App = () => (
                         <Route path="/blocket/arenden" element={<ArendenList />} />
                         <Route path="/blocket/arenden/:id" element={<ArendeDetail />} />
                         <Route path="/bil-annonsgenerator" element={<BilAnnonsgenerator />} />
+                        <Route path="/agent" element={<Agent />} />
                         <Route path="*" element={<NotFound />} />
                       </Routes>
                     </main>
