@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChatHeader } from './ChatHeader';
 import { MessageList } from './MessageList';
 import { SuggestedPrompts } from './SuggestedPrompts';
@@ -7,12 +7,24 @@ import { Message } from './types';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
-export const ChatContainer = () => {
-  const [messages, setMessages] = useState<Message[]>([]);
+interface ChatContainerProps {
+  channelId?: string;
+}
+
+export const ChatContainer = ({ channelId }: ChatContainerProps) => {
+  const storageKey = channelId ? `chat-messages-${channelId}` : 'chat-messages-agent';
+  const [messages, setMessages] = useState<Message[]>(() => {
+    const saved = localStorage.getItem(storageKey);
+    return saved ? JSON.parse(saved) : [];
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [isAnimating, setIsAnimating] = useState(false);
   const { toast } = useToast();
+
+  useEffect(() => {
+    localStorage.setItem(storageKey, JSON.stringify(messages));
+  }, [messages, storageKey]);
 
   const sendMessage = async (content: string) => {
     setIsAnimating(true);
@@ -69,7 +81,7 @@ export const ChatContainer = () => {
 
   return (
     <div className="flex flex-col h-screen bg-background">
-      <ChatHeader />
+      <ChatHeader channelId={channelId} />
       
       {messages.length === 0 ? (
         <div className={`flex-1 flex items-center justify-center transition-opacity duration-300 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}>

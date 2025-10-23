@@ -10,6 +10,7 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { EmailDraftModal } from "@/components/EmailDraftModal";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import Channel from "./pages/Channel";
 
 import ArendenList from "./pages/ArendenList";
 import ArendeDetail from "./pages/ArendeDetail";
@@ -54,6 +55,7 @@ const App = () => (
                         <Route path="/blocket/arenden/:id" element={<ArendeDetail />} />
                         <Route path="/bil-annonsgenerator" element={<BilAnnonsgenerator />} />
                         <Route path="/agent" element={<Agent />} />
+                        <Route path="/channel/:id" element={<Channel />} />
                         <Route path="*" element={<NotFound />} />
                       </Routes>
                     </main>
