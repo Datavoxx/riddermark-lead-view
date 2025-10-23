@@ -8,6 +8,26 @@ interface MessageBubbleProps {
 export const MessageBubble = ({ message }: MessageBubbleProps) => {
   const isUser = message.role === 'user';
 
+  // Parse message content to highlight @mentions
+  const renderContent = () => {
+    const parts = message.content.split(/(@\w+)/g);
+    return parts.map((part, index) => {
+      if (part.startsWith('@')) {
+        return (
+          <span
+            key={index}
+            className={`font-semibold ${
+              isUser ? 'text-primary-foreground/90' : 'text-primary'
+            }`}
+          >
+            {part}
+          </span>
+        );
+      }
+      return part;
+    });
+  };
+
   return (
     <div className={`flex gap-3 ${isUser ? 'justify-end' : 'justify-start'} animate-fade-in`}>
       {!isUser && (
@@ -22,7 +42,7 @@ export const MessageBubble = ({ message }: MessageBubbleProps) => {
             : 'bg-muted text-foreground'
         }`}
       >
-        <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+        <p className="text-sm whitespace-pre-wrap">{renderContent()}</p>
       </div>
       {isUser && (
         <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
