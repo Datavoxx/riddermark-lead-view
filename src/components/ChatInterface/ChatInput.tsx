@@ -34,7 +34,7 @@ export const ChatInput = ({ onSendMessage, disabled, value, onChange }: ChatInpu
           disabled={disabled}
           className="flex-1 rounded-xl"
         />
-        <Button type="submit" disabled={disabled || !inputValue.trim()} size="icon" className="rounded-xl">
+        <Button type="submit" disabled={disabled || !inputValue.trim()} size="icon" className="rounded-full">
           <Send className="w-4 h-4" />
         </Button>
       </div>
