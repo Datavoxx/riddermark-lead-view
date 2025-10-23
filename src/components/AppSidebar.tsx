@@ -33,6 +33,12 @@ const channels = [
   { name: "sälj-3", id: "6" },
 ];
 
+const agents = [
+  { name: "Agent 1", id: "agent-1" },
+  { name: "Agent 2", id: "agent-2" },
+  { name: "Agent 3", id: "agent-3" },
+];
+
 export function AppSidebar() {
   const { signOut, user } = useAuth();
   const navigate = useNavigate();
@@ -93,6 +99,32 @@ export function AppSidebar() {
                     >
                       <Hash className="h-4 w-4" />
                       <span>{channel.name}</span>
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarSeparator className="my-2" />
+
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground px-2 flex items-center gap-1">
+            <ChevronDown className="h-3 w-3" />
+            Agents
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {agents.map((agent) => (
+                <SidebarMenuItem key={agent.id}>
+                  <SidebarMenuButton asChild>
+                    <NavLink 
+                      to={`/agent/${agent.id}`}
+                      className={getNavClassName}
+                    >
+                      <Hash className="h-4 w-4" />
+                      <span>{agent.name}</span>
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
