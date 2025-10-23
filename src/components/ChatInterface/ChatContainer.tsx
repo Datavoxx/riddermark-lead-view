@@ -121,9 +121,14 @@ export const ChatContainer = ({ channelId }: ChatContainerProps) => {
     sendMessage(prompt);
   };
 
+  const handleClearMessages = () => {
+    setMessages([]);
+    localStorage.removeItem(storageKey);
+  };
+
   return (
     <div className="flex flex-col h-screen bg-background">
-      <ChatHeader channelId={channelId} />
+      <ChatHeader channelId={channelId} onClearMessages={handleClearMessages} />
       
       {messages.length === 0 ? (
         <div className={`flex-1 flex items-center justify-center transition-opacity duration-300 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}>

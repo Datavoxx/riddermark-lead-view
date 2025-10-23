@@ -1,8 +1,10 @@
-import { Clock, Hash } from 'lucide-react';
+import { Clock, Hash, RotateCcw } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface ChatHeaderProps {
   channelId?: string;
   channelName?: string;
+  onClearMessages: () => void;
 }
 
 const channelNames: Record<string, string> = {
@@ -14,7 +16,7 @@ const channelNames: Record<string, string> = {
   '6': 'sälj-3',
 };
 
-export const ChatHeader = ({ channelId }: ChatHeaderProps) => {
+export const ChatHeader = ({ channelId, onClearMessages }: ChatHeaderProps) => {
   const displayName = channelId ? channelNames[channelId] : 'AI Assistant';
   const Icon = channelId ? Hash : Clock;
 
@@ -24,6 +26,15 @@ export const ChatHeader = ({ channelId }: ChatHeaderProps) => {
         <Icon className="w-5 h-5 text-muted-foreground" />
         <span className="text-sm text-muted-foreground">{displayName}</span>
       </div>
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={onClearMessages}
+        className="gap-2"
+      >
+        <RotateCcw className="h-4 w-4" />
+        Ny chatt
+      </Button>
     </div>
   );
 };
