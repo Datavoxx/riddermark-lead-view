@@ -29,9 +29,6 @@ const channels = [
   { name: "röstmeddelande-oliver", id: "1" },
   { name: "röstmeddelande-säljare-1", id: "2" },
   { name: "röstmeddelande-säljare-2", id: "3" },
-  { name: "sälj-1", id: "4" },
-  { name: "sälj-2", id: "5" },
-  { name: "sälj-3", id: "6" },
 ];
 
 const agents = [
