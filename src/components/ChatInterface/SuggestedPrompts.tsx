@@ -32,7 +32,7 @@ export const SuggestedPrompts = ({ onSelectPrompt }: SuggestedPromptsProps) => {
       {prompts.map((prompt) => (
         <Card
           key={prompt.id}
-          className="p-4 cursor-pointer hover:bg-accent/50 transition-colors border-border hover:border-primary/20"
+          className="p-4 cursor-pointer hover:bg-accent/50 transition-colors border-border hover:border-primary/20 rounded-xl"
           onClick={() => onSelectPrompt(prompt.text)}
         >
           <div className="flex items-center gap-3">
