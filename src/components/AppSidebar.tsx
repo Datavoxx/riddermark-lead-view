@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Home, FileText, Archive, LogOut, Car, Bot, Hash, ChevronDown } from "lucide-react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import Logo from "@/assets/Logo";
 import {
@@ -40,6 +40,7 @@ const agents = [
 export function AppSidebar() {
   const { signOut, user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [channelsOpen, setChannelsOpen] = useState(true);
   const [agentsOpen, setAgentsOpen] = useState(true);
 
@@ -96,10 +97,12 @@ export function AppSidebar() {
             <SidebarMenu>
               {channels.map((channel) => (
                 <SidebarMenuItem key={channel.id}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton 
+                    asChild
+                    className={location.pathname === `/channel/${channel.id}` ? "bg-accent text-accent-foreground font-medium hover:bg-accent" : ""}
+                  >
                     <NavLink 
                       to={`/channel/${channel.id}`}
-                      className={getNavClassName}
                     >
                       <Hash className="h-4 w-4" />
                       <span>{channel.name}</span>
@@ -127,10 +130,12 @@ export function AppSidebar() {
             <SidebarMenu>
               {agents.map((agent) => (
                 <SidebarMenuItem key={agent.id}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton 
+                    asChild
+                    className={location.pathname === `/agent/${agent.id}` ? "bg-accent text-accent-foreground font-medium hover:bg-accent" : ""}
+                  >
                     <NavLink 
                       to={`/agent/${agent.id}`}
-                      className={getNavClassName}
                     >
                       <Bot className="h-4 w-4" />
                       <span>{agent.name}</span>
