@@ -5,6 +5,7 @@ const CHATKIT_URL = "https://fjqsaixszaqceviqwboz.supabase.co/functions/v1/chatk
 
 export default function Agent() {
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const { control } = useChatKit({
     api: {
@@ -40,17 +41,30 @@ export default function Agent() {
           }
 
           console.log("✅ client_secret mottagen");
+          setIsLoading(false);
           return data.client_secret;
           
         } catch (e) {
           const errorMsg = e instanceof Error ? e.message : "Okänt fel vid hämtning av client_secret";
           console.error("❌ getClientSecret error:", errorMsg);
           setError(errorMsg);
+          setIsLoading(false);
           throw new Error(errorMsg);
         }
       },
     },
   });
+
+  if (isLoading) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Laddar ChatKit...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (error) {
     return (
@@ -61,10 +75,10 @@ export default function Agent() {
           <div className="text-xs text-muted-foreground space-y-2">
             <p>Kontrollera att:</p>
             <ul className="list-disc list-inside space-y-1 ml-2">
-              <li>Supabase edge function <code className="bg-muted px-1 py-0.5 rounded">{CHATKIT_URL}</code> är tillgänglig</li>
+              <li>Supabase edge function är tillgänglig</li>
               <li>Edge function anropar OpenAI's ChatKit API korrekt</li>
               <li>Domänen är tillagd i ChatKit's allowlist</li>
-              <li>OPENAI_API_KEY är korrekt konfigurerad i Supabase</li>
+              <li>OPENAI_API_KEY är korrekt konfigurerad</li>
             </ul>
           </div>
         </div>
@@ -73,7 +87,7 @@ export default function Agent() {
   }
 
   return (
-    <div className="w-full h-screen">
+    <div className="w-full h-screen overflow-hidden">
       <ChatKit 
         control={control} 
         className="w-full h-full"
