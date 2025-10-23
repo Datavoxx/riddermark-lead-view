@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ChatHeader } from './ChatHeader';
 import { MessageList } from './MessageList';
 import { SuggestedPrompts } from './SuggestedPrompts';
@@ -18,6 +18,22 @@ export const ChatContainer = ({ channelId }: ChatContainerProps) => {
   const [inputValue, setInputValue] = useState('');
   const [isAnimating, setIsAnimating] = useState(false);
   const { toast } = useToast();
+  
+  // Håll reda på aktiv kanal och avbryt controller
+  const activeChannelRef = useRef(channelId);
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Uppdatera aktiv kanal ref när channelId ändras
+  useEffect(() => {
+    activeChannelRef.current = channelId;
+    
+    // Avbryt pågående request när vi byter kanal
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+      setIsLoading(false);
+    }
+  }, [channelId]);
 
   // Ladda meddelanden när channelId ändras
   useEffect(() => {
@@ -44,6 +60,13 @@ export const ChatContainer = ({ channelId }: ChatContainerProps) => {
 
     setMessages((prev) => [...prev, userMessage]);
     setIsLoading(true);
+    
+    // Spara vilket channelId denna request tillhör
+    const requestChannelId = channelId;
+    
+    // Skapa en ny AbortController för denna request
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
 
     try {
       const { data, error } = await supabase.functions.invoke('chat-stream', {
@@ -54,6 +77,12 @@ export const ChatContainer = ({ channelId }: ChatContainerProps) => {
           }))
         }
       });
+
+      // Kontrollera om vi fortfarande är på samma kanal
+      if (activeChannelRef.current !== requestChannelId) {
+        console.log('Channel changed, ignoring response');
+        return;
+      }
 
       if (error) throw error;
 
@@ -66,6 +95,12 @@ export const ChatContainer = ({ channelId }: ChatContainerProps) => {
 
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
+      // Ignorera avbrutna requests
+      if (error instanceof Error && error.name === 'AbortError') {
+        console.log('Request aborted');
+        return;
+      }
+      
       console.error('Error sending message:', error);
       toast({
         title: 'Något gick fel',
@@ -73,8 +108,12 @@ export const ChatContainer = ({ channelId }: ChatContainerProps) => {
         variant: 'destructive',
       });
     } finally {
-      setIsLoading(false);
-      setIsAnimating(false);
+      // Endast uppdatera loading state om vi fortfarande är på samma kanal
+      if (activeChannelRef.current === requestChannelId) {
+        setIsLoading(false);
+        setIsAnimating(false);
+      }
+      abortControllerRef.current = null;
     }
   };
 
