@@ -40,7 +40,7 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         workflow: { 
-          id: 'wf_68eaeb8ac54481909e822336a91727b60297fb9b627f0' 
+          id: 'wf_68eaeb8ac54481909e822336a91727b60297fb9b627b27f0' 
         },
         user: "anonymous-user"
       })
