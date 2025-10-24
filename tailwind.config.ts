@@ -122,15 +122,15 @@ export default {
         }
       },
       animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
-        "button-press": "button-press 0.15s ease-out",
-        "fade-in": "fade-in 0.3s ease-out",
-        "fade-out": "fade-out 0.3s ease-out",
-        "scale-in": "scale-in 0.2s ease-out",
-        "glow": "glow 1.5s ease-out",
-        "pulse-subtle": "pulse-subtle 2s ease-in-out infinite",
-        "slide-up": "slide-up 0.4s ease-out"
+        "accordion-down": "accordion-down 0.6s ease-out",
+        "accordion-up": "accordion-up 0.6s ease-out",
+        "button-press": "button-press 0.45s ease-out",
+        "fade-in": "fade-in 0.9s ease-out",
+        "fade-out": "fade-out 0.9s ease-out",
+        "scale-in": "scale-in 0.6s ease-out",
+        "glow": "glow 4s ease-out",
+        "pulse-subtle": "pulse-subtle 5s ease-in-out infinite",
+        "slide-up": "slide-up 1s ease-out"
       },
     },
   },
