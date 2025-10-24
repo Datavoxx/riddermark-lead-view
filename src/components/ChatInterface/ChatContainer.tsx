@@ -16,10 +16,11 @@ export const ChatContainer = ({ channelId }: ChatContainerProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [currentUser, setCurrentUser] = useState<{ id: string; name: string } | null>(null);
+  const [otherUserName, setOtherUserName] = useState<string>('');
   const { toast } = useToast();
   const channelRef = useRef<RealtimeChannel | null>(null);
 
-  // Ladda aktuell användare
+  // Ladda aktuell användare och hitta namnet på den andra användaren
   useEffect(() => {
     const loadCurrentUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -34,10 +35,33 @@ export const ChatContainer = ({ channelId }: ChatContainerProps) => {
           id: user.id,
           name: profile?.name || user.email || 'Okänd'
         });
+
+        // Om vi har en channelId (conversation_id), hitta den andra användaren
+        if (channelId) {
+          const { data: conversation } = await supabase
+            .from('conversations')
+            .select('participant_1_id, participant_2_id')
+            .eq('id', channelId)
+            .single();
+
+          if (conversation) {
+            const otherUserId = conversation.participant_1_id === user.id
+              ? conversation.participant_2_id
+              : conversation.participant_1_id;
+
+            const { data: otherProfile } = await supabase
+              .from('profiles')
+              .select('name')
+              .eq('user_id', otherUserId)
+              .single();
+
+            setOtherUserName(otherProfile?.name || 'Okänd');
+          }
+        }
       }
     };
     loadCurrentUser();
-  }, []);
+  }, [channelId]);
 
   // Ladda meddelanden och sätt upp real-time prenumeration
   useEffect(() => {
@@ -177,7 +201,11 @@ export const ChatContainer = ({ channelId }: ChatContainerProps) => {
 
   return (
     <div className="flex flex-col h-screen bg-background">
-      <ChatHeader channelId={channelId} onClearMessages={handleClearMessages} />
+      <ChatHeader 
+        channelId={channelId} 
+        channelName={otherUserName}
+        onClearMessages={handleClearMessages} 
+      />
       <MessageList messages={messages} isLoading={isLoading} />
       <ChatInput 
         onSendMessage={sendMessage} 

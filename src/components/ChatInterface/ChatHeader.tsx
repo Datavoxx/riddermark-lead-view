@@ -7,14 +7,8 @@ interface ChatHeaderProps {
   onClearMessages: () => void;
 }
 
-const channelNames: Record<string, string> = {
-  '1': 'johan',
-  '2': 'hanna',
-  '3': 'mahad',
-};
-
-export const ChatHeader = ({ channelId, onClearMessages }: ChatHeaderProps) => {
-  const displayName = channelId ? channelNames[channelId] : 'AI Assistant';
+export const ChatHeader = ({ channelId, channelName, onClearMessages }: ChatHeaderProps) => {
+  const displayName = channelName || 'AI Assistant';
   const Icon = channelId ? Hash : Clock;
 
   return (
