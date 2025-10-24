@@ -39,7 +39,7 @@ export const useUnreadMessages = (userId: string | undefined) => {
           const { data: messages } = await supabaseUntyped
             .from('messages')
             .select('id')
-            .eq('conversation_id', conv.id)
+            .eq('channel_id', conv.id)
             .neq('sender_id', userId)
             .gt('created_at', lastVisitTime);
 

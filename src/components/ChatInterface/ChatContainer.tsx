@@ -6,6 +6,7 @@ import { SuggestedPrompts } from './SuggestedPrompts';
 import { Message } from './types';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useUnreadMessages } from '@/hooks/useUnreadMessages';
 import { RealtimeChannel } from '@supabase/supabase-js';
 
 interface ChatContainerProps {
@@ -22,6 +23,7 @@ export const ChatContainer = ({ channelId, agentId, agentName }: ChatContainerPr
   const [otherUserName, setOtherUserName] = useState<string>('');
   const { toast } = useToast();
   const channelRef = useRef<RealtimeChannel | null>(null);
+  const { markAsRead } = useUnreadMessages(currentUser?.id);
 
   // Ladda aktuell användare och hitta namnet på den andra användaren
   useEffect(() => {
@@ -72,6 +74,7 @@ export const ChatContainer = ({ channelId, agentId, agentName }: ChatContainerPr
     
     // Markera meddelanden som lästa när konversationen öppnas
     localStorage.setItem(`last-visit-${channelId}`, new Date().toISOString());
+    markAsRead(channelId);
 
     const loadMessages = async () => {
       const { data, error } = await supabase
@@ -145,7 +148,7 @@ export const ChatContainer = ({ channelId, agentId, agentName }: ChatContainerPr
         supabase.removeChannel(channelRef.current);
       }
     };
-  }, [channelId, toast]);
+  }, [channelId, toast, markAsRead]);
 
   const sendMessage = async (content: string) => {
     if (!currentUser) {
