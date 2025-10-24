@@ -1,149 +1,184 @@
 import { useState, useEffect, useRef } from 'react';
 import { ChatHeader } from './ChatHeader';
 import { MessageList } from './MessageList';
-import { SuggestedPrompts } from './SuggestedPrompts';
 import { ChatInput } from './ChatInput';
 import { Message } from './types';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { RealtimeChannel } from '@supabase/supabase-js';
 
 interface ChatContainerProps {
   channelId?: string;
 }
 
 export const ChatContainer = ({ channelId }: ChatContainerProps) => {
-  const storageKey = channelId ? `chat-messages-${channelId}` : 'chat-messages-agent';
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [inputValue, setInputValue] = useState('');
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [currentUser, setCurrentUser] = useState<{ id: string; name: string } | null>(null);
   const { toast } = useToast();
-  
-  // Håll reda på aktiv kanal och avbryt controller
-  const activeChannelRef = useRef(channelId);
-  const abortControllerRef = useRef<AbortController | null>(null);
+  const channelRef = useRef<RealtimeChannel | null>(null);
 
-  // Uppdatera aktiv kanal ref när channelId ändras
+  // Ladda aktuell användare
   useEffect(() => {
-    activeChannelRef.current = channelId;
-    
-    // Avbryt pågående request när vi byter kanal
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-      abortControllerRef.current = null;
-      setIsLoading(false);
-    }
-  }, [channelId]);
+    const loadCurrentUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('name')
+          .eq('user_id', user.id)
+          .single();
+        
+        setCurrentUser({
+          id: user.id,
+          name: profile?.name || user.email || 'Okänd'
+        });
+      }
+    };
+    loadCurrentUser();
+  }, []);
 
-  // Ladda meddelanden när channelId ändras
+  // Ladda meddelanden och sätt upp real-time prenumeration
   useEffect(() => {
-    const saved = localStorage.getItem(storageKey);
-    setMessages(saved ? JSON.parse(saved) : []);
-  }, [storageKey]);
+    if (!channelId) return;
 
-  useEffect(() => {
-    localStorage.setItem(storageKey, JSON.stringify(messages));
-  }, [messages, storageKey]);
+    const loadMessages = async () => {
+      const { data, error } = await supabase
+        .from('messages')
+        .select(`
+          *,
+          profiles!messages_sender_id_fkey(name)
+        `)
+        .eq('channel_id', channelId)
+        .order('created_at', { ascending: true });
 
-  const sendMessage = async (content: string) => {
-    setIsAnimating(true);
-    
-    // Kort delay för att låta fade-out animation spelas
-    await new Promise(resolve => setTimeout(resolve, 300));
-    
-    const userMessage: Message = {
-      id: crypto.randomUUID(),
-      role: 'user',
-      content,
-      timestamp: new Date(),
+      if (error) {
+        console.error('Error loading messages:', error);
+        toast({
+          title: 'Kunde inte ladda meddelanden',
+          description: error.message,
+          variant: 'destructive',
+        });
+        return;
+      }
+
+      const formattedMessages: Message[] = (data || []).map((msg: any) => ({
+        id: msg.id,
+        sender_id: msg.sender_id,
+        sender_name: msg.profiles?.name || 'Okänd',
+        content: msg.content,
+        created_at: msg.created_at,
+        mentions: msg.mentions,
+      }));
+
+      setMessages(formattedMessages);
     };
 
-    setMessages((prev) => [...prev, userMessage]);
+    loadMessages();
+
+    // Sätt upp real-time prenumeration
+    channelRef.current = supabase
+      .channel(`messages:${channelId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter: `channel_id=eq.${channelId}`,
+        },
+        async (payload) => {
+          // Hämta sender_name från profiles
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('name')
+            .eq('user_id', payload.new.sender_id)
+            .single();
+
+          const newMessage: Message = {
+            id: payload.new.id,
+            sender_id: payload.new.sender_id,
+            sender_name: profile?.name || 'Okänd',
+            content: payload.new.content,
+            created_at: payload.new.created_at,
+            mentions: payload.new.mentions,
+          };
+
+          setMessages((prev) => [...prev, newMessage]);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+      }
+    };
+  }, [channelId, toast]);
+
+  const sendMessage = async (content: string) => {
+    if (!channelId || !currentUser) {
+      toast({
+        title: 'Kunde inte skicka meddelande',
+        description: 'Du måste vara inloggad',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setIsLoading(true);
-    
-    // Spara vilket channelId denna request tillhör
-    const requestChannelId = channelId;
-    
-    // Skapa en ny AbortController för denna request
-    const controller = new AbortController();
-    abortControllerRef.current = controller;
 
     try {
-      const { data, error } = await supabase.functions.invoke('chat-stream', {
-        body: { 
-          messages: [...messages, userMessage].map(m => ({
-            role: m.role,
-            content: m.content
-          }))
-        }
-      });
-
-      // Kontrollera om vi fortfarande är på samma kanal
-      if (activeChannelRef.current !== requestChannelId) {
-        console.log('Channel changed, ignoring response');
-        return;
-      }
+      const { error } = await supabase
+        .from('messages')
+        .insert({
+          channel_id: channelId,
+          sender_id: currentUser.id,
+          content,
+        });
 
       if (error) throw error;
-
-      const assistantMessage: Message = {
-        id: crypto.randomUUID(),
-        role: 'assistant',
-        content: data.response,
-        timestamp: new Date(),
-      };
-
-      setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
-      // Ignorera avbrutna requests
-      if (error instanceof Error && error.name === 'AbortError') {
-        console.log('Request aborted');
-        return;
-      }
-      
       console.error('Error sending message:', error);
       toast({
-        title: 'Något gick fel',
-        description: 'Kunde inte skicka meddelandet. Försök igen.',
+        title: 'Kunde inte skicka meddelande',
+        description: 'Försök igen.',
         variant: 'destructive',
       });
     } finally {
-      // Endast uppdatera loading state om vi fortfarande är på samma kanal
-      if (activeChannelRef.current === requestChannelId) {
-        setIsLoading(false);
-        setIsAnimating(false);
-      }
-      abortControllerRef.current = null;
+      setIsLoading(false);
     }
   };
 
-  const handlePromptSelect = (prompt: string) => {
-    sendMessage(prompt);
-  };
+  const handleClearMessages = async () => {
+    if (!channelId) return;
+    
+    try {
+      const { error } = await supabase
+        .from('messages')
+        .delete()
+        .eq('channel_id', channelId);
 
-  const handleClearMessages = () => {
-    setMessages([]);
-    localStorage.removeItem(storageKey);
+      if (error) throw error;
+
+      setMessages([]);
+      toast({
+        title: 'Meddelanden rensade',
+      });
+    } catch (error) {
+      console.error('Error clearing messages:', error);
+      toast({
+        title: 'Kunde inte rensa meddelanden',
+        variant: 'destructive',
+      });
+    }
   };
 
   return (
     <div className="flex flex-col h-screen bg-background">
       <ChatHeader channelId={channelId} onClearMessages={handleClearMessages} />
-      
-      {messages.length === 0 ? (
-        <div className={`flex-1 flex items-center justify-center transition-opacity duration-300 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}>
-          <div className="max-w-4xl w-full">
-            <div className="text-center mb-8 animate-fade-in">
-              <h1 className="text-3xl font-bold mb-2">Hur kan jag hjälpa dig idag?</h1>
-              <p className="text-muted-foreground">Välj ett förslag eller skriv din egen fråga</p>
-            </div>
-            <SuggestedPrompts onSelectPrompt={handlePromptSelect} isAnimating={isAnimating} />
-          </div>
-        </div>
-      ) : (
-        <MessageList messages={messages} isLoading={isLoading} />
-      )}
-
+      <MessageList messages={messages} isLoading={isLoading} />
       <ChatInput 
         onSendMessage={sendMessage} 
         disabled={isLoading}

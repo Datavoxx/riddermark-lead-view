@@ -1,8 +1,10 @@
 export type Message = {
   id: string;
-  role: 'user' | 'assistant';
+  sender_id: string;
+  sender_name: string;
   content: string;
-  timestamp: Date;
+  created_at: string;
+  mentions?: string[];
 };
 
 export type SuggestedPrompt = {
