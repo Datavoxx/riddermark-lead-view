@@ -4,6 +4,8 @@ import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import Logo from "@/assets/Logo";
 import { supabase } from "@/integrations/supabase/client";
+import { Badge } from "@/components/ui/badge";
+import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import {
   Sidebar,
   SidebarContent,
@@ -45,6 +47,7 @@ export function AppSidebar() {
   const [channelsOpen, setChannelsOpen] = useState(true);
   const [agentsOpen, setAgentsOpen] = useState(true);
   const [conversations, setConversations] = useState<ConversationWithUser[]>([]);
+  const { unreadCounts } = useUnreadMessages(user?.id);
 
   // Hämta konversationer från databasen
   useEffect(() => {
@@ -183,9 +186,20 @@ export function AppSidebar() {
                     >
                       <NavLink 
                         to={`/channel/${conv.conversation_id}`}
+                        className="flex items-center justify-between w-full"
                       >
-                        <Hash className="h-4 w-4" />
-                        <span>{conv.other_user_name}</span>
+                        <div className="flex items-center gap-2">
+                          <Hash className="h-4 w-4" />
+                          <span>{conv.other_user_name}</span>
+                        </div>
+                        {unreadCounts[conv.conversation_id] > 0 && (
+                          <Badge 
+                            variant="default" 
+                            className="ml-auto h-5 min-w-5 rounded-full px-1.5 text-xs font-medium bg-primary text-primary-foreground"
+                          >
+                            {unreadCounts[conv.conversation_id]}
+                          </Badge>
+                        )}
                       </NavLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

@@ -69,6 +69,9 @@ export const ChatContainer = ({ channelId, agentId, agentName }: ChatContainerPr
   // Ladda meddelanden och sätt upp real-time prenumeration
   useEffect(() => {
     if (!channelId) return;
+    
+    // Markera meddelanden som lästa när konversationen öppnas
+    localStorage.setItem(`last-visit-${channelId}`, new Date().toISOString());
 
     const loadMessages = async () => {
       const { data, error } = await supabase
