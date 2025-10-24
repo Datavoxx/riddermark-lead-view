@@ -56,6 +56,7 @@ const App = () => (
                         <Route path="/blocket/arenden/:id" element={<ArendeDetail />} />
                         <Route path="/bil-annonsgenerator" element={<BilAnnonsgenerator />} />
                         <Route path="/agent" element={<Agent />} />
+                        <Route path="/agent/:agentId" element={<Agent />} />
                         <Route path="/notiser" element={<Notiser />} />
                         <Route path="/channel/:id" element={<Channel />} />
                         <Route path="*" element={<NotFound />} />
