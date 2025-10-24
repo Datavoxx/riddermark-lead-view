@@ -26,10 +26,10 @@ const navigation = [
   { title: "Agent", url: "/agent", icon: Bot },
 ];
 
-type Channel = {
-  id: string;
-  name: string;
-  user_id: string;
+type ConversationWithUser = {
+  conversation_id: string;
+  other_user_id: string;
+  other_user_name: string;
 };
 
 const agents = [
@@ -44,38 +44,70 @@ export function AppSidebar() {
   const location = useLocation();
   const [channelsOpen, setChannelsOpen] = useState(true);
   const [agentsOpen, setAgentsOpen] = useState(true);
-  const [channels, setChannels] = useState<Channel[]>([]);
+  const [conversations, setConversations] = useState<ConversationWithUser[]>([]);
 
-  // Hämta kanaler från databasen
+  // Hämta konversationer från databasen
   useEffect(() => {
-    const fetchChannels = async () => {
-      const { data, error } = await supabase
-        .from('channels')
-        .select('*')
-        .order('name');
+    if (!user?.id) return;
+
+    const fetchConversations = async () => {
+      // Hämta alla konversationer för inloggade användaren
+      const { data: conversationsData, error: convError } = await supabase
+        .from('conversations')
+        .select('id, participant_1_id, participant_2_id')
+        .or(`participant_1_id.eq.${user.id},participant_2_id.eq.${user.id}`);
       
-      if (error) {
-        console.error('Error fetching channels:', error);
+      if (convError) {
+        console.error('Error fetching conversations:', convError);
         return;
       }
+
+      // För varje konversation, hitta den andra användaren
+      const conversationsWithUsers: ConversationWithUser[] = [];
       
-      setChannels(data || []);
+      for (const conv of conversationsData || []) {
+        const otherUserId = conv.participant_1_id === user.id 
+          ? conv.participant_2_id 
+          : conv.participant_1_id;
+        
+        // Hämta namn på den andra användaren
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('name')
+          .eq('user_id', otherUserId)
+          .single();
+        
+        if (!profileError && profile) {
+          conversationsWithUsers.push({
+            conversation_id: conv.id,
+            other_user_id: otherUserId,
+            other_user_name: profile.name || 'Unknown'
+          });
+        }
+      }
+
+      // Sortera efter namn
+      conversationsWithUsers.sort((a, b) => 
+        a.other_user_name.localeCompare(b.other_user_name)
+      );
+      
+      setConversations(conversationsWithUsers);
     };
 
-    fetchChannels();
+    fetchConversations();
 
-    // Real-time subscription för nya kanaler
+    // Real-time subscription för nya konversationer
     const channel = supabase
-      .channel('channels-changes')
+      .channel('conversations-changes')
       .on(
         'postgres_changes',
         {
           event: '*',
           schema: 'public',
-          table: 'channels'
+          table: 'conversations'
         },
         () => {
-          fetchChannels();
+          fetchConversations();
         }
       )
       .subscribe();
@@ -83,7 +115,7 @@ export function AppSidebar() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [user?.id]);
 
   const handleLogout = async () => {
     await signOut();
@@ -136,24 +168,24 @@ export function AppSidebar() {
           {channelsOpen && (
           <SidebarGroupContent>
             <SidebarMenu>
-              {channels.length === 0 ? (
+              {conversations.length === 0 ? (
                 <SidebarMenuItem>
                   <div className="px-2 py-1 text-xs text-muted-foreground">
-                    Inga kanaler tillgängliga
+                    Inga konversationer tillgängliga
                   </div>
                 </SidebarMenuItem>
               ) : (
-                channels.map((channel) => (
-                  <SidebarMenuItem key={channel.id}>
+                conversations.map((conv) => (
+                  <SidebarMenuItem key={conv.conversation_id}>
                     <SidebarMenuButton 
                       asChild
-                      className={location.pathname === `/channel/${channel.id}` ? "bg-accent text-accent-foreground font-medium hover:bg-accent" : ""}
+                      className={location.pathname === `/channel/${conv.conversation_id}` ? "bg-accent text-accent-foreground font-medium hover:bg-accent" : ""}
                     >
                       <NavLink 
-                        to={`/channel/${channel.id}`}
+                        to={`/channel/${conv.conversation_id}`}
                       >
                         <Hash className="h-4 w-4" />
-                        <span>{channel.name}</span>
+                        <span>{conv.other_user_name}</span>
                       </NavLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

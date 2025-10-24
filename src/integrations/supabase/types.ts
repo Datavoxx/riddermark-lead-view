@@ -14,29 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
-      channels: {
+      conversations: {
         Row: {
           created_at: string
           id: string
-          name: string
-          user_id: string
+          participant_1_id: string
+          participant_2_id: string
         }
         Insert: {
           created_at?: string
           id?: string
-          name: string
-          user_id: string
+          participant_1_id: string
+          participant_2_id: string
         }
         Update: {
           created_at?: string
           id?: string
-          name?: string
-          user_id?: string
+          participant_1_id?: string
+          participant_2_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "channels_user_id_fkey"
-            columns: ["user_id"]
+            foreignKeyName: "conversations_participant_1_id_fkey"
+            columns: ["participant_1_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "conversations_participant_2_id_fkey"
+            columns: ["participant_2_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["user_id"]
@@ -295,6 +302,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_or_create_conversation: {
+        Args: { user1_id: string; user2_id: string }
+        Returns: string
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
