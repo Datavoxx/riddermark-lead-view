@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Home, FileText, Archive, LogOut, Car, Bot, Hash, ChevronDown, Bell } from "lucide-react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import Logo from "@/assets/Logo";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Sidebar,
   SidebarContent,
@@ -25,11 +26,11 @@ const navigation = [
   { title: "Agent", url: "/agent", icon: Bot },
 ];
 
-const channels = [
-  { name: "johan", id: "1" },
-  { name: "hanna", id: "2" },
-  { name: "mahad", id: "3" },
-];
+type Channel = {
+  id: string;
+  name: string;
+  user_id: string;
+};
 
 const agents = [
   { name: "Agent 1", id: "agent-1", url: "/agent/agent-1", icon: Bot },
@@ -43,6 +44,46 @@ export function AppSidebar() {
   const location = useLocation();
   const [channelsOpen, setChannelsOpen] = useState(true);
   const [agentsOpen, setAgentsOpen] = useState(true);
+  const [channels, setChannels] = useState<Channel[]>([]);
+
+  // Hämta kanaler från databasen
+  useEffect(() => {
+    const fetchChannels = async () => {
+      const { data, error } = await supabase
+        .from('channels')
+        .select('*')
+        .order('name');
+      
+      if (error) {
+        console.error('Error fetching channels:', error);
+        return;
+      }
+      
+      setChannels(data || []);
+    };
+
+    fetchChannels();
+
+    // Real-time subscription för nya kanaler
+    const channel = supabase
+      .channel('channels-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'channels'
+        },
+        () => {
+          fetchChannels();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   const handleLogout = async () => {
     await signOut();
@@ -95,21 +136,29 @@ export function AppSidebar() {
           {channelsOpen && (
           <SidebarGroupContent>
             <SidebarMenu>
-              {channels.map((channel) => (
-                <SidebarMenuItem key={channel.id}>
-                  <SidebarMenuButton 
-                    asChild
-                    className={location.pathname === `/channel/${channel.id}` ? "bg-accent text-accent-foreground font-medium hover:bg-accent" : ""}
-                  >
-                    <NavLink 
-                      to={`/channel/${channel.id}`}
-                    >
-                      <Hash className="h-4 w-4" />
-                      <span>{channel.name}</span>
-                    </NavLink>
-                  </SidebarMenuButton>
+              {channels.length === 0 ? (
+                <SidebarMenuItem>
+                  <div className="px-2 py-1 text-xs text-muted-foreground">
+                    Inga kanaler tillgängliga
+                  </div>
                 </SidebarMenuItem>
-              ))}
+              ) : (
+                channels.map((channel) => (
+                  <SidebarMenuItem key={channel.id}>
+                    <SidebarMenuButton 
+                      asChild
+                      className={location.pathname === `/channel/${channel.id}` ? "bg-accent text-accent-foreground font-medium hover:bg-accent" : ""}
+                    >
+                      <NavLink 
+                        to={`/channel/${channel.id}`}
+                      >
+                        <Hash className="h-4 w-4" />
+                        <span>{channel.name}</span>
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
           )}
