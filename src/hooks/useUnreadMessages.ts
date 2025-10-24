@@ -1,10 +1,5 @@
 import { useState, useEffect } from 'react';
-import { createClient } from '@supabase/supabase-js';
-
-const SUPABASE_URL = "https://fjqsaixszaqceviqwboz.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqcXNhaXhzemFxY2V2aXF3Ym96Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc4OTM2ODgsImV4cCI6MjA3MzQ2OTY4OH0.ebuIKmXECbUv1L1Y2JhoXmL6pcvFcfvLOpSEggNWhXc";
-
-const supabaseUntyped = createClient(SUPABASE_URL, SUPABASE_KEY);
+import { supabase } from '@/integrations/supabase/client';
 
 interface UnreadCounts {
   [conversationId: string]: number;
@@ -19,7 +14,7 @@ export const useUnreadMessages = (userId: string | undefined) => {
     const fetchUnreadCounts = async () => {
       try {
         // Hämta alla konversationer för användaren
-        const { data: conversations } = await supabaseUntyped
+        const { data: conversations } = await supabase
           .from('conversations')
           .select('id')
           .or(`participant_1_id.eq.${userId},participant_2_id.eq.${userId}`);
@@ -36,7 +31,7 @@ export const useUnreadMessages = (userId: string | undefined) => {
           const lastVisit = localStorage.getItem(`last-visit-${conv.id}`);
           const lastVisitTime = lastVisit || new Date(0).toISOString();
 
-          const { data: messages } = await supabaseUntyped
+          const { data: messages } = await supabase
             .from('messages')
             .select('id')
             .eq('channel_id', conv.id)
@@ -55,7 +50,7 @@ export const useUnreadMessages = (userId: string | undefined) => {
     fetchUnreadCounts();
 
     // Real-time subscription för nya meddelanden
-    const channel = supabaseUntyped
+    const channel = supabase
       .channel('messages-unread')
       .on(
         'postgres_changes',
@@ -74,7 +69,7 @@ export const useUnreadMessages = (userId: string | undefined) => {
     const interval = setInterval(fetchUnreadCounts, 30000);
 
     return () => {
-      supabaseUntyped.removeChannel(channel);
+      supabase.removeChannel(channel);
       clearInterval(interval);
     };
   }, [userId]);
