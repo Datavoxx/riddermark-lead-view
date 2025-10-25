@@ -11,35 +11,22 @@ export const useUnreadMessages = (userId: string | undefined) => {
   useEffect(() => {
     if (!userId) return;
 
+    let isActive = true;
+
+    // Funktion för att hämta unread counts från server via SQL-funktion
     const fetchUnreadCounts = async () => {
       try {
-        // Hämta alla konversationer för användaren
-        const { data: conversations } = await supabase
-          .from('conversations')
-          .select('id')
-          .or(`participant_1_id.eq.${userId},participant_2_id.eq.${userId}`);
+        const { data, error } = await supabase.rpc('get_unread_counts', {
+          for_user_id: userId,
+        });
 
-        if (!conversations || conversations.length === 0) {
-          setUnreadCounts({});
-          return;
-        }
+        if (error) throw error;
+        if (!isActive) return;
 
         const counts: UnreadCounts = {};
-
-        // Räkna olästa meddelanden för varje konversation
-        for (const conv of conversations) {
-          const lastVisit = localStorage.getItem(`last-visit-${conv.id}`);
-          const lastVisitTime = lastVisit || new Date(0).toISOString();
-
-          const { data: messages } = await supabase
-            .from('messages')
-            .select('id')
-            .eq('channel_id', conv.id)
-            .neq('sender_id', userId)
-            .gt('created_at', lastVisitTime);
-
-          counts[conv.id] = messages?.length || 0;
-        }
+        data?.forEach((row: { conversation_id: string; unread_count: number }) => {
+          counts[row.conversation_id] = Number(row.unread_count);
+        });
 
         setUnreadCounts(counts);
       } catch (error) {
@@ -47,36 +34,79 @@ export const useUnreadMessages = (userId: string | undefined) => {
       }
     };
 
+    // Initial fetch
     fetchUnreadCounts();
 
-    // Real-time subscription för nya meddelanden
+    // Lyssna på nya meddelanden för optimistiska updates
     const channel = supabase
-      .channel('messages-unread')
+      .channel('unread-realtime')
       .on(
         'postgres_changes',
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'messages'
+          table: 'messages',
         },
-        () => {
-          fetchUnreadCounts();
+        (payload) => {
+          const message = payload.new as any;
+          
+          // Optimistisk update: öka räknaren om meddelandet inte är från mig
+          if (message.sender_id !== userId) {
+            setUnreadCounts((prev) => ({
+              ...prev,
+              [message.channel_id]: (prev[message.channel_id] || 0) + 1,
+            }));
+          }
         }
       )
       .subscribe();
 
-    // Intervall för att uppdatera räknare
+    // Polling med visibility check
     const interval = setInterval(fetchUnreadCounts, 30000);
 
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        fetchUnreadCounts();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
     return () => {
-      supabase.removeChannel(channel);
+      isActive = false;
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
       clearInterval(interval);
+      supabase.removeChannel(channel);
     };
   }, [userId]);
 
-  const markAsRead = (conversationId: string) => {
-    localStorage.setItem(`last-visit-${conversationId}`, new Date().toISOString());
-    setUnreadCounts(prev => ({ ...prev, [conversationId]: 0 }));
+  const markAsRead = async (conversationId: string) => {
+    if (!userId) return;
+
+    try {
+      // Upsertera read_states i databasen
+      const { error } = await supabase
+        .from('read_states')
+        .upsert(
+          {
+            conversation_id: conversationId,
+            user_id: userId,
+            last_read_at: new Date().toISOString(),
+          },
+          {
+            onConflict: 'conversation_id,user_id',
+          }
+        );
+
+      if (error) throw error;
+
+      // Optimistisk update: sätt till 0 lokalt direkt
+      setUnreadCounts((prev) => ({
+        ...prev,
+        [conversationId]: 0,
+      }));
+    } catch (error) {
+      console.error('Error marking as read:', error);
+    }
   };
 
   return { unreadCounts, markAsRead };

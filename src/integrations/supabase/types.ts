@@ -214,6 +214,32 @@ export type Database = {
         }
         Relationships: []
       }
+      read_states: {
+        Row: {
+          conversation_id: string
+          last_read_at: string
+          user_id: string
+        }
+        Insert: {
+          conversation_id: string
+          last_read_at?: string
+          user_id: string
+        }
+        Update: {
+          conversation_id?: string
+          last_read_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "read_states_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       recordings: {
         Row: {
           correlation_id: string
@@ -305,6 +331,13 @@ export type Database = {
       get_or_create_conversation: {
         Args: { user1_id: string; user2_id: string }
         Returns: string
+      }
+      get_unread_counts: {
+        Args: { for_user_id: string }
+        Returns: {
+          conversation_id: string
+          unread_count: number
+        }[]
       }
       has_role: {
         Args: {

@@ -6,6 +6,7 @@ import { SuggestedPrompts } from './SuggestedPrompts';
 import { Message } from './types';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 import { RealtimeChannel } from '@supabase/supabase-js';
 
 interface ChatContainerProps {
@@ -17,11 +18,15 @@ interface ChatContainerProps {
 export const ChatContainer = ({ channelId, agentId, agentName }: ChatContainerProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingChannel, setIsLoadingChannel] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [currentUser, setCurrentUser] = useState<{ id: string; name: string } | null>(null);
   const [otherUserName, setOtherUserName] = useState<string>('');
   const { toast } = useToast();
+  const { user } = useAuth();
   const channelRef = useRef<RealtimeChannel | null>(null);
+  const isMountedRef = useRef(true);
+  const markAsReadTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Ladda aktuell användare och hitta namnet på den andra användaren
   useEffect(() => {
@@ -69,46 +74,69 @@ export const ChatContainer = ({ channelId, agentId, agentName }: ChatContainerPr
   // Ladda meddelanden och sätt upp real-time prenumeration
   useEffect(() => {
     if (!channelId) return;
-    
-    // Markera meddelanden som lästa när konversationen öppnas
-    localStorage.setItem(`last-visit-${channelId}`, new Date().toISOString());
+
+    isMountedRef.current = true;
+    setIsLoadingChannel(true);
+
+    const abortController = new AbortController();
 
     const loadMessages = async () => {
-      const { data, error } = await supabase
-        .from('messages')
-        .select(`
-          *,
-          profiles!messages_sender_id_fkey(name)
-        `)
-        .eq('channel_id', channelId)
-        .order('created_at', { ascending: true });
+      try {
+        const { data, error } = await supabase
+          .from('messages')
+          .select(`
+            *,
+            profiles!messages_sender_id_fkey(name)
+          `)
+          .eq('channel_id', channelId)
+          .order('created_at', { ascending: true })
+          .abortSignal(abortController.signal);
 
-      if (error) {
-        console.error('Error loading messages:', error);
-        toast({
-          title: 'Kunde inte ladda meddelanden',
-          description: error.message,
-          variant: 'destructive',
-        });
-        return;
+        if (!isMountedRef.current) return;
+
+        if (error) {
+          console.error('Error loading messages:', error);
+          toast({
+            title: 'Kunde inte ladda meddelanden',
+            description: error.message,
+            variant: 'destructive',
+          });
+          return;
+        }
+
+        const formattedMessages: Message[] = (data || []).map((msg: any) => ({
+          id: msg.id,
+          sender_id: msg.sender_id,
+          sender_name: msg.profiles?.name || 'Okänd',
+          content: msg.content,
+          created_at: msg.created_at,
+          mentions: msg.mentions,
+        }));
+
+        if (isMountedRef.current) {
+          setMessages(formattedMessages);
+          setIsLoadingChannel(false);
+        }
+      } catch (err: any) {
+        if (err.name === 'AbortError') return;
+        console.error('Error loading messages:', err);
+        if (isMountedRef.current) {
+          setIsLoadingChannel(false);
+        }
       }
-
-      const formattedMessages: Message[] = (data || []).map((msg: any) => ({
-        id: msg.id,
-        sender_id: msg.sender_id,
-        sender_name: msg.profiles?.name || 'Okänd',
-        content: msg.content,
-        created_at: msg.created_at,
-        mentions: msg.mentions,
-      }));
-
-      setMessages(formattedMessages);
     };
 
     loadMessages();
 
+    // Stäng gamla kanalen innan ny skapas
+    if (channelRef.current) {
+      channelRef.current.unsubscribe();
+      supabase.removeChannel(channelRef.current);
+      channelRef.current = null;
+    }
+
     // Sätt upp real-time prenumeration
-    channelRef.current = supabase
+    const channel = supabase
       .channel(`messages:${channelId}`)
       .on(
         'postgres_changes',
@@ -119,6 +147,8 @@ export const ChatContainer = ({ channelId, agentId, agentName }: ChatContainerPr
           filter: `channel_id=eq.${channelId}`,
         },
         async (payload) => {
+          if (!isMountedRef.current) return;
+
           // Hämta sender_name från profiles
           const { data: profile } = await supabase
             .from('profiles')
@@ -135,17 +165,55 @@ export const ChatContainer = ({ channelId, agentId, agentName }: ChatContainerPr
             mentions: payload.new.mentions,
           };
 
-          setMessages((prev) => [...prev, newMessage]);
+          if (isMountedRef.current) {
+            setMessages((prev) => [...prev, newMessage]);
+          }
         }
       )
       .subscribe();
 
+    channelRef.current = channel;
+
+    // Debounced markAsRead
+    if (markAsReadTimeoutRef.current) {
+      clearTimeout(markAsReadTimeoutRef.current);
+    }
+    markAsReadTimeoutRef.current = setTimeout(async () => {
+      if (user?.id) {
+        try {
+          await supabase
+            .from('read_states')
+            .upsert(
+              {
+                conversation_id: channelId,
+                user_id: user.id,
+                last_read_at: new Date().toISOString(),
+              },
+              {
+                onConflict: 'conversation_id,user_id',
+              }
+            );
+        } catch (error) {
+          console.error('Error marking as read:', error);
+        }
+      }
+    }, 300);
+
     return () => {
+      isMountedRef.current = false;
+      abortController.abort();
+      
+      if (markAsReadTimeoutRef.current) {
+        clearTimeout(markAsReadTimeoutRef.current);
+      }
+
       if (channelRef.current) {
+        channelRef.current.unsubscribe();
         supabase.removeChannel(channelRef.current);
+        channelRef.current = null;
       }
     };
-  }, [channelId, toast]);
+  }, [channelId, toast, user?.id]);
 
   const sendMessage = async (content: string) => {
     if (!currentUser) {
@@ -262,9 +330,16 @@ export const ChatContainer = ({ channelId, agentId, agentName }: ChatContainerPr
           <SuggestedPrompts onSelectPrompt={handleSelectPrompt} />
         </div>
       ) : (
-        <MessageList messages={messages} isLoading={isLoading} />
+        <>
+          {isLoadingChannel && (
+            <div className="flex items-center justify-center p-4 text-sm text-muted-foreground">
+              Laddar meddelanden...
+            </div>
+          )}
+          <MessageList messages={messages} isLoading={isLoading} />
+        </>
       )}
-      <ChatInput 
+      <ChatInput
         onSendMessage={sendMessage} 
         disabled={isLoading}
         value={inputValue}
