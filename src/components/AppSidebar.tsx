@@ -227,7 +227,7 @@ export function AppSidebar() {
                 <SidebarMenuItem key={agent.id}>
                   <SidebarMenuButton 
                     asChild
-                    className={location.pathname === agent.url ? "bg-accent text-accent-foreground font-medium hover:bg-accent" : ""}
+                    className={location.pathname === agent.url ? "bg-primary/10 text-primary font-medium hover:bg-primary/20" : "hover:bg-primary/10"}
                   >
                     <NavLink 
                       to={agent.url}
