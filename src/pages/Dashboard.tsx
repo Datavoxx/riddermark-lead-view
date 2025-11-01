@@ -54,6 +54,36 @@ export default function Dashboard() {
           </CardHeader>
         </Card>
 
+        {/* Available Cases Section */}
+        <Card className="animate-fade-in hover:shadow-lg transition-all duration-200" style={{ animationDelay: "0.15s" }}>
+          <CardHeader>
+            <CardTitle>Tillgängliga ärenden</CardTitle>
+            <CardDescription>
+              Ärenden som väntar på att plockas upp
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                  <Archive className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <div className="text-3xl font-bold">{availableCases}</div>
+                  <div className="text-sm text-muted-foreground">Redo att plockas upp</div>
+                </div>
+              </div>
+              <Button 
+                onClick={() => navigate('/blocket/arenden')}
+                className="flex items-center gap-2"
+              >
+                Gå till ärenden
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* KPI Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-in" style={{ animationDelay: "0.2s" }}>
           <Card className="hover:shadow-lg transition-all duration-200 hover:scale-[1.02] animate-slide-up" style={{ animationDelay: "0.3s" }}>
@@ -130,27 +160,6 @@ export default function Dashboard() {
               >
                 <Plus className="h-4 w-4" />
                 Skapa test-lead
-              </Button>
-            </div>
-
-            {/* Available Cases Display */}
-            <div className="bg-muted/20 rounded-lg p-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <Archive className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <div className="font-semibold">{availableCases} tillgängliga ärenden</div>
-                  <div className="text-sm text-muted-foreground">Redo att plockas upp</div>
-                </div>
-              </div>
-              <Button 
-                size="sm"
-                onClick={() => navigate('/blocket/arenden')}
-                className="flex items-center gap-2"
-              >
-                <ArrowRight className="h-4 w-4" />
-                Gå dit
               </Button>
             </div>
           </CardContent>
