@@ -9,7 +9,7 @@ import { TopBar } from "@/components/TopBar";
 import { CreateTestLeadForm } from "@/components/CreateTestLeadForm";
 import { supabase } from "@/integrations/supabase/client";
 import { useDashboardSimulation } from "@/hooks/useDashboardSimulation";
-import { ArrowRight, Plus, Users, Clock, TrendingUp, BarChart3, Archive, Loader2, Store, User, Mail, Car, CheckCircle2 } from "lucide-react";
+import { ArrowRight, Plus, Users, Clock, TrendingUp, BarChart3, Archive, Loader2, Store, User, Mail, Car, CheckCircle2, Target, ArrowUpIcon, ArrowDownIcon } from "lucide-react";
 import { Lead } from "@/types/lead";
 
 export default function Dashboard() {
@@ -19,6 +19,19 @@ export default function Dashboard() {
   const [availableLeads, setAvailableLeads] = useState<Lead[]>([]);
   const [loadingLeads, setLoadingLeads] = useState(true);
   const { metrics, isLoading } = useDashboardSimulation();
+
+  const performanceKPIs = {
+    conversionRate: {
+      value: 24.8,
+      change: -2.1,
+      trend: "down" as "up" | "down"
+    },
+    totalLeads: {
+      value: 1247,
+      change: 12.5,
+      trend: "up" as "up" | "down"
+    }
+  };
 
   const handleLeadCreated = () => {
     setShowCreateDialog(false);
@@ -246,18 +259,96 @@ export default function Dashboard() {
           <CardHeader>
             <CardTitle>Prestation</CardTitle>
             <CardDescription>
-              Se din egna prestation
+              Se din egna prestation och nyckeltal
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex flex-col sm:flex-row gap-4">
+          <CardContent className="space-y-6">
+            {/* KPI Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Conversion Rate Card */}
+              <Card 
+                className="relative overflow-hidden cursor-pointer hover:shadow-md transition-shadow border-2 hover:border-primary/50"
+                onClick={() => navigate("/reports/conversion-rate")}
+              >
+                <CardHeader className="pb-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="p-2 bg-primary/10 rounded-lg">
+                        <Target className="h-4 w-4 text-primary" />
+                      </div>
+                      <CardTitle className="text-sm font-medium text-muted-foreground">
+                        Konverteringsgrad
+                      </CardTitle>
+                    </div>
+                    <div className="flex items-center gap-1 text-xs">
+                      {performanceKPIs.conversionRate.trend === "up" ? (
+                        <ArrowUpIcon className="h-3 w-3 text-success" />
+                      ) : (
+                        <ArrowDownIcon className="h-3 w-3 text-destructive" />
+                      )}
+                      <span className={performanceKPIs.conversionRate.trend === "up" ? "text-success" : "text-destructive"}>
+                        {Math.abs(performanceKPIs.conversionRate.change)}%
+                      </span>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-foreground">
+                    {performanceKPIs.conversionRate.value}%
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Klicka för att se detaljer →
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Total Leads Card */}
+              <Card 
+                className="relative overflow-hidden cursor-pointer hover:shadow-md transition-shadow border-2 hover:border-primary/50"
+                onClick={() => navigate("/reports/total-leads")}
+              >
+                <CardHeader className="pb-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="p-2 bg-primary/10 rounded-lg">
+                        <Users className="h-4 w-4 text-primary" />
+                      </div>
+                      <CardTitle className="text-sm font-medium text-muted-foreground">
+                        Totala Leads
+                      </CardTitle>
+                    </div>
+                    <div className="flex items-center gap-1 text-xs">
+                      {performanceKPIs.totalLeads.trend === "up" ? (
+                        <ArrowUpIcon className="h-3 w-3 text-success" />
+                      ) : (
+                        <ArrowDownIcon className="h-3 w-3 text-destructive" />
+                      )}
+                      <span className={performanceKPIs.totalLeads.trend === "up" ? "text-success" : "text-destructive"}>
+                        {Math.abs(performanceKPIs.totalLeads.change)}%
+                      </span>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-foreground">
+                    {performanceKPIs.totalLeads.value.toLocaleString()}
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Klicka för att se detaljer →
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 pt-2">
               <Button 
                 onClick={() => navigate('/reports')}
                 className="flex items-center gap-2 animate-slide-up"
                 style={{ animationDelay: "0.7s" }}
               >
                 <BarChart3 className="h-4 w-4" />
-                Se Rapporter
+                Se alla Rapporter
                 <ArrowRight className="h-4 w-4" />
               </Button>
               
