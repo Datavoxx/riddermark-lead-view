@@ -28,19 +28,23 @@ export default function Dashboard() {
   const fetchAvailableCases = async () => {
     try {
       setLoadingLeads(true);
-      console.log('Dashboard: Fetching unclaimed leads...');
-      const { data, error } = await supabase
-        .from('leads')
-        .select('*')
-        .eq('claimed', false)
-        .order('created_at', { ascending: false })
-        .limit(3);
+      console.log('Dashboard: Fetching unclaimed leads via api-leads...');
       
-      if (error) {
-        console.error('Dashboard: Error fetching leads:', error);
-        throw error;
+      const params = new URLSearchParams({
+        status: 'unclaimed',
+        order: 'created_at.desc',
+        limit: '3'
+      });
+
+      const response = await fetch(
+        `https://fjqsaixszaqceviqwboz.functions.supabase.co/api-leads?${params}`
+      );
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
       }
-      
+
+      const data = await response.json();
       console.log('Dashboard: Received leads:', data?.length || 0, data);
       setAvailableLeads(data || []);
     } catch (error) {
