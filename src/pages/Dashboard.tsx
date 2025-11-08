@@ -28,6 +28,7 @@ export default function Dashboard() {
   const fetchAvailableCases = async () => {
     try {
       setLoadingLeads(true);
+      console.log('Dashboard: Fetching unclaimed leads...');
       const { data, error } = await supabase
         .from('leads')
         .select('*')
@@ -35,7 +36,12 @@ export default function Dashboard() {
         .order('created_at', { ascending: false })
         .limit(3);
       
-      if (error) throw error;
+      if (error) {
+        console.error('Dashboard: Error fetching leads:', error);
+        throw error;
+      }
+      
+      console.log('Dashboard: Received leads:', data?.length || 0, data);
       setAvailableLeads(data || []);
     } catch (error) {
       console.error('Error fetching available cases:', error);
