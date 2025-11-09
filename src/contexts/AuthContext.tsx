@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
 
 interface AuthContextType {
   user: User | null;
@@ -18,7 +17,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  const { toast } = useToast();
 
   useEffect(() => {
     // Set up auth state listener
@@ -50,18 +48,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (error) {
-        toast({
-          title: "Inloggning misslyckades",
-          description: error.message,
-          variant: "destructive",
-        });
+        console.error('Sign in error:', error.message);
         return { error };
       }
-
-      toast({
-        title: "Välkommen tillbaka!",
-        description: "Du är nu inloggad.",
-      });
 
       return { error: null };
     } catch (error) {
@@ -83,18 +72,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (error) {
-        toast({
-          title: "Registrering misslyckades",
-          description: error.message,
-          variant: "destructive",
-        });
+        console.error('Sign up error:', error.message);
         return { error };
       }
-
-      toast({
-        title: "Registrering lyckades!",
-        description: "Kontrollera din e-post för bekräftelse.",
-      });
 
       return { error: null };
     } catch (error) {
@@ -106,10 +86,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     try {
       await supabase.auth.signOut();
-      toast({
-        title: "Du har loggats ut",
-        description: "Ha det så bra!",
-      });
     } catch (error) {
       console.error('Sign out error:', error);
     }
