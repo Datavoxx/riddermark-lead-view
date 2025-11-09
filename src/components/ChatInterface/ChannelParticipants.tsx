@@ -31,23 +31,32 @@ export const ChannelParticipants = ({ channelId }: ChannelParticipantsProps) => 
   const loadParticipants = async () => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase
+      // Hämta deltagare och sedan deras profiler separat
+      const { data: participantData, error: participantError } = await supabase
         .from('channel_participants')
-        .select(`
-          user_id,
-          profiles!channel_participants_user_id_fkey(
-            name,
-            email
-          )
-        `)
+        .select('user_id')
         .eq('channel_id', channelId);
 
-      if (error) throw error;
+      if (participantError) throw participantError;
 
-      const formattedParticipants: Participant[] = (data || []).map((p: any) => ({
-        user_id: p.user_id,
-        name: p.profiles?.name,
-        email: p.profiles?.email,
+      if (!participantData || participantData.length === 0) {
+        setParticipants([]);
+        return;
+      }
+
+      // Hämta profiler för alla användare
+      const userIds = participantData.map(p => p.user_id);
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('user_id, name, email')
+        .in('user_id', userIds);
+
+      if (profileError) throw profileError;
+
+      const formattedParticipants: Participant[] = (profileData || []).map((profile: any) => ({
+        user_id: profile.user_id,
+        name: profile.name,
+        email: profile.email,
       }));
 
       setParticipants(formattedParticipants);
