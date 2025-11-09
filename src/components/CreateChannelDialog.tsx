@@ -86,13 +86,8 @@ export function CreateChannelDialog({ open, onOpenChange, onChannelCreated }: Cr
 
     setIsLoading(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      console.log('Session:', session);
-      console.log('User ID:', session?.user?.id);
-      console.log('Access token exists:', !!session?.access_token);
-      
-      if (!session?.user) throw new Error('Inte inloggad');
-      const user = session.user;
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Inte inloggad');
 
       const { data: channel, error: channelError } = await supabase
         .from('group_channels')
