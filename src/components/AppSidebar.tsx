@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Home, FileText, Archive, LogOut, Car, Bot, Hash, ChevronDown, Bell, Plus } from "lucide-react";
+import { Home, FileText, Archive, LogOut, Car, Bot, Hash, ChevronDown, Bell, Plus, Users } from "lucide-react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import Logo from "@/assets/Logo";
@@ -255,7 +255,7 @@ export function AppSidebar() {
                       className="flex items-center justify-between w-full"
                     >
                       <div className="flex items-center gap-2">
-                        <Hash className="h-4 w-4" />
+                        <Users className="h-4 w-4" />
                         <span>{channel.name}</span>
                       </div>
                       {unreadCounts[channel.id] > 0 && (

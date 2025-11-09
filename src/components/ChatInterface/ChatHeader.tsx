@@ -1,4 +1,4 @@
-import { Clock, Hash, RotateCcw } from 'lucide-react';
+import { Clock, Hash, RotateCcw, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ChannelParticipants } from './ChannelParticipants';
 
@@ -11,7 +11,7 @@ interface ChatHeaderProps {
 
 export const ChatHeader = ({ channelId, channelName, onClearMessages, isGroupChannel }: ChatHeaderProps) => {
   const displayName = channelName || 'Chat';
-  const Icon = channelId ? Hash : Clock;
+  const Icon = isGroupChannel ? Users : (channelId ? Hash : Clock);
 
   return (
     <div className="flex items-center justify-between p-4 border-b">
