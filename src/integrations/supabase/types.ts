@@ -14,6 +14,32 @@ export type Database = {
   }
   public: {
     Tables: {
+      channel_participants: {
+        Row: {
+          channel_id: string
+          joined_at: string | null
+          user_id: string
+        }
+        Insert: {
+          channel_id: string
+          joined_at?: string | null
+          user_id: string
+        }
+        Update: {
+          channel_id?: string
+          joined_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "channel_participants_channel_id_fkey"
+            columns: ["channel_id"]
+            isOneToOne: false
+            referencedRelation: "group_channels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       conversations: {
         Row: {
           created_at: string
@@ -77,6 +103,30 @@ export type Database = {
           resume_url?: string | null
           status?: string
           text?: string
+        }
+        Relationships: []
+      }
+      group_channels: {
+        Row: {
+          created_at: string | null
+          created_by: string
+          id: string
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by: string
+          id?: string
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string
+          id?: string
+          name?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
