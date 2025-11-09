@@ -24,18 +24,16 @@ import NotFound from "./pages/NotFound";
 import BilAnnonsgenerator from "./pages/BilAnnonsgenerator";
 import Agent from "./pages/Agent";
 import Notiser from "./pages/Notiser";
-import { useState } from "react";
 
-const App = () => {
-  const [queryClient] = useState(() => new QueryClient());
-  
-  return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <AuthProvider>
-          <Toaster />
-          <Sonner />
-          <EmailDraftModal />
+const queryClient = new QueryClient();
+
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <AuthProvider>
+        <EmailDraftModal />
           <BrowserRouter>
           <Routes>
             <Route path="/test" element={<Index />} />
@@ -73,7 +71,6 @@ const App = () => {
       </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
-  );
-};
+);
 
 export default App;
