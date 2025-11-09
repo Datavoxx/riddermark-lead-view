@@ -86,30 +86,13 @@ export function CreateChannelDialog({ open, onOpenChange, onChannelCreated }: Cr
 
     setIsLoading(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Inte inloggad');
+      const { data: channelId, error } = await supabase
+        .rpc('create_group_channel', {
+          _name: channelName,
+          _participant_ids: selectedUsers
+        });
 
-      const { data: channel, error: channelError } = await supabase
-        .from('group_channels')
-        .insert({
-          name: channelName,
-          created_by: user.id,
-        })
-        .select()
-        .single();
-
-      if (channelError) throw channelError;
-
-      const participants = [...selectedUsers, user.id].map(userId => ({
-        channel_id: channel.id,
-        user_id: userId,
-      }));
-
-      const { error: participantsError } = await supabase
-        .from('channel_participants')
-        .insert(participants);
-
-      if (participantsError) throw participantsError;
+      if (error) throw error;
 
       toast({
         title: 'Kanal skapad!',

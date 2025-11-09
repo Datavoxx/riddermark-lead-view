@@ -378,6 +378,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_group_channel: {
+        Args: { _name: string; _participant_ids: string[] }
+        Returns: string
+      }
       get_or_create_conversation: {
         Args: { user1_id: string; user2_id: string }
         Returns: string
