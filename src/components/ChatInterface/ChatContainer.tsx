@@ -22,13 +22,15 @@ export const ChatContainer = ({ channelId, agentId, agentName }: ChatContainerPr
   const [inputValue, setInputValue] = useState('');
   const [currentUser, setCurrentUser] = useState<{ id: string; name: string } | null>(null);
   const [otherUserName, setOtherUserName] = useState<string>('');
+  const [channelName, setChannelName] = useState<string>('');
+  const [isGroupChannel, setIsGroupChannel] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
   const channelRef = useRef<RealtimeChannel | null>(null);
   const isMountedRef = useRef(true);
   const markAsReadTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Ladda aktuell användare och hitta namnet på den andra användaren
+  // Ladda aktuell användare och hitta namnet på den andra användaren eller gruppkanalen
   useEffect(() => {
     const loadCurrentUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -44,26 +46,39 @@ export const ChatContainer = ({ channelId, agentId, agentName }: ChatContainerPr
           name: profile?.name || user.email || 'Okänd'
         });
 
-        // Om vi har en channelId (conversation_id), hitta den andra användaren
         if (channelId) {
-          const { data: conversation } = await supabase
-            .from('conversations')
-            .select('participant_1_id, participant_2_id')
+          // Kolla först om det är en gruppkanal
+          const { data: groupChannel } = await supabase
+            .from('group_channels')
+            .select('name')
             .eq('id', channelId)
-            .single();
+            .maybeSingle();
 
-          if (conversation) {
-            const otherUserId = conversation.participant_1_id === user.id
-              ? conversation.participant_2_id
-              : conversation.participant_1_id;
+          if (groupChannel) {
+            setChannelName(groupChannel.name);
+            setIsGroupChannel(true);
+          } else {
+            // Om inte gruppkanal, kolla conversations
+            const { data: conversation } = await supabase
+              .from('conversations')
+              .select('participant_1_id, participant_2_id')
+              .eq('id', channelId)
+              .maybeSingle();
 
-            const { data: otherProfile } = await supabase
-              .from('profiles')
-              .select('name')
-              .eq('user_id', otherUserId)
-              .single();
+            if (conversation) {
+              const otherUserId = conversation.participant_1_id === user.id
+                ? conversation.participant_2_id
+                : conversation.participant_1_id;
 
-            setOtherUserName(otherProfile?.name || 'Okänd');
+              const { data: otherProfile } = await supabase
+                .from('profiles')
+                .select('name')
+                .eq('user_id', otherUserId)
+                .single();
+
+              setOtherUserName(otherProfile?.name || 'Okänd');
+              setIsGroupChannel(false);
+            }
           }
         }
       }
@@ -322,8 +337,9 @@ export const ChatContainer = ({ channelId, agentId, agentName }: ChatContainerPr
     <div className="flex flex-col h-screen bg-background">
       <ChatHeader 
         channelId={channelId} 
-        channelName={agentName || otherUserName}
-        onClearMessages={handleClearMessages} 
+        channelName={agentName || channelName || otherUserName}
+        onClearMessages={handleClearMessages}
+        isGroupChannel={isGroupChannel}
       />
       {showSuggestedPrompts ? (
         <div className="flex-1 overflow-y-auto flex items-center justify-center">

@@ -1,13 +1,15 @@
 import { Clock, Hash, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ChannelParticipants } from './ChannelParticipants';
 
 interface ChatHeaderProps {
   channelId?: string;
   channelName?: string;
   onClearMessages: () => void;
+  isGroupChannel?: boolean;
 }
 
-export const ChatHeader = ({ channelId, channelName, onClearMessages }: ChatHeaderProps) => {
+export const ChatHeader = ({ channelId, channelName, onClearMessages, isGroupChannel }: ChatHeaderProps) => {
   const displayName = channelName || 'Chat';
   const Icon = channelId ? Hash : Clock;
 
@@ -17,15 +19,20 @@ export const ChatHeader = ({ channelId, channelName, onClearMessages }: ChatHead
         <Icon className="w-5 h-5 text-muted-foreground" />
         <span className="text-sm text-muted-foreground">{displayName}</span>
       </div>
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={onClearMessages}
-        className="gap-2"
-      >
-        <RotateCcw className="h-4 w-4" />
-        Ny chatt
-      </Button>
+      <div className="flex items-center gap-2">
+        {isGroupChannel && channelId && (
+          <ChannelParticipants channelId={channelId} />
+        )}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onClearMessages}
+          className="gap-2"
+        >
+          <RotateCcw className="h-4 w-4" />
+          Ny chatt
+        </Button>
+      </div>
     </div>
   );
 };
