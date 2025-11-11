@@ -60,9 +60,11 @@ export default function Login() {
       setIsLoading(false);
     } else {
       toast({
-        title: "Registrering lyckades!",
-        description: "Du kan nu logga in med ditt konto."
+        title: "Bekräfta din e-post",
+        description: "Vi har skickat en bekräftelselänk till din e-post. Vänligen kontrollera din inkorg och bekräfta din e-postadress innan du loggar in.",
+        duration: 8000,
       });
+      setIsLoading(false);
     }
   };
 
