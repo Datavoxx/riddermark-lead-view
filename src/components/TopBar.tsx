@@ -1,5 +1,4 @@
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface TopBarProps {
   title: string;
@@ -12,7 +11,6 @@ export function TopBar({ title }: TopBarProps) {
         <SidebarTrigger className="mr-4" />
         <h1 className="font-semibold text-foreground">{title}</h1>
       </div>
-      <ThemeToggle />
     </header>
   );
 }
