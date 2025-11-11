@@ -165,7 +165,7 @@ export function AppSidebar() {
     <Sidebar className="border-r border-border">
       <SidebarHeader className="p-4">
         <div className="flex items-center justify-center">
-          <Logo h={32} />
+          <Logo h={56} />
         </div>
       </SidebarHeader>
 
