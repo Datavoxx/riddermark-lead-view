@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Eye, EyeOff } from "lucide-react";
 import Logo from "@/assets/Logo";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -18,6 +19,8 @@ export default function Login() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
   const { signIn, signUp, user } = useAuth();
   const location = useLocation();
   const { toast } = useToast();
@@ -48,14 +51,14 @@ export default function Login() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-
+    
     const { error } = await signUp(email, password, firstName, lastName, phoneNumber);
     
     if (error) {
       toast({
         title: "Registrering misslyckades",
         description: error.message,
-        variant: "destructive"
+        variant: "destructive",
       });
       setIsLoading(false);
     } else {
@@ -67,6 +70,91 @@ export default function Login() {
       setIsLoading(false);
     }
   };
+
+  const handlePasswordReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+      redirectTo: `${window.location.origin}/`,
+    });
+
+    if (error) {
+      toast({
+        title: "Fel",
+        description: error.message,
+        variant: "destructive",
+      });
+      setIsLoading(false);
+    } else {
+      toast({
+        title: "E-post skickad",
+        description: "Om kontot finns kommer du få en återställningslänk till din e-post.",
+        duration: 8000,
+      });
+      setIsLoading(false);
+      setShowForgotPassword(false);
+      setResetEmail('');
+    }
+  };
+
+  if (showForgotPassword) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background p-4">
+        <Card className="w-full max-w-md animate-fade-in shadow-xl">
+          <CardHeader className="text-center">
+            <div className="flex justify-center mb-4">
+              <Logo h={96} />
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-2 text-center">
+              <h2 className="text-2xl font-semibold">Återställ lösenord</h2>
+              <p className="text-sm text-muted-foreground">
+                Ange din e-postadress så skickar vi en återställningslänk
+              </p>
+            </div>
+            <form onSubmit={handlePasswordReset} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="reset-email">E-post</Label>
+                <Input
+                  id="reset-email"
+                  type="email"
+                  placeholder="din@email.se"
+                  value={resetEmail}
+                  onChange={(e) => setResetEmail(e.target.value)}
+                  required
+                  disabled={isLoading}
+                  className="transition-all duration-200 focus:shadow-lg focus:shadow-primary/10"
+                />
+              </div>
+              <Button 
+                type="submit" 
+                className="w-full"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-primary-foreground/20 border-t-primary-foreground rounded-full animate-spin" />
+                    Skickar...
+                  </div>
+                ) : (
+                  "Skicka återställningslänk"
+                )}
+              </Button>
+              <button
+                type="button"
+                onClick={() => setShowForgotPassword(false)}
+                className="text-sm text-primary hover:underline w-full text-center"
+              >
+                Tillbaka till inloggning
+              </button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
@@ -137,6 +225,14 @@ export default function Login() {
                     "Fortsätt"
                   )}
                 </Button>
+                <button
+                  type="button"
+                  onClick={() => setShowForgotPassword(true)}
+                  className="text-sm text-primary hover:underline w-full text-center animate-slide-up"
+                  style={{ animationDelay: "0.6s" }}
+                >
+                  Har du glömt ditt lösenord?
+                </button>
               </form>
             </TabsContent>
             
