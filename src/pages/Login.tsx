@@ -124,7 +124,7 @@ export default function Login() {
                     Skickar...
                   </div> : "Skicka återställningslänk"}
               </Button>
-              <button type="button" onClick={() => setShowForgotPassword(false)} className="text-sm text-primary hover:underline w-full text-center">
+              <button type="button" onClick={() => setShowForgotPassword(false)} className="text-sm hover:underline w-full text-center text-neutral-950">
                 Tillbaka till inloggning
               </button>
             </form>
