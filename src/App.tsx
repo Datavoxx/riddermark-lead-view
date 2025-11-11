@@ -9,6 +9,7 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AppSidebar } from "@/components/AppSidebar";
 import { EmailDraftModal } from "@/components/EmailDraftModal";
 import Login from "./pages/Login";
+import ResetPassword from "./pages/ResetPassword";
 import Dashboard from "./pages/Dashboard";
 import Channel from "./pages/Channel";
 
@@ -38,6 +39,7 @@ const App = () => (
           <Routes>
             <Route path="/test" element={<Index />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/*" element={
               <ProtectedRoute>
                 <SidebarProvider>
