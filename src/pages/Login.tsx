@@ -40,7 +40,7 @@ export default function Login() {
       <Card className="w-full max-w-md animate-fade-in shadow-xl">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
-            <Logo h={48} />
+            <Logo h={96} />
           </div>
         </CardHeader>
         
