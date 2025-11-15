@@ -211,7 +211,7 @@ export default function ArendenList() {
                 <Badge
                   key={filter.key}
                   variant={statusFilter === filter.key ? "default" : "outline"}
-                  className="cursor-pointer px-4 py-1.5 transition-all hover:scale-105"
+                  className="cursor-pointer px-4 py-1.5 transition-all hover:scale-[1.02]"
                   onClick={() => setStatusFilter(filter.key)}
                 >
                   {filter.label}
@@ -298,8 +298,8 @@ export default function ArendenList() {
                   }}
                 >
                   <Card 
-                    className={`group hover:shadow-lg transition-all duration-200 cursor-pointer border hover:border-primary/50 overflow-hidden h-full flex flex-col ${
-                      isNew ? 'animate-pulse border-primary shadow-[0_0_30px_rgba(0,0,0,0.3)] dark:shadow-[0_0_30px_rgba(255,255,255,0.2)] bg-primary/5' : ''
+                    className={`group hover:shadow-lg transition-all duration-200 cursor-pointer border hover:border-primary/50 overflow-hidden h-full flex flex-col hover:scale-[1.01] ${
+                      isNew ? 'border-primary/60 bg-primary/5 animate-fade-in' : ''
                     }`}
                     onClick={() => navigate(`/blocket/arenden/${lead.id}`)}
                   >
@@ -366,7 +366,7 @@ export default function ArendenList() {
                         <img 
                           src={lead.preview_image_url} 
                           alt="Fordonsannons"
-                          className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-300"
+                          className="w-full h-32 object-cover group-hover:scale-[1.02] transition-transform duration-200"
                         />
                       </div>
                     )}

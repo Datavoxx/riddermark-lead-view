@@ -240,9 +240,7 @@ export default function Login() {
           </div>
         </CardHeader>
         
-        <CardContent className="animate-fade-in" style={{
-        animationDelay: "0.2s"
-      }}>
+        <CardContent className="animate-fade-in">
           <Tabs defaultValue="login" className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-6">
               <TabsTrigger value="login">Logga in</TabsTrigger>
@@ -251,16 +249,12 @@ export default function Login() {
             
             <TabsContent value="login">
               <form onSubmit={handleLogin} className="space-y-4">
-                <div className="space-y-2 animate-slide-up" style={{
-                animationDelay: "0.3s"
-              }}>
+                <div className="space-y-2 animate-slide-up">
                   <Label htmlFor="login-email">E-post</Label>
                   <Input id="login-email" type="email" placeholder="din@email.se" value={email} onChange={e => setEmail(e.target.value)} required disabled={isLoading} className="transition-all duration-200 focus:shadow-lg focus:shadow-primary/10" />
                 </div>
                 
-                <div className="space-y-2 animate-slide-up" style={{
-                animationDelay: "0.4s"
-              }}>
+                <div className="space-y-2 animate-slide-up">
                   <Label htmlFor="login-password">Lösenord</Label>
                   <div className="relative">
                     <Input id="login-password" type={showPassword ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)} required disabled={isLoading} className="transition-all duration-200 focus:shadow-lg focus:shadow-primary/10 pr-10" />
@@ -270,17 +264,13 @@ export default function Login() {
                   </div>
                 </div>
                 
-                <Button type="submit" className="w-full animate-slide-up" style={{
-                animationDelay: "0.5s"
-              }} disabled={isLoading}>
+                <Button type="submit" className="w-full animate-slide-up" disabled={isLoading}>
                   {isLoading ? <div className="flex items-center gap-2">
                       <div className="w-4 h-4 border-2 border-primary-foreground/20 border-t-primary-foreground rounded-full animate-spin" />
                       Loggar in...
                     </div> : "Fortsätt"}
                 </Button>
-                <button type="button" onClick={() => setShowForgotPassword(true)} style={{
-                animationDelay: "0.6s"
-              }} className="text-sm hover:underline w-full text-center animate-slide-up text-neutral-950">
+                <button type="button" onClick={() => setShowForgotPassword(true)} className="text-sm hover:underline w-full text-center animate-slide-up text-neutral-950">
                   Har du glömt ditt lösenord?
                 </button>
               </form>

@@ -107,7 +107,7 @@ export const CreateTestLeadForm = ({ onLeadCreated }: CreateTestLeadFormProps) =
           <DialogTitle>Skapa test-lead</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="animate-slide-up" style={{ animationDelay: "0.1s" }}>
+          <div>
             <Label htmlFor="blocket_url">Blocket URL</Label>
             <Input
               id="blocket_url"
@@ -120,7 +120,7 @@ export const CreateTestLeadForm = ({ onLeadCreated }: CreateTestLeadFormProps) =
             />
           </div>
           
-          <div className="animate-slide-up" style={{ animationDelay: "0.2s" }}>
+          <div>
             <Label htmlFor="lead_namn">Namn</Label>
             <Input
               id="lead_namn"
@@ -132,7 +132,7 @@ export const CreateTestLeadForm = ({ onLeadCreated }: CreateTestLeadFormProps) =
             />
           </div>
           
-          <div className="animate-slide-up" style={{ animationDelay: "0.3s" }}>
+          <div>
             <Label htmlFor="lead_email">E-post</Label>
             <Input
               id="lead_email"
@@ -145,7 +145,7 @@ export const CreateTestLeadForm = ({ onLeadCreated }: CreateTestLeadFormProps) =
             />
           </div>
           
-          <div className="animate-slide-up" style={{ animationDelay: "0.4s" }}>
+          <div>
             <Label htmlFor="regnr">Registreringsnummer</Label>
             <Input
               id="regnr"
@@ -157,7 +157,7 @@ export const CreateTestLeadForm = ({ onLeadCreated }: CreateTestLeadFormProps) =
             />
           </div>
           
-          <div className="animate-slide-up" style={{ animationDelay: "0.5s" }}>
+          <div>
             <Label htmlFor="summary">Sammanfattning</Label>
             <Textarea
               id="summary"
@@ -172,9 +172,8 @@ export const CreateTestLeadForm = ({ onLeadCreated }: CreateTestLeadFormProps) =
           
           <Button 
             type="submit" 
-            disabled={isLoading} 
-            className="w-full animate-slide-up" 
-            style={{ animationDelay: "0.6s" }}
+            disabled={isLoading}
+            className="w-full"
           >
             {isLoading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
             Skapa lead

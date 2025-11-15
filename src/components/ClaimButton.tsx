@@ -64,7 +64,7 @@ export const ClaimButton = ({ leadId, onClaim }: ClaimButtonProps) => {
     return (
       <div className="flex items-center gap-2 animate-fade-in">
         <Button variant="secondary" disabled className="flex items-center gap-2">
-          <CheckCircle className="h-4 w-4 text-success animate-glow" />
+          <CheckCircle className="h-4 w-4 text-success" />
           Ta över ärendet
         </Button>
         <Badge variant="secondary" className="bg-success text-success-foreground animate-scale-in">

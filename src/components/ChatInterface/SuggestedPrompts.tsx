@@ -33,10 +33,9 @@ export const SuggestedPrompts = ({ onSelectPrompt, isAnimating }: SuggestedPromp
       {prompts.map((prompt, index) => (
         <Card
           key={prompt.id}
-          className={`p-4 cursor-pointer hover:bg-accent/50 transition-all duration-300 border-border hover:border-primary/20 rounded-xl hover-scale animate-fade-in ${
+          className={`p-4 cursor-pointer hover:bg-accent/50 transition-all duration-200 border-border hover:border-primary/20 rounded-xl hover:scale-[1.02] animate-fade-in ${
             isAnimating ? 'opacity-0 translate-y-2' : 'opacity-100'
           }`}
-          style={{ animationDelay: `${index * 0.05}s` }}
           onClick={() => onSelectPrompt(prompt.text)}
         >
           <div className="flex items-center gap-3">
