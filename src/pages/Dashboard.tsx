@@ -87,15 +87,15 @@ export default function Dashboard() {
         {/* Welcome Section */}
         <Card className="animate-fade-in">
           <CardHeader>
-            <CardTitle className="animate-slide-up">Välkommen tillbaka, {user?.email?.split('@')[0]}</CardTitle>
-            <CardDescription className="animate-slide-up" style={{ animationDelay: "0.1s" }}>
+            <CardTitle>Välkommen tillbaka, {user?.email?.split('@')[0]}</CardTitle>
+            <CardDescription>
               Här är en översikt av dina leads och aktiviteter
             </CardDescription>
           </CardHeader>
         </Card>
 
         {/* Available Cases Section */}
-        <Card className="animate-fade-in" style={{ animationDelay: "0.15s" }}>
+        <Card className="animate-fade-in">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
@@ -142,7 +142,7 @@ export default function Dashboard() {
                 {availableLeads.map((lead) => (
                   <Card 
                     key={lead.id}
-                    className="group hover:shadow-lg transition-all duration-200 cursor-pointer border hover:border-primary/50 overflow-hidden flex flex-col"
+                    className="group hover:shadow-lg transition-all duration-200 cursor-pointer border hover:border-primary/50 overflow-hidden flex flex-col hover:scale-[1.01]"
                     onClick={() => navigate(`/blocket/arenden/${lead.id}`)}
                   >
                     <CardHeader className="pb-3">
@@ -194,7 +194,7 @@ export default function Dashboard() {
                           <img 
                             src={lead.preview_image_url} 
                             alt="Fordonsannons"
-                            className="w-full h-24 object-cover group-hover:scale-105 transition-transform duration-300"
+                            className="w-full h-24 object-cover group-hover:scale-[1.02] transition-transform duration-200"
                           />
                         </div>
                       )}
@@ -207,8 +207,8 @@ export default function Dashboard() {
         </Card>
 
         {/* KPI Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-in" style={{ animationDelay: "0.2s" }}>
-          <Card className="hover:shadow-lg transition-all duration-200 hover:scale-[1.02] animate-slide-up" style={{ animationDelay: "0.3s" }}>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-in">
+          <Card className="hover:shadow-lg transition-all duration-200 hover:scale-[1.02] animate-slide-up">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Nya leads idag</CardTitle>
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
@@ -223,7 +223,7 @@ export default function Dashboard() {
             </CardContent>
           </Card>
           
-          <Card className="hover:shadow-lg transition-all duration-200 hover:scale-[1.02] animate-slide-up" style={{ animationDelay: "0.4s" }}>
+          <Card className="hover:shadow-lg transition-all duration-200 hover:scale-[1.02] animate-slide-up">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Upplockade</CardTitle>
               <Users className="h-4 w-4 text-muted-foreground" />
@@ -238,7 +238,7 @@ export default function Dashboard() {
             </CardContent>
           </Card>
           
-          <Card className="hover:shadow-lg transition-all duration-200 hover:scale-[1.02] animate-slide-up" style={{ animationDelay: "0.5s" }}>
+          <Card className="hover:shadow-lg transition-all duration-200 hover:scale-[1.02] animate-slide-up">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Svarstid medel</CardTitle>
               <Clock className="h-4 w-4 text-muted-foreground" />
@@ -255,7 +255,7 @@ export default function Dashboard() {
         </div>
 
         {/* Performance Section */}
-        <Card className="animate-fade-in hover:shadow-lg transition-all duration-200" style={{ animationDelay: "0.6s" }}>
+        <Card className="animate-fade-in hover:shadow-lg transition-all duration-200">
           <CardHeader>
             <CardTitle>Prestation</CardTitle>
             <CardDescription>
@@ -345,7 +345,6 @@ export default function Dashboard() {
               <Button 
                 onClick={() => navigate('/reports')}
                 className="flex items-center gap-2 animate-slide-up"
-                style={{ animationDelay: "0.7s" }}
               >
                 <BarChart3 className="h-4 w-4" />
                 Se alla Rapporter
@@ -356,7 +355,6 @@ export default function Dashboard() {
                 variant="secondary"
                 onClick={() => setShowCreateDialog(true)}
                 className="flex items-center gap-2 animate-slide-up"
-                style={{ animationDelay: "0.8s" }}
               >
                 <Plus className="h-4 w-4" />
                 Skapa test-lead

@@ -204,7 +204,7 @@ export const VoiceRecorder = ({ onRecordingComplete, leadId, resumeUrl }: VoiceR
           <Button
             onClick={startRecording}
             variant="secondary"
-            className="flex items-center gap-2 hover:scale-105 transition-transform"
+            className="flex items-center gap-2 hover:scale-[1.02] transition-transform"
           >
             <Mic className="h-4 w-4" />
             Spela in röstmeddelande 🎙️
