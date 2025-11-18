@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -23,6 +23,13 @@ export function EditChannelDialog({
 }: EditChannelDialogProps) {
   const [name, setName] = useState(currentName);
   const [loading, setLoading] = useState(false);
+
+  // Reset name when dialog opens or currentName changes
+  useEffect(() => {
+    if (open) {
+      setName(currentName);
+    }
+  }, [open, currentName]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
