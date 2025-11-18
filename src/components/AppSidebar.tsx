@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { CreateChannelDialog } from "@/components/CreateChannelDialog";
+import { GroupChannelMenu } from "@/components/GroupChannelMenu";
 import {
   Sidebar,
   SidebarContent,
@@ -100,7 +101,7 @@ export function AppSidebar() {
 
     const { data: channels, error } = await supabase
       .from('group_channels')
-      .select('id, name, created_at')
+      .select('id, name, created_at, created_by')
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -245,7 +246,7 @@ export function AppSidebar() {
               ))}
 
               {groupChannels.map((channel) => (
-                <SidebarMenuItem key={channel.id}>
+                <SidebarMenuItem key={channel.id} className="group">
                   <SidebarMenuButton 
                     asChild
                     className={location.pathname === `/channel/${channel.id}` ? "bg-accent text-accent-foreground font-medium hover:bg-accent" : ""}
@@ -254,18 +255,29 @@ export function AppSidebar() {
                       to={`/channel/${channel.id}`}
                       className="flex items-center justify-between w-full"
                     >
-                      <div className="flex items-center gap-2">
-                        <Users className="h-4 w-4" />
-                        <span>{channel.name}</span>
+                      <div className="flex items-center gap-2 flex-1 min-w-0">
+                        <Users className="h-4 w-4 flex-shrink-0" />
+                        <span className="truncate">{channel.name}</span>
                       </div>
-                      {unreadCounts[channel.id] > 0 && (
-                        <Badge 
-                          variant="default" 
-                          className="ml-auto h-5 min-w-5 rounded-full px-1.5 text-xs font-medium bg-primary text-primary-foreground"
-                        >
-                          {unreadCounts[channel.id]}
-                        </Badge>
-                      )}
+                      <div className="flex items-center gap-1 ml-2">
+                        {unreadCounts[channel.id] > 0 && (
+                          <Badge 
+                            variant="default" 
+                            className="h-5 min-w-5 rounded-full px-1.5 text-xs font-medium bg-primary text-primary-foreground"
+                          >
+                            {unreadCounts[channel.id]}
+                          </Badge>
+                        )}
+                        <GroupChannelMenu
+                          channelId={channel.id}
+                          channelName={channel.name}
+                          createdBy={channel.created_by}
+                          currentChannelId={location.pathname.split('/')[2]}
+                          onSuccess={() => {
+                            fetchGroupChannels();
+                          }}
+                        />
+                      </div>
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
