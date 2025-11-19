@@ -246,7 +246,7 @@ export default function ArendeDetail() {
                       onClick={() => setShowEmailForm(!showEmailForm)}
                     >
                       <Mail className="h-4 w-4" />
-                      Skriv mejl
+                      Skriv text
                     </Button>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -281,7 +281,7 @@ export default function ArendeDetail() {
                   {showEmailForm && (
                     <div className="w-full border-t pt-4">
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="text-sm font-medium">✉️ Skriv mejl</span>
+                        <span className="text-sm font-medium">✉️ Skriv text</span>
                       </div>
                       <Textarea
                         value={emailText}
