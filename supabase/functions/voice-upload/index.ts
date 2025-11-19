@@ -31,64 +31,87 @@ serve(async (req) => {
     }
 
     const formData = await req.formData();
-    const audioFile = formData.get('audio') as File;
+    const audioFile = formData.get('audio') as File | null;
+    const textMessage = formData.get('text_message') as string | null;
+    const messageType = formData.get('message_type') as string || 'voice';
     const leadId = formData.get('lead_id') as string;
-    const durationMs = parseInt(formData.get('duration_ms') as string);
+    const durationMs = formData.get('duration_ms') ? parseInt(formData.get('duration_ms') as string) : null;
     const threadId = formData.get('thread_id') as string || leadId;
     const waitWebhook = formData.get('wait_webhook') as string || '';
 
-    if (!audioFile || !leadId) {
-      throw new Error('Missing required fields: audio, lead_id');
+    // Validate: must have either audio OR text_message
+    if (!audioFile && !textMessage) {
+      throw new Error('Missing required fields: either audio or text_message must be provided');
     }
 
-    console.log('Processing voice upload for lead:', leadId);
+    if (!leadId) {
+      throw new Error('Missing required field: lead_id');
+    }
+
+    console.log(`Processing ${messageType} message for lead:`, leadId);
 
     // Generate correlation ID
     const correlationId = crypto.randomUUID();
     
-    // Create storage path
-    const storagePath = `voice/${threadId}/${correlationId}.webm`;
-    
-    // Upload to Supabase storage
-    const arrayBuffer = await audioFile.arrayBuffer();
-    const { data: uploadData, error: uploadError } = await supabase.storage
-      .from('voice-recordings')
-      .upload(`${user.id}/${storagePath}`, arrayBuffer, {
-        contentType: 'audio/webm',
-        upsert: false
-      });
-
-    if (uploadError) {
-      console.error('Upload error:', uploadError);
-      throw new Error(`Failed to upload audio: ${uploadError.message}`);
-    }
-
-    console.log('Audio uploaded successfully:', uploadData.path);
-
-    // Get signed URL (valid for 1 hour)
-    const { data: signedUrlData, error: signedUrlError } = await supabase.storage
-      .from('voice-recordings')
-      .createSignedUrl(`${user.id}/${storagePath}`, 3600);
-
-    if (signedUrlError) {
-      console.error('Signed URL error:', signedUrlError);
-      throw new Error('Failed to create signed URL');
-    }
-
-    const audioUrl = signedUrlData.signedUrl;
-    console.log('Generated signed URL');
-
-    // Send data to n8n webhook
-    const webhookPayload = {
+    let webhookPayload: any = {
+      message_type: messageType,
       thread_id: threadId,
       wait_webhook: waitWebhook,
       lead_id: leadId,
       correlation_id: correlationId,
       lang: 'sv',
-      duration_ms: durationMs,
-      storage_path: storagePath,
-      audio_url: audioUrl
     };
+
+    // Handle voice messages
+    if (messageType === 'voice' && audioFile) {
+      // Create storage path
+      const storagePath = `voice/${threadId}/${correlationId}.webm`;
+      
+      // Upload to Supabase storage
+      const arrayBuffer = await audioFile.arrayBuffer();
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('voice-recordings')
+        .upload(`${user.id}/${storagePath}`, arrayBuffer, {
+          contentType: 'audio/webm',
+          upsert: false
+        });
+
+      if (uploadError) {
+        console.error('Upload error:', uploadError);
+        throw new Error(`Failed to upload audio: ${uploadError.message}`);
+      }
+
+      console.log('Audio uploaded successfully:', uploadData.path);
+
+      // Get signed URL (valid for 1 hour)
+      const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+        .from('voice-recordings')
+        .createSignedUrl(`${user.id}/${storagePath}`, 3600);
+
+      if (signedUrlError) {
+        console.error('Signed URL error:', signedUrlError);
+        throw new Error('Failed to create signed URL');
+      }
+
+      const audioUrl = signedUrlData.signedUrl;
+      console.log('Generated signed URL');
+
+      webhookPayload = {
+        ...webhookPayload,
+        duration_ms: durationMs,
+        storage_path: storagePath,
+        audio_url: audioUrl
+      };
+    }
+    
+    // Handle text messages
+    if (messageType === 'text' && textMessage) {
+      console.log('Processing text message:', textMessage.substring(0, 50) + '...');
+      webhookPayload = {
+        ...webhookPayload,
+        text_message: textMessage
+      };
+    }
 
     console.log('Sending to n8n webhook:', webhookPayload);
 

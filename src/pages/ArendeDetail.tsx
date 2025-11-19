@@ -30,6 +30,7 @@ export default function ArendeDetail() {
   const [loading, setLoading] = useState(true);
   const [showEmailForm, setShowEmailForm] = useState(false);
   const [emailText, setEmailText] = useState("");
+  const [sendingText, setSendingText] = useState(false);
   const { toast } = useToast();
 
   const fetchLead = async () => {
@@ -120,6 +121,61 @@ export default function ArendeDetail() {
   const openBlocketUrl = () => {
     if (lead?.blocket_url) {
       window.open(lead.blocket_url, '_blank');
+    }
+  };
+
+  const sendTextMessage = async () => {
+    if (!lead || !emailText.trim()) return;
+
+    try {
+      setSendingText(true);
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        throw new Error('Not authenticated');
+      }
+
+      const formData = new FormData();
+      formData.append('text_message', emailText);
+      formData.append('message_type', 'text');
+      formData.append('lead_id', lead.id);
+      formData.append('thread_id', lead.id);
+      if (lead.resume_url) {
+        formData.append('wait_webhook', lead.resume_url);
+      }
+
+      const response = await fetch(
+        'https://fjqsaixszaqceviqwboz.functions.supabase.co/voice-upload',
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+          },
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to send message');
+      }
+
+      toast({
+        title: "Meddelande skickat",
+        description: "Ditt textmeddelande har skickats till n8n workflow.",
+      });
+
+      setEmailText('');
+      setShowEmailForm(false);
+    } catch (error) {
+      console.error('Error sending text message:', error);
+      toast({
+        title: "Fel",
+        description: error instanceof Error ? error.message : "Kunde inte skicka meddelandet.",
+        variant: "destructive",
+      });
+    } finally {
+      setSendingText(false);
     }
   };
 
@@ -286,24 +342,16 @@ export default function ArendeDetail() {
                       <Textarea
                         value={emailText}
                         onChange={(e) => setEmailText(e.target.value)}
-                        placeholder="Skriv ditt mejl här..."
+                        placeholder="Skriv ditt meddelande här..."
                         className="min-h-[120px] mb-2"
                       />
                       <div className="flex gap-2">
                         <Button 
                           size="sm"
-                          onClick={() => {
-                            // TODO: Implement send email functionality
-                            toast({
-                              title: "Mejl skickat",
-                              description: "Ditt mejl har skickats till kunden.",
-                            });
-                            setEmailText("");
-                            setShowEmailForm(false);
-                          }}
-                          disabled={!emailText.trim()}
+                          onClick={sendTextMessage}
+                          disabled={!emailText.trim() || sendingText}
                         >
-                          Skicka mejl
+                          {sendingText ? "Skickar..." : "Skicka"}
                         </Button>
                         <Button 
                           size="sm"
