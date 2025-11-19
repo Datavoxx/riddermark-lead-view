@@ -107,9 +107,46 @@ serve(async (req) => {
     // Handle text messages
     if (messageType === 'text' && textMessage) {
       console.log('Processing text message:', textMessage.substring(0, 50) + '...');
+      
+      // Create storage path for text
+      const storagePath = `text/${threadId}/${correlationId}.txt`;
+      
+      // Convert text to buffer
+      const textBlob = new Blob([textMessage], { type: 'text/plain; charset=utf-8' });
+      const arrayBuffer = await textBlob.arrayBuffer();
+      
+      // Upload to Supabase storage
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('voice-recordings')
+        .upload(`${user.id}/${storagePath}`, arrayBuffer, {
+          contentType: 'text/plain; charset=utf-8',
+          upsert: false
+        });
+
+      if (uploadError) {
+        console.error('Text upload error:', uploadError);
+        throw new Error(`Failed to upload text: ${uploadError.message}`);
+      }
+
+      console.log('Text uploaded successfully:', uploadData.path);
+
+      // Get signed URL (valid for 1 hour)
+      const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+        .from('voice-recordings')
+        .createSignedUrl(`${user.id}/${storagePath}`, 3600);
+
+      if (signedUrlError) {
+        console.error('Signed URL error:', signedUrlError);
+        throw new Error('Failed to create signed URL for text');
+      }
+
+      const textUrl = signedUrlData.signedUrl;
+      console.log('Generated signed URL for text');
+
       webhookPayload = {
         ...webhookPayload,
-        text_message: textMessage
+        storage_path: storagePath,
+        text_url: textUrl
       };
     }
 
@@ -138,8 +175,8 @@ serve(async (req) => {
       webhook_response: webhookResult
     };
 
-    // Only include storage_path for voice messages
-    if (messageType === 'voice' && storagePath) {
+    // Include storage_path for both voice and text messages
+    if (storagePath) {
       responseData.storage_path = storagePath;
     }
 
