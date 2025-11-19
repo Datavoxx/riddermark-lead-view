@@ -132,13 +132,19 @@ serve(async (req) => {
     const webhookResult = await webhookResponse.json();
     console.log('Webhook response:', webhookResult);
 
+    const responseData: any = { 
+      success: true,
+      correlation_id: correlationId,
+      webhook_response: webhookResult
+    };
+
+    // Only include storage_path for voice messages
+    if (messageType === 'voice' && storagePath) {
+      responseData.storage_path = storagePath;
+    }
+
     return new Response(
-      JSON.stringify({ 
-        success: true,
-        correlation_id: correlationId,
-        storage_path: storagePath,
-        webhook_response: webhookResult
-      }),
+      JSON.stringify(responseData),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
