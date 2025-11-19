@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      cars: {
+        Row: {
+          arsmodell: number
+          created_at: string | null
+          id: string
+          marke_modell: string
+          regnr: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          arsmodell: number
+          created_at?: string | null
+          id?: string
+          marke_modell: string
+          regnr: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          arsmodell?: number
+          created_at?: string | null
+          id?: string
+          marke_modell?: string
+          regnr?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       channel_participants: {
         Row: {
           channel_id: string

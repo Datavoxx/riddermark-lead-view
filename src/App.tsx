@@ -22,7 +22,7 @@ import ResponseTime from "./pages/ResponseTime";
 import ActiveLeads from "./pages/ActiveLeads";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import BilAnnonsgenerator from "./pages/BilAnnonsgenerator";
+import Bilar from "./pages/Bilar";
 import Agent from "./pages/Agent";
 import Notiser from "./pages/Notiser";
 
@@ -56,7 +56,7 @@ const App = () => (
                         <Route path="/reports/active-leads" element={<ActiveLeads />} />
                         <Route path="/blocket/arenden" element={<ArendenList />} />
                         <Route path="/blocket/arenden/:id" element={<ArendeDetail />} />
-                        <Route path="/bil-annonsgenerator" element={<BilAnnonsgenerator />} />
+                        <Route path="/bilar" element={<Bilar />} />
                         <Route path="/agent" element={<Agent />} />
                         <Route path="/agent/:agentId" element={<Agent />} />
                         <Route path="/notiser" element={<Notiser />} />

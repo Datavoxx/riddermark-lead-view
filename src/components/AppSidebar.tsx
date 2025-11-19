@@ -27,7 +27,7 @@ const navigation = [
   { title: "Hem", url: "/dashboard", icon: Home },
   { title: "Rapporter", url: "/reports", icon: FileText },
   { title: "Blocket", url: "/blocket/arenden", icon: Archive },
-  { title: "Bil annonsgenerator", url: "/bil-annonsgenerator", icon: Car },
+  { title: "Våra bilar", url: "/bilar", icon: Car },
   { title: "Agent", url: "/agent", icon: Bot },
 ];
 
