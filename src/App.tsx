@@ -27,6 +27,8 @@ import Agent from "./pages/Agent";
 import Notiser from "./pages/Notiser";
 import IVerkstad from "./pages/IVerkstad";
 import Servicestatus from "./pages/Servicestatus";
+import Wayke from "./pages/Wayke";
+import Bytbil from "./pages/Bytbil";
 
 const queryClient = new QueryClient();
 
@@ -56,8 +58,10 @@ const App = () => (
                         <Route path="/reports/conversion-rate" element={<ConversionRate />} />
                         <Route path="/reports/response-time" element={<ResponseTime />} />
                         <Route path="/reports/active-leads" element={<ActiveLeads />} />
-                        <Route path="/blocket/arenden" element={<ArendenList />} />
-                        <Route path="/blocket/arenden/:id" element={<ArendeDetail />} />
+              <Route path="/blocket/arenden" element={<ArendenList />} />
+              <Route path="/blocket/arenden/:id" element={<ArendeDetail />} />
+              <Route path="/blocket/wayke" element={<Wayke />} />
+              <Route path="/blocket/bytbil" element={<Bytbil />} />
                         <Route path="/fordonstatus/bilar" element={<Bilar />} />
                         <Route path="/fordonstatus/i-verkstad" element={<IVerkstad />} />
                         <Route path="/fordonstatus/servicestatus" element={<Servicestatus />} />
