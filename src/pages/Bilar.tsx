@@ -3,6 +3,8 @@ import { Plus, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { format } from "date-fns";
+import { sv } from "date-fns/locale";
 import {
   Dialog,
   DialogContent,
@@ -28,6 +30,8 @@ type Car = {
   arsmodell: number;
   regnr: string;
   user_id: string;
+  created_at: string;
+  updated_at: string;
 };
 
 export default function Bilar() {
@@ -224,13 +228,15 @@ export default function Bilar() {
                 <TableHead>Märke & Modell</TableHead>
                 <TableHead>Årsmodell</TableHead>
                 <TableHead>Registreringsnummer</TableHead>
+                <TableHead>Tillagd</TableHead>
+                <TableHead>Senast uppdaterad</TableHead>
                 <TableHead className="text-right">Åtgärder</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {cars.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
+                  <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
                     Inga bilar ännu. Lägg till din första bil!
                   </TableCell>
                 </TableRow>
@@ -240,6 +246,12 @@ export default function Bilar() {
                     <TableCell className="font-medium">{car.marke_modell}</TableCell>
                     <TableCell>{car.arsmodell}</TableCell>
                     <TableCell>{car.regnr}</TableCell>
+                    <TableCell className="text-muted-foreground text-sm">
+                      {format(new Date(car.created_at), "d MMM yyyy HH:mm", { locale: sv })}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground text-sm">
+                      {format(new Date(car.updated_at), "d MMM yyyy HH:mm", { locale: sv })}
+                    </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
                         <Button
