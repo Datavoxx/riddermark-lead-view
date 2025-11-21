@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Plus, Pencil, Trash2 } from "lucide-react";
+import Autocomplete from "react-google-autocomplete";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,6 +29,9 @@ type Car = {
   arsmodell: number;
   regnr: string;
   user_id: string;
+  workshop_name?: string;
+  workshop_address?: string;
+  workshop_place_id?: string;
 };
 
 export default function Bilar() {
@@ -39,6 +43,9 @@ export default function Bilar() {
     marke_modell: "",
     arsmodell: new Date().getFullYear(),
     regnr: "",
+    workshop_name: "",
+    workshop_address: "",
+    workshop_place_id: "",
   });
 
   useEffect(() => {
@@ -101,6 +108,9 @@ export default function Bilar() {
       marke_modell: "",
       arsmodell: new Date().getFullYear(),
       regnr: "",
+      workshop_name: "",
+      workshop_address: "",
+      workshop_place_id: "",
     });
     fetchCars();
   };
@@ -111,6 +121,9 @@ export default function Bilar() {
       marke_modell: car.marke_modell,
       arsmodell: car.arsmodell,
       regnr: car.regnr,
+      workshop_name: car.workshop_name || "",
+      workshop_address: car.workshop_address || "",
+      workshop_place_id: car.workshop_place_id || "",
     });
     setIsDialogOpen(true);
   };
@@ -137,6 +150,9 @@ export default function Bilar() {
       marke_modell: "",
       arsmodell: new Date().getFullYear(),
       regnr: "",
+      workshop_name: "",
+      workshop_address: "",
+      workshop_place_id: "",
     });
   };
 
@@ -200,6 +216,32 @@ export default function Bilar() {
                     required
                   />
                 </div>
+                <div>
+                  <Label htmlFor="workshop">Verkstad (valfritt)</Label>
+                  <Autocomplete
+                    apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
+                    onPlaceSelected={(place) => {
+                      setFormData({
+                        ...formData,
+                        workshop_name: place.name || "",
+                        workshop_address: place.formatted_address || "",
+                        workshop_place_id: place.place_id || "",
+                      });
+                    }}
+                    options={{
+                      types: ["establishment"],
+                      componentRestrictions: { country: "se" },
+                    }}
+                    defaultValue={formData.workshop_name}
+                    className="flex h-10 w-full rounded-sm border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm transition-all duration-600 hover:border-primary/20 focus:border-primary/40"
+                    placeholder="Sök efter verkstad..."
+                  />
+                  {formData.workshop_address && (
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {formData.workshop_address}
+                    </p>
+                  )}
+                </div>
                 <div className="flex justify-end gap-2">
                   <Button
                     type="button"
@@ -224,13 +266,14 @@ export default function Bilar() {
                 <TableHead>Märke & Modell</TableHead>
                 <TableHead>Årsmodell</TableHead>
                 <TableHead>Registreringsnummer</TableHead>
+                <TableHead>Verkstad</TableHead>
                 <TableHead className="text-right">Åtgärder</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {cars.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
+                  <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
                     Inga bilar ännu. Lägg till din första bil!
                   </TableCell>
                 </TableRow>
@@ -240,6 +283,18 @@ export default function Bilar() {
                     <TableCell className="font-medium">{car.marke_modell}</TableCell>
                     <TableCell>{car.arsmodell}</TableCell>
                     <TableCell>{car.regnr}</TableCell>
+                    <TableCell>
+                      {car.workshop_name ? (
+                        <div>
+                          <div className="font-medium">{car.workshop_name}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {car.workshop_address}
+                          </div>
+                        </div>
+                      ) : (
+                        <span className="text-muted-foreground">-</span>
+                      )}
+                    </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
                         <Button
