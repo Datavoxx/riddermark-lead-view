@@ -25,6 +25,8 @@ import NotFound from "./pages/NotFound";
 import Bilar from "./pages/Bilar";
 import Agent from "./pages/Agent";
 import Notiser from "./pages/Notiser";
+import IVerkstad from "./pages/IVerkstad";
+import Servicestatus from "./pages/Servicestatus";
 
 const queryClient = new QueryClient();
 
@@ -56,6 +58,9 @@ const App = () => (
                         <Route path="/reports/active-leads" element={<ActiveLeads />} />
                         <Route path="/blocket/arenden" element={<ArendenList />} />
                         <Route path="/blocket/arenden/:id" element={<ArendeDetail />} />
+                        <Route path="/fordonstatus/bilar" element={<Bilar />} />
+                        <Route path="/fordonstatus/i-verkstad" element={<IVerkstad />} />
+                        <Route path="/fordonstatus/servicestatus" element={<Servicestatus />} />
                         <Route path="/bilar" element={<Bilar />} />
                         <Route path="/agent" element={<Agent />} />
                         <Route path="/agent/:agentId" element={<Agent />} />

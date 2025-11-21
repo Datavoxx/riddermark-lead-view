@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Home, FileText, Archive, LogOut, Car, Bot, Hash, ChevronDown, Bell, Plus, Users } from "lucide-react";
+import { Home, FileText, Archive, LogOut, Car, Bot, Hash, ChevronDown, Bell, Plus, Users, Wrench, ClipboardList } from "lucide-react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import Logo from "@/assets/Logo";
@@ -27,8 +27,13 @@ const navigation = [
   { title: "Hem", url: "/dashboard", icon: Home },
   { title: "Rapporter", url: "/reports", icon: FileText },
   { title: "Blocket", url: "/blocket/arenden", icon: Archive },
-  { title: "Våra bilar", url: "/bilar", icon: Car },
   { title: "Agent", url: "/agent", icon: Bot },
+];
+
+const fordonsstatusItems = [
+  { title: "Våra bilar", url: "/fordonstatus/bilar", icon: Car },
+  { title: "I verkstad", url: "/fordonstatus/i-verkstad", icon: Wrench },
+  { title: "Servicestatus", url: "/fordonstatus/servicestatus", icon: ClipboardList },
 ];
 
 type ConversationWithUser = {
@@ -49,6 +54,7 @@ export function AppSidebar() {
   const location = useLocation();
   const [channelsOpen, setChannelsOpen] = useState(true);
   const [agentsOpen, setAgentsOpen] = useState(true);
+  const [fordonsstatusOpen, setFordonsstatusOpen] = useState(true);
   const [conversations, setConversations] = useState<ConversationWithUser[]>([]);
   const [showCreateChannelDialog, setShowCreateChannelDialog] = useState(false);
   const [groupChannels, setGroupChannels] = useState<any[]>([]);
@@ -190,6 +196,37 @@ export function AppSidebar() {
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarSeparator className="my-2" />
+
+        <SidebarGroup>
+          <SidebarGroupLabel 
+            className="text-xs font-semibold text-muted-foreground px-2 flex items-center gap-1 cursor-pointer hover:bg-accent/50 rounded-md"
+            onClick={() => setFordonsstatusOpen(!fordonsstatusOpen)}
+          >
+            <ChevronDown className={`h-3 w-3 transition-transform ${fordonsstatusOpen ? '' : '-rotate-90'}`} />
+            Fordonstatus
+          </SidebarGroupLabel>
+          {fordonsstatusOpen && (
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {fordonsstatusItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton 
+                    asChild
+                    className={location.pathname === item.url ? "bg-accent text-accent-foreground font-medium hover:bg-accent" : "hover:bg-accent/50"}
+                  >
+                    <NavLink to={item.url}>
+                      <item.icon className="h-4 w-4" />
+                      <span>{item.title}</span>
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+          )}
         </SidebarGroup>
 
         <SidebarSeparator className="my-2" />
