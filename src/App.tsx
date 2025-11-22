@@ -63,7 +63,7 @@ const App = () => (
               <Route path="/blocket/wayke" element={<Wayke />} />
               <Route path="/blocket/bytbil" element={<Bytbil />} />
                         <Route path="/fordonstatus/bilar" element={<Bilar />} />
-                        <Route path="/fordonstatus/i-verkstad" element={<IVerkstad />} />
+                        <Route path="/fordonstatus/verkstad" element={<IVerkstad />} />
                         <Route path="/fordonstatus/servicestatus" element={<Servicestatus />} />
                         <Route path="/bilar" element={<Bilar />} />
                         <Route path="/agent" element={<Agent />} />

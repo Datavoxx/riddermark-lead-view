@@ -34,7 +34,7 @@ const navigation = [
 
 const fordonsstatusItems = [
   { title: "Våra bilar", url: "/fordonstatus/bilar", icon: Car },
-  { title: "I verkstad", url: "/fordonstatus/i-verkstad", icon: Wrench },
+  { title: "Verkstad", url: "/fordonstatus/verkstad", icon: Wrench },
   { title: "Servicestatus", url: "/fordonstatus/servicestatus", icon: ClipboardList },
 ];
 
