@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,12 +8,17 @@ import { Plus, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
+import { useGoogleMaps } from "@/contexts/GoogleMapsContext";
+import { Autocomplete } from "@react-google-maps/api";
 
 export function AddCarToWorkshopDialog() {
   const [open, setOpen] = useState(false);
   const [workshopLocation, setWorkshopLocation] = useState("");
   const [selectedCarId, setSelectedCarId] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
+  const { isLoaded } = useGoogleMaps();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   
 
@@ -31,6 +36,19 @@ export function AddCarToWorkshopDialog() {
   });
 
 
+  const onLoad = (autocompleteInstance: google.maps.places.Autocomplete) => {
+    setAutocomplete(autocompleteInstance);
+  };
+
+  const onPlaceChanged = () => {
+    if (autocomplete) {
+      const place = autocomplete.getPlace();
+      if (place.formatted_address) {
+        setWorkshopLocation(place.formatted_address);
+      }
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -39,6 +57,10 @@ export function AddCarToWorkshopDialog() {
       return;
     }
 
+    if (!workshopLocation) {
+      toast.error("Vänligen ange verkstad");
+      return;
+    }
 
     setIsSubmitting(true);
 
@@ -50,13 +72,15 @@ export function AddCarToWorkshopDialog() {
         return;
       }
 
+      const place = autocomplete?.getPlace();
+
       const { error } = await supabase
         .from('workshop_entries')
         .insert({
           car_id: selectedCarId,
-          workshop_name: workshopLocation,
-          workshop_address: workshopLocation,
-          workshop_place_id: null,
+          workshop_name: place?.name || workshopLocation,
+          workshop_address: place?.formatted_address || workshopLocation,
+          workshop_place_id: place?.place_id || null,
           user_id: user.id,
         });
 
@@ -109,13 +133,31 @@ export function AddCarToWorkshopDialog() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="workshop">Verkstad</Label>
-            <Input
-              id="workshop"
-              placeholder="Ange verkstadsnamn och adress..."
-              value={workshopLocation}
-              onChange={(e) => setWorkshopLocation(e.target.value)}
-              required
-            />
+            {isLoaded ? (
+              <Autocomplete
+                onLoad={onLoad}
+                onPlaceChanged={onPlaceChanged}
+                options={{
+                  types: ['establishment'],
+                  fields: ['place_id', 'name', 'formatted_address'],
+                }}
+              >
+                <Input
+                  ref={inputRef}
+                  id="workshop"
+                  placeholder="Sök efter verkstad..."
+                  value={workshopLocation}
+                  onChange={(e) => setWorkshopLocation(e.target.value)}
+                  required
+                />
+              </Autocomplete>
+            ) : (
+              <Input
+                id="workshop"
+                placeholder="Laddar Google Maps..."
+                disabled
+              />
+            )}
           </div>
           <div className="flex justify-end gap-3">
             <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isSubmitting}>
