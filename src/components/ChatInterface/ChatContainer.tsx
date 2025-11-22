@@ -249,17 +249,37 @@ export const ChatContainer = ({ channelId, agentId, agentName }: ChatContainerPr
       };
       setMessages((prev) => [...prev, newMessage]);
 
-      // Simulera agent-svar efter en kort fördröjning
-      setTimeout(() => {
+      // Skicka till n8n via edge function
+      setIsLoading(true);
+      
+      try {
+        const { data, error } = await supabase.functions.invoke('agent-chat', {
+          body: { 
+            message: content,
+            userId: currentUser.id 
+          }
+        });
+
+        if (error) throw error;
+
         const agentMessage: Message = {
           id: crypto.randomUUID(),
           sender_id: 'agent',
           sender_name: agentName || 'Agent',
-          content: 'Tack för ditt meddelande! Jag är en AI-assistent och kan hjälpa dig med olika uppgifter.',
+          content: data.response || 'Inget svar från agenten',
           created_at: new Date().toISOString(),
         };
         setMessages((prev) => [...prev, agentMessage]);
-      }, 1000);
+      } catch (error) {
+        console.error('Error calling agent:', error);
+        toast({
+          title: 'Kunde inte få svar från agenten',
+          description: 'Försök igen.',
+          variant: 'destructive',
+        });
+      } finally {
+        setIsLoading(false);
+      }
       
       return;
     }
