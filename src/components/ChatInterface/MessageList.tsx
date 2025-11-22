@@ -6,9 +6,10 @@ import { Message } from './types';
 interface MessageListProps {
   messages: Message[];
   isLoading: boolean;
+  isLoadingChannel?: boolean;
 }
 
-export const MessageList = ({ messages, isLoading }: MessageListProps) => {
+export const MessageList = ({ messages, isLoading, isLoadingChannel = false }: MessageListProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -20,7 +21,7 @@ export const MessageList = ({ messages, isLoading }: MessageListProps) => {
   return (
     <ScrollArea className="flex-1 px-4">
       <div ref={scrollRef} className="space-y-4 py-4">
-        {messages.length === 0 ? (
+        {messages.length === 0 && !isLoadingChannel ? (
           <div className="flex items-center justify-center h-full">
             <p className="text-muted-foreground">Inga meddelanden ännu. Börja konversationen!</p>
           </div>
