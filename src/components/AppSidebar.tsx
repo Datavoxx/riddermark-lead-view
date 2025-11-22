@@ -26,8 +26,8 @@ import {
 const navigation = [
   { title: "Hem", url: "/dashboard", icon: Home },
   { title: "Rapporter", url: "/reports", icon: FileText },
-  { title: "Blocket", url: "/blocket/arenden", icon: Archive },
-  { title: "Wayke", url: "/blocket/wayke", icon: ShoppingCart },
+  { title: "Blocket", url: "/blocket/arenden", icon: Car },
+  { title: "Wayke", url: "/blocket/wayke", icon: Car },
   { title: "Bytbil", url: "/blocket/bytbil", icon: Car },
   { title: "Agent", url: "/agent", icon: Bot },
 ];
