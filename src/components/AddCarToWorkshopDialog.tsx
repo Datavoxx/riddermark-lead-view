@@ -14,6 +14,7 @@ import { Autocomplete } from "@react-google-maps/api";
 export function AddCarToWorkshopDialog() {
   const [open, setOpen] = useState(false);
   const [workshopLocation, setWorkshopLocation] = useState("");
+  const [manualWorkshopInput, setManualWorkshopInput] = useState("");
   const [selectedCarId, setSelectedCarId] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
@@ -43,12 +44,13 @@ export function AddCarToWorkshopDialog() {
   const onPlaceChanged = () => {
     if (autocomplete) {
       const place = autocomplete.getPlace();
-      if (place.formatted_address) {
-        setWorkshopLocation(place.formatted_address);
+      const text = place.formatted_address || place.name || inputRef.current?.value || "";
+      if (text) {
+        setWorkshopLocation(text);
+        setManualWorkshopInput(text);
       }
     }
   };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -57,7 +59,9 @@ export function AddCarToWorkshopDialog() {
       return;
     }
 
-    if (!workshopLocation) {
+    const finalWorkshopText = workshopLocation || manualWorkshopInput;
+
+    if (!finalWorkshopText) {
       toast.error("Vänligen ange verkstad");
       return;
     }
@@ -78,8 +82,8 @@ export function AddCarToWorkshopDialog() {
         .from('workshop_entries')
         .insert({
           car_id: selectedCarId,
-          workshop_name: place?.name || workshopLocation,
-          workshop_address: place?.formatted_address || workshopLocation,
+          workshop_name: place?.name || finalWorkshopText,
+          workshop_address: place?.formatted_address || finalWorkshopText,
           workshop_place_id: place?.place_id || null,
           user_id: user.id,
         });
@@ -146,8 +150,7 @@ export function AddCarToWorkshopDialog() {
                   ref={inputRef}
                   id="workshop"
                   placeholder="Sök efter verkstad..."
-                  value={workshopLocation}
-                  onChange={(e) => setWorkshopLocation(e.target.value)}
+                  onChange={(e) => setManualWorkshopInput(e.target.value)}
                   required
                 />
               </Autocomplete>
