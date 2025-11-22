@@ -2,7 +2,7 @@ import { createContext, useContext, ReactNode } from "react";
 import { useLoadScript } from "@react-google-maps/api";
 
 const libraries: ("places")[] = ["places"];
-const GOOGLE_MAPS_API_KEY = "AIzaSyCefaIPUKmFrVjsfjxRTFtzR7_bomiPkXY";
+const GOOGLE_MAPS_API_KEY = "AIzaSyALHaxSIJTfBDJWdKtfTk2-QUI4lkcSOas";
 
 interface GoogleMapsContextType {
   isLoaded: boolean;
