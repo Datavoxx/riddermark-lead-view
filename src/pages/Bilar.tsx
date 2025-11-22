@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -37,6 +37,7 @@ type Car = {
 export default function Bilar() {
   const { user } = useAuth();
   const [cars, setCars] = useState<Car[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingCar, setEditingCar] = useState<Car | null>(null);
   const [formData, setFormData] = useState({
@@ -144,6 +145,15 @@ export default function Bilar() {
     });
   };
 
+  const filteredCars = cars.filter((car) => {
+    const query = searchQuery.toLowerCase();
+    return (
+      car.marke_modell.toLowerCase().includes(query) ||
+      car.arsmodell.toString().includes(query) ||
+      car.regnr.toLowerCase().includes(query)
+    );
+  });
+
   return (
     <div className="min-h-screen bg-background p-8">
       <div className="max-w-6xl mx-auto">
@@ -221,6 +231,19 @@ export default function Bilar() {
           </Dialog>
         </div>
 
+        <div className="mb-6">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Sök på märke, modell, årsmodell eller registreringsnummer..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+        </div>
+
         <div className="bg-card rounded-lg border">
           <Table>
             <TableHeader>
@@ -234,14 +257,16 @@ export default function Bilar() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {cars.length === 0 ? (
+              {filteredCars.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
-                    Inga bilar ännu. Lägg till din första bil!
+                    {cars.length === 0 
+                      ? "Inga bilar ännu. Lägg till din första bil!"
+                      : "Inga bilar matchar din sökning."}
                   </TableCell>
                 </TableRow>
               ) : (
-                cars.map((car) => (
+                filteredCars.map((car) => (
                   <TableRow key={car.id}>
                     <TableCell className="font-medium">{car.marke_modell}</TableCell>
                     <TableCell>{car.arsmodell}</TableCell>
