@@ -1,5 +1,6 @@
 import { TopBar } from "@/components/TopBar";
 import { AddCarToWorkshopDialog } from "@/components/AddCarToWorkshopDialog";
+import { WorkshopEntriesList } from "@/components/WorkshopEntriesList";
 
 export default function IVerkstad() {
   return (
@@ -10,11 +11,7 @@ export default function IVerkstad() {
           <h1 className="text-3xl font-bold">Verkstad</h1>
           <AddCarToWorkshopDialog />
         </div>
-        <div className="bg-card rounded-lg border p-6">
-          <p className="text-muted-foreground">
-            Här visas bilar som för närvarande är i verkstad.
-          </p>
-        </div>
+        <WorkshopEntriesList />
       </div>
     </div>
   );

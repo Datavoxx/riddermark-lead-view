@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useGoogleMaps } from "@/contexts/GoogleMapsContext";
 import { Autocomplete } from "@react-google-maps/api";
 
@@ -20,6 +20,7 @@ export function AddCarToWorkshopDialog() {
   const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
   const { isLoaded } = useGoogleMaps();
   const inputRef = useRef<HTMLInputElement>(null);
+  const queryClient = useQueryClient();
 
   
 
@@ -91,8 +92,13 @@ export function AddCarToWorkshopDialog() {
       if (error) throw error;
 
       toast.success("Bil tillagd i verkstad");
+      
+      // Uppdatera listan
+      queryClient.invalidateQueries({ queryKey: ['workshop-entries'] });
+      
       setOpen(false);
       setWorkshopLocation("");
+      setManualWorkshopInput("");
       setSelectedCarId("");
     } catch (error) {
       console.error('Error adding car to workshop:', error);
