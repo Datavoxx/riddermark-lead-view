@@ -124,22 +124,9 @@ export function AddCarToWorkshopDialog() {
     }
   }, [isLoaded]);
 
+  // Log any Google Maps errors
   if (loadError) {
-    return (
-      <Button disabled>
-        <Plus className="mr-2 h-4 w-4" />
-        Lägg till bil i verkstad (Maps fel)
-      </Button>
-    );
-  }
-
-  if (!isLoaded) {
-    return (
-      <Button disabled>
-        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-        Laddar...
-      </Button>
-    );
+    console.error("Google Maps loadError:", loadError);
   }
 
   return (
@@ -148,6 +135,7 @@ export function AddCarToWorkshopDialog() {
         <Button>
           <Plus className="mr-2 h-4 w-4" />
           Lägg till bil i verkstad
+          {loadError && " (utan autocomplete)"}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
@@ -175,22 +163,43 @@ export function AddCarToWorkshopDialog() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="workshop">Verkstad</Label>
-            <Autocomplete
-              onLoad={onLoad}
-              onPlaceChanged={onPlaceChanged}
-              options={{
-                types: ["establishment"],
-                fields: ["formatted_address", "name", "place_id", "geometry"],
-              }}
-            >
+            {!isLoaded ? (
               <Input
                 id="workshop"
-                placeholder="Sök efter verkstad..."
-                value={workshopLocation}
-                onChange={(e) => setWorkshopLocation(e.target.value)}
-                required
+                placeholder="Laddar Google Maps..."
+                disabled
               />
-            </Autocomplete>
+            ) : loadError ? (
+              <div className="space-y-2">
+                <Input
+                  id="workshop"
+                  placeholder="Ange verkstadsnamn och adress..."
+                  value={workshopLocation}
+                  onChange={(e) => setWorkshopLocation(e.target.value)}
+                  required
+                />
+                <p className="text-sm text-destructive">
+                  Google Maps kunde inte laddas. Du kan fortfarande ange verkstad manuellt.
+                </p>
+              </div>
+            ) : (
+              <Autocomplete
+                onLoad={onLoad}
+                onPlaceChanged={onPlaceChanged}
+                options={{
+                  types: ["establishment"],
+                  fields: ["formatted_address", "name", "place_id", "geometry"],
+                }}
+              >
+                <Input
+                  id="workshop"
+                  placeholder="Sök efter verkstad..."
+                  value={workshopLocation}
+                  onChange={(e) => setWorkshopLocation(e.target.value)}
+                  required
+                />
+              </Autocomplete>
+            )}
             {selectedPlace && (
               <p className="text-sm text-muted-foreground">
                 {selectedPlace.name} - {selectedPlace.formatted_address}

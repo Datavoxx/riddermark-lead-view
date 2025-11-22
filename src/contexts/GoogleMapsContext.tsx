@@ -17,6 +17,9 @@ export function GoogleMapsProvider({ children }: { children: ReactNode }) {
     libraries,
   });
 
+  // Debug logging
+  console.log("Google Maps status:", { isLoaded, loadError });
+
   return (
     <GoogleMapsContext.Provider value={{ isLoaded, loadError }}>
       {children}
