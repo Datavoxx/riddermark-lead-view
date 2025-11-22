@@ -117,6 +117,7 @@ export const ChatContainer = ({ channelId, agentId, agentName }: ChatContainerPr
           // Ignorera helt om det är AbortError
           if (error.message?.includes('aborted') || error.code === '20') {
             console.log('[Chat] Request aborted (expected during cleanup)');
+            setIsLoadingChannel(false);
             return;
           }
           
@@ -126,6 +127,7 @@ export const ChatContainer = ({ channelId, agentId, agentName }: ChatContainerPr
             description: error.message,
             variant: 'destructive',
           });
+          setIsLoadingChannel(false);
           return;
         }
 
@@ -145,6 +147,7 @@ export const ChatContainer = ({ channelId, agentId, agentName }: ChatContainerPr
       } catch (err: any) {
         // Ignorera AbortError helt utan att logga
         if (err.name === 'AbortError' || !isMountedRef.current) {
+          setIsLoadingChannel(false);
           return;
         }
         
