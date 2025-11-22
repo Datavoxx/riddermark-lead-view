@@ -12,16 +12,14 @@ export function WorkshopEntriesList() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('workshop_entries')
-        .select(`
-          *,
-          cars (
-            regnr,
-            marke_modell
-          )
-        `)
+        .select('*')
         .order('checked_in_at', { ascending: false });
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching workshop entries:', error);
+        throw error;
+      }
+      console.log('Workshop entries fetched:', data);
       return data;
     },
     refetchInterval: 5000, // Uppdatera automatiskt var 5:e sekund
@@ -50,8 +48,7 @@ export function WorkshopEntriesList() {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Bil</TableHead>
-            <TableHead>Regnummer</TableHead>
+            <TableHead>Bil-ID</TableHead>
             <TableHead>Verkstad</TableHead>
             <TableHead>Adress</TableHead>
             <TableHead>Incheckad</TableHead>
@@ -61,11 +58,10 @@ export function WorkshopEntriesList() {
         <TableBody>
           {entries.map((entry) => (
             <TableRow key={entry.id}>
-              <TableCell className="font-medium">
-                {entry.cars?.marke_modell}
+              <TableCell className="font-mono text-sm">
+                {entry.car_id.substring(0, 8)}...
               </TableCell>
-              <TableCell>{entry.cars?.regnr}</TableCell>
-              <TableCell>{entry.workshop_name}</TableCell>
+              <TableCell className="font-medium">{entry.workshop_name}</TableCell>
               <TableCell className="text-muted-foreground">
                 {entry.workshop_address || '—'}
               </TableCell>

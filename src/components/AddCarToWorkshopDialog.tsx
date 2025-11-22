@@ -79,7 +79,7 @@ export function AddCarToWorkshopDialog() {
 
       const place = autocomplete?.getPlace();
 
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('workshop_entries')
         .insert({
           car_id: selectedCarId,
@@ -87,10 +87,17 @@ export function AddCarToWorkshopDialog() {
           workshop_address: place?.formatted_address || finalWorkshopText,
           workshop_place_id: place?.place_id || null,
           user_id: user.id,
-        });
+        })
+        .select()
+        .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase insert error (workshop_entries):', error);
+        toast.error(`Kunde inte lägga till bil i verkstad: ${error.message}`);
+        return;
+      }
 
+      console.log('Workshop entry saved:', data);
       toast.success("Bil tillagd i verkstad");
       
       // Uppdatera listan
