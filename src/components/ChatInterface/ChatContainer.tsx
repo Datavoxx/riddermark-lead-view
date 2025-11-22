@@ -97,6 +97,9 @@ export const ChatContainer = ({ channelId, agentId, agentName }: ChatContainerPr
 
     const loadMessages = async () => {
       try {
+        // Early return om komponenten unmountats
+        if (!isMountedRef.current) return;
+        
         const { data, error } = await supabase
           .from('messages')
           .select(`
@@ -107,9 +110,16 @@ export const ChatContainer = ({ channelId, agentId, agentName }: ChatContainerPr
           .order('created_at', { ascending: true })
           .abortSignal(abortController.signal);
 
+        // Check igen efter async operation
         if (!isMountedRef.current) return;
 
         if (error) {
+          // Ignorera helt om det är AbortError
+          if (error.message?.includes('aborted') || error.code === '20') {
+            console.log('[Chat] Request aborted (expected during cleanup)');
+            return;
+          }
+          
           console.error('Error loading messages:', error);
           toast({
             title: 'Kunde inte ladda meddelanden',
@@ -133,10 +143,19 @@ export const ChatContainer = ({ channelId, agentId, agentName }: ChatContainerPr
           setIsLoadingChannel(false);
         }
       } catch (err: any) {
-        if (err.name === 'AbortError') return;
-        console.error('Error loading messages:', err);
+        // Ignorera AbortError helt utan att logga
+        if (err.name === 'AbortError' || !isMountedRef.current) {
+          return;
+        }
+        
+        console.error('Unexpected error loading messages:', err);
         if (isMountedRef.current) {
           setIsLoadingChannel(false);
+          toast({
+            title: 'Ett oväntat fel inträffade',
+            description: 'Försök ladda om sidan',
+            variant: 'destructive',
+          });
         }
       }
     };
@@ -215,18 +234,21 @@ export const ChatContainer = ({ channelId, agentId, agentName }: ChatContainerPr
     }, 300);
 
     return () => {
-      isMountedRef.current = false;
-      abortController.abort();
-      
-      if (markAsReadTimeoutRef.current) {
-        clearTimeout(markAsReadTimeoutRef.current);
-      }
+      // Ge pågående requests en chans att slutföras
+      setTimeout(() => {
+        isMountedRef.current = false;
+        abortController.abort();
+        
+        if (markAsReadTimeoutRef.current) {
+          clearTimeout(markAsReadTimeoutRef.current);
+        }
 
-      if (channelRef.current) {
-        channelRef.current.unsubscribe();
-        supabase.removeChannel(channelRef.current);
-        channelRef.current = null;
-      }
+        if (channelRef.current) {
+          channelRef.current.unsubscribe();
+          supabase.removeChannel(channelRef.current);
+          channelRef.current = null;
+        }
+      }, 100);
     };
   }, [channelId, toast, user?.id]);
 
