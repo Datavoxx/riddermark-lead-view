@@ -44,18 +44,12 @@ type ConversationWithUser = {
   other_user_name: string;
 };
 
-const agents = [
-  { name: "Agent 1", id: "agent-1", url: "/agent/agent-1", icon: Bot },
-  { name: "Agent 2", id: "agent-2", url: "/agent/agent-2", icon: Bot },
-  { name: "Agent 3", id: "agent-3", url: "/agent/agent-3", icon: Bot },
-];
 
 export function AppSidebar() {
   const { signOut, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [channelsOpen, setChannelsOpen] = useState(true);
-  const [agentsOpen, setAgentsOpen] = useState(true);
   const [fordonsstatusOpen, setFordonsstatusOpen] = useState(true);
   const [conversations, setConversations] = useState<ConversationWithUser[]>([]);
   const [showCreateChannelDialog, setShowCreateChannelDialog] = useState(false);
@@ -334,40 +328,6 @@ export function AppSidebar() {
           )}
         </SidebarGroup>
 
-        <SidebarSeparator className="my-2" />
-
-        <SidebarGroup>
-          <SidebarGroupLabel 
-            className="text-xs font-semibold text-muted-foreground px-2 flex items-center gap-1 cursor-pointer hover:bg-accent/50 rounded-md"
-            onClick={() => setAgentsOpen(!agentsOpen)}
-          >
-            <ChevronDown className={`h-3 w-3 transition-transform ${agentsOpen ? '' : '-rotate-90'}`} />
-            Agents
-          </SidebarGroupLabel>
-          {agentsOpen && (
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {agents.map((agent) => (
-                <SidebarMenuItem key={agent.id}>
-                  <SidebarMenuButton 
-                    asChild
-                    className={location.pathname === agent.url ? "bg-primary/10 text-primary font-medium hover:bg-primary/20" : "hover:bg-primary/10"}
-                  >
-                    <NavLink 
-                      to={agent.url}
-                    >
-                      <agent.icon className="h-4 w-4" />
-                      <span>{agent.name}</span>
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-          )}
-        </SidebarGroup>
-
-        <SidebarSeparator className="my-2" />
 
         <SidebarGroup>
           <SidebarGroupContent>
