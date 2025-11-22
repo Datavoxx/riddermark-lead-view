@@ -412,6 +412,59 @@ export type Database = {
         }
         Relationships: []
       }
+      workshop_entries: {
+        Row: {
+          car_id: string
+          checked_in_at: string
+          checked_out_at: string | null
+          created_at: string
+          id: string
+          notes: string | null
+          status: string | null
+          updated_at: string
+          user_id: string
+          workshop_address: string | null
+          workshop_name: string
+          workshop_place_id: string | null
+        }
+        Insert: {
+          car_id: string
+          checked_in_at?: string
+          checked_out_at?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          status?: string | null
+          updated_at?: string
+          user_id: string
+          workshop_address?: string | null
+          workshop_name: string
+          workshop_place_id?: string | null
+        }
+        Update: {
+          car_id?: string
+          checked_in_at?: string
+          checked_out_at?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          status?: string | null
+          updated_at?: string
+          user_id?: string
+          workshop_address?: string | null
+          workshop_name?: string
+          workshop_place_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workshop_entries_car_id_fkey"
+            columns: ["car_id"]
+            isOneToOne: false
+            referencedRelation: "cars"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
