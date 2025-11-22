@@ -125,7 +125,7 @@ export function AddCarToWorkshopDialog() {
           Lägg till bil i verkstad
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px]" onInteractOutside={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>Lägg till bil i verkstad</DialogTitle>
           <DialogDescription>
