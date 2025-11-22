@@ -27,7 +27,6 @@ export const ChatContainer = ({ channelId, agentId, agentName }: ChatContainerPr
   const { toast } = useToast();
   const { user } = useAuth();
   const channelRef = useRef<RealtimeChannel | null>(null);
-  const isMountedRef = useRef(true);
   const markAsReadTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Ladda aktuell användare och hitta namnet på den andra användaren eller gruppkanalen
@@ -90,16 +89,11 @@ export const ChatContainer = ({ channelId, agentId, agentName }: ChatContainerPr
   useEffect(() => {
     if (!channelId) return;
 
-    isMountedRef.current = true;
+    let cancelled = false;
     setIsLoadingChannel(true);
-
-    const abortController = new AbortController();
 
     const loadMessages = async () => {
       try {
-        // Early return om komponenten unmountats
-        if (!isMountedRef.current) return;
-        
         const { data, error } = await supabase
           .from('messages')
           .select(`
@@ -107,20 +101,11 @@ export const ChatContainer = ({ channelId, agentId, agentName }: ChatContainerPr
             profiles!messages_sender_id_fkey(name)
           `)
           .eq('channel_id', channelId)
-          .order('created_at', { ascending: true })
-          .abortSignal(abortController.signal);
+          .order('created_at', { ascending: true });
 
-        // Check igen efter async operation
-        if (!isMountedRef.current) return;
+        if (cancelled) return;
 
         if (error) {
-          // Ignorera helt om det är AbortError
-          if (error.message?.includes('aborted') || error.code === '20') {
-            console.log('[Chat] Request aborted (expected during cleanup)');
-            setIsLoadingChannel(false);
-            return;
-          }
-          
           console.error('Error loading messages:', error);
           toast({
             title: 'Kunde inte ladda meddelanden',
@@ -140,26 +125,18 @@ export const ChatContainer = ({ channelId, agentId, agentName }: ChatContainerPr
           mentions: msg.mentions,
         }));
 
-        if (isMountedRef.current) {
-          setMessages(formattedMessages);
-          setIsLoadingChannel(false);
-        }
+        setMessages(formattedMessages);
+        setIsLoadingChannel(false);
       } catch (err: any) {
-        // Ignorera AbortError helt utan att logga
-        if (err.name === 'AbortError' || !isMountedRef.current) {
-          setIsLoadingChannel(false);
-          return;
-        }
+        if (cancelled) return;
         
         console.error('Unexpected error loading messages:', err);
-        if (isMountedRef.current) {
-          setIsLoadingChannel(false);
-          toast({
-            title: 'Ett oväntat fel inträffade',
-            description: 'Försök ladda om sidan',
-            variant: 'destructive',
-          });
-        }
+        setIsLoadingChannel(false);
+        toast({
+          title: 'Ett oväntat fel inträffade',
+          description: 'Försök ladda om sidan',
+          variant: 'destructive',
+        });
       }
     };
 
@@ -184,7 +161,7 @@ export const ChatContainer = ({ channelId, agentId, agentName }: ChatContainerPr
           filter: `channel_id=eq.${channelId}`,
         },
         async (payload) => {
-          if (!isMountedRef.current) return;
+          if (cancelled) return;
 
           // Hämta sender_name från profiles
           const { data: profile } = await supabase
@@ -202,7 +179,7 @@ export const ChatContainer = ({ channelId, agentId, agentName }: ChatContainerPr
             mentions: payload.new.mentions,
           };
 
-          if (isMountedRef.current) {
+          if (!cancelled) {
             setMessages((prev) => [...prev, newMessage]);
           }
         }
@@ -237,21 +214,17 @@ export const ChatContainer = ({ channelId, agentId, agentName }: ChatContainerPr
     }, 300);
 
     return () => {
-      // Ge pågående requests en chans att slutföras
-      setTimeout(() => {
-        isMountedRef.current = false;
-        abortController.abort();
-        
-        if (markAsReadTimeoutRef.current) {
-          clearTimeout(markAsReadTimeoutRef.current);
-        }
+      cancelled = true;
+      
+      if (markAsReadTimeoutRef.current) {
+        clearTimeout(markAsReadTimeoutRef.current);
+      }
 
-        if (channelRef.current) {
-          channelRef.current.unsubscribe();
-          supabase.removeChannel(channelRef.current);
-          channelRef.current = null;
-        }
-      }, 100);
+      if (channelRef.current) {
+        channelRef.current.unsubscribe();
+        supabase.removeChannel(channelRef.current);
+        channelRef.current = null;
+      }
     };
   }, [channelId, toast, user?.id]);
 
@@ -377,7 +350,7 @@ export const ChatContainer = ({ channelId, agentId, agentName }: ChatContainerPr
               Laddar meddelanden...
             </div>
           )}
-          <MessageList messages={messages} isLoading={isLoading} />
+          <MessageList messages={messages} isLoading={isLoading} isLoadingChannel={isLoadingChannel} />
         </>
       )}
       <ChatInput
