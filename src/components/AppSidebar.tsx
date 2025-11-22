@@ -26,13 +26,10 @@ import {
 const navigation = [
   { title: "Hem", url: "/dashboard", icon: Home },
   { title: "Rapporter", url: "/reports", icon: FileText },
-  { title: "Agent", url: "/agent", icon: Bot },
-];
-
-const blocketItems = [
-  { title: "Ärenden", url: "/blocket/arenden", icon: Archive },
+  { title: "Blocket", url: "/blocket/arenden", icon: Archive },
   { title: "Wayke", url: "/blocket/wayke", icon: ShoppingCart },
   { title: "Bytbil", url: "/blocket/bytbil", icon: Car },
+  { title: "Agent", url: "/agent", icon: Bot },
 ];
 
 const fordonsstatusItems = [
@@ -59,7 +56,6 @@ export function AppSidebar() {
   const location = useLocation();
   const [channelsOpen, setChannelsOpen] = useState(true);
   const [agentsOpen, setAgentsOpen] = useState(true);
-  const [blocketOpen, setBlocketOpen] = useState(true);
   const [fordonsstatusOpen, setFordonsstatusOpen] = useState(true);
   const [conversations, setConversations] = useState<ConversationWithUser[]>([]);
   const [showCreateChannelDialog, setShowCreateChannelDialog] = useState(false);
@@ -202,37 +198,6 @@ export function AppSidebar() {
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
-        </SidebarGroup>
-
-        <SidebarSeparator className="my-2" />
-
-        <SidebarGroup>
-          <SidebarGroupLabel 
-            className="text-xs font-semibold text-muted-foreground px-2 flex items-center gap-1 cursor-pointer hover:bg-accent/50 rounded-md"
-            onClick={() => setBlocketOpen(!blocketOpen)}
-          >
-            <ChevronDown className={`h-3 w-3 transition-transform ${blocketOpen ? '' : '-rotate-90'}`} />
-            Blocket
-          </SidebarGroupLabel>
-          {blocketOpen && (
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {blocketItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild
-                    className={location.pathname === item.url ? "bg-accent text-accent-foreground font-medium hover:bg-accent" : "hover:bg-accent/50"}
-                  >
-                    <NavLink to={item.url}>
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.title}</span>
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-          )}
         </SidebarGroup>
 
         <SidebarSeparator className="my-2" />
