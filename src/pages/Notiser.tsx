@@ -2,6 +2,7 @@ import { Bell, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { TopBar } from '@/components/TopBar';
 
 const mockNotifications = [
   {
@@ -55,7 +56,9 @@ const getIcon = (type: string) => {
 
 export default function Notiser() {
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <>
+      <TopBar title="Notiser" />
+      <div className="p-6 max-w-4xl mx-auto">
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-foreground">Notiser</h1>
         <p className="text-muted-foreground mt-2">
@@ -115,5 +118,6 @@ export default function Notiser() {
         </CardContent>
       </Card>
     </div>
+    </>
   );
 }
