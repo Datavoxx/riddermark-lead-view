@@ -12,12 +12,12 @@ export default function Agent() {
   
   // Om ingen agentId, redirect till agent-1
   if (!agentId) {
-    return <Navigate to="/agent/agent-1" replace />;
+    return <Navigate to="/fordonstatus/agent/agent-1" replace />;
   }
 
   // Om ogiltigt agentId, redirect till agent-1
   if (!agentNames[agentId]) {
-    return <Navigate to="/agent/agent-1" replace />;
+    return <Navigate to="/fordonstatus/agent/agent-1" replace />;
   }
 
   return (
