@@ -87,7 +87,12 @@ export const ChatContainer = ({ channelId, agentId, agentName }: ChatContainerPr
 
   // Ladda meddelanden och sätt upp real-time prenumeration
   useEffect(() => {
-    if (!channelId) return;
+    // För agent-chattar: använd agent-specifik channel ID
+    const effectiveChannelId = agentId && currentUser 
+      ? `agent-${agentId}-${currentUser.id}` 
+      : channelId;
+    
+    if (!effectiveChannelId) return;
 
     let cancelled = false;
     setIsLoadingChannel(true);
@@ -100,7 +105,7 @@ export const ChatContainer = ({ channelId, agentId, agentName }: ChatContainerPr
             *,
             profiles!messages_sender_id_fkey(name)
           `)
-          .eq('channel_id', channelId)
+          .eq('channel_id', effectiveChannelId)
           .order('created_at', { ascending: true });
 
         if (cancelled) return;
@@ -119,7 +124,9 @@ export const ChatContainer = ({ channelId, agentId, agentName }: ChatContainerPr
         const formattedMessages: Message[] = (data || []).map((msg: any) => ({
           id: msg.id,
           sender_id: msg.sender_id,
-          sender_name: msg.profiles?.name || 'Okänd',
+          sender_name: msg.sender_id === '00000000-0000-0000-0000-000000000001' 
+            ? (agentName || 'Agent')
+            : (msg.profiles?.name || 'Okänd'),
           content: msg.content,
           created_at: msg.created_at,
           mentions: msg.mentions,
@@ -151,29 +158,38 @@ export const ChatContainer = ({ channelId, agentId, agentName }: ChatContainerPr
 
     // Sätt upp real-time prenumeration
     const channel = supabase
-      .channel(`messages:${channelId}`)
+      .channel(`messages:${effectiveChannelId}`)
       .on(
         'postgres_changes',
         {
           event: 'INSERT',
           schema: 'public',
           table: 'messages',
-          filter: `channel_id=eq.${channelId}`,
+          filter: `channel_id=eq.${effectiveChannelId}`,
         },
         async (payload) => {
           if (cancelled) return;
 
-          // Hämta sender_name från profiles
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('name')
-            .eq('user_id', payload.new.sender_id)
-            .single();
+          let senderName = 'Okänd';
+          
+          // För agent-meddelanden använd agentName
+          if (payload.new.sender_id === '00000000-0000-0000-0000-000000000001') {
+            senderName = agentName || 'Agent';
+          } else {
+            // Hämta sender_name från profiles för vanliga användare
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select('name')
+              .eq('user_id', payload.new.sender_id)
+              .single();
+            
+            senderName = profile?.name || 'Okänd';
+          }
 
           const newMessage: Message = {
             id: payload.new.id,
             sender_id: payload.new.sender_id,
-            sender_name: profile?.name || 'Okänd',
+            sender_name: senderName,
             content: payload.new.content,
             created_at: payload.new.created_at,
             mentions: payload.new.mentions,
@@ -193,13 +209,13 @@ export const ChatContainer = ({ channelId, agentId, agentName }: ChatContainerPr
       clearTimeout(markAsReadTimeoutRef.current);
     }
     markAsReadTimeoutRef.current = setTimeout(async () => {
-      if (user?.id) {
+      if (user?.id && effectiveChannelId) {
         try {
           await supabase
             .from('read_states')
             .upsert(
               {
-                conversation_id: channelId,
+                conversation_id: effectiveChannelId,
                 user_id: user.id,
                 last_read_at: new Date().toISOString(),
               },
@@ -226,7 +242,7 @@ export const ChatContainer = ({ channelId, agentId, agentName }: ChatContainerPr
         channelRef.current = null;
       }
     };
-  }, [channelId, toast, user?.id]);
+  }, [channelId, agentId, agentName, currentUser, toast, user?.id]);
 
   const sendMessage = async (content: string) => {
     if (!currentUser) {
@@ -238,42 +254,30 @@ export const ChatContainer = ({ channelId, agentId, agentName }: ChatContainerPr
       return;
     }
 
-    // För agent-chattar: lägg bara till i-memory meddelande
+    // För agent-chattar: skicka till edge function som hanterar allt
     if (agentId) {
-      const newMessage: Message = {
-        id: crypto.randomUUID(),
-        sender_id: currentUser.id,
-        sender_name: currentUser.name,
-        content,
-        created_at: new Date().toISOString(),
-      };
-      setMessages((prev) => [...prev, newMessage]);
-
-      // Skicka till n8n via edge function
       setIsLoading(true);
       
       try {
         const { data, error } = await supabase.functions.invoke('agent-chat', {
           body: { 
             message: content,
-            userId: currentUser.id 
+            userId: currentUser.id,
+            agentId: agentId
           }
         });
 
         if (error) throw error;
 
-        const agentMessage: Message = {
-          id: crypto.randomUUID(),
-          sender_id: 'agent',
-          sender_name: agentName || 'Agent',
-          content: data.response || 'Inget svar från agenten',
-          created_at: new Date().toISOString(),
-        };
-        setMessages((prev) => [...prev, agentMessage]);
+        // Meddelanden kommer via real-time subscription, ingen manuell tillägg
+        toast({
+          title: 'Meddelande skickat',
+          description: 'Väntar på svar från agenten...',
+        });
       } catch (error) {
         console.error('Error calling agent:', error);
         toast({
-          title: 'Kunde inte få svar från agenten',
+          title: 'Kunde inte skicka meddelande',
           description: 'Försök igen.',
           variant: 'destructive',
         });
@@ -312,23 +316,17 @@ export const ChatContainer = ({ channelId, agentId, agentName }: ChatContainerPr
   };
 
   const handleClearMessages = async () => {
-    // För agent-chattar: rensa bara in-memory meddelanden
-    if (agentId) {
-      setMessages([]);
-      toast({
-        title: 'Meddelanden rensade',
-      });
-      return;
-    }
-
-    // För user-to-user chattar: radera från databasen
-    if (!channelId) return;
+    // Bestäm vilken channel ID som ska användas
+    const effectiveChannelId = agentId && currentUser 
+      ? `agent-${agentId}-${currentUser.id}` 
+      : channelId;
     
+    if (!effectiveChannelId) return;
     try {
       const { error } = await supabase
         .from('messages')
         .delete()
-        .eq('channel_id', channelId);
+        .eq('channel_id', effectiveChannelId);
 
       if (error) throw error;
 
