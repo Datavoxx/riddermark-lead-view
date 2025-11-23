@@ -57,90 +57,90 @@ export default function ActiveLeads() {
     <div className="min-h-screen bg-background">
       <TopBar title="Aktiva Leads" />
       
-      <main className="p-6 space-y-6">
-        <div className="flex items-center gap-4 mb-6">
+      <main className="p-2 md:p-6 space-y-2 md:space-y-6">
+        <div className="flex items-center gap-2 md:gap-4 mb-2 md:mb-6">
           <Button 
             variant="ghost" 
             size="sm" 
             onClick={() => navigate("/reports")}
             className="flex items-center gap-2"
           >
-            <ArrowLeft className="h-4 w-4" />
-            Tillbaka till Rapporter
+            <ArrowLeft className="h-3 w-3 md:h-4 md:w-4" />
+            <span className="text-xs md:text-sm">Tillbaka till Rapporter</span>
           </Button>
         </div>
 
         {/* Header Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-6 mb-3 md:mb-8">
           <Card>
-            <CardHeader className="pb-2">
-              <div className="flex items-center gap-2">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <TrendingUp className="h-5 w-5 text-primary" />
+            <CardHeader className="pb-1 px-2 pt-2 md:p-6 md:pb-2">
+              <div className="flex items-center gap-1 md:gap-2">
+                <div className="p-1 md:p-2 bg-primary/10 rounded-lg">
+                  <TrendingUp className="h-3 w-3 md:h-5 md:w-5 text-primary" />
                 </div>
-                <CardTitle className="text-sm font-medium text-muted-foreground">
+                <CardTitle className="text-[10px] md:text-sm font-medium text-muted-foreground">
                   Totalt Aktiva
                 </CardTitle>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-2 pb-2 md:p-6 md:pt-0">
               <div className="flex items-center gap-2">
-                <div className="text-3xl font-bold text-foreground">89</div>
-                <div className="flex items-center gap-1 text-sm">
-                  <ArrowUpIcon className="h-4 w-4 text-success" />
+                <div className="text-xl md:text-3xl font-bold text-foreground">89</div>
+                <div className="flex items-center gap-0.5 md:gap-1 text-[10px] md:text-sm">
+                  <ArrowUpIcon className="h-3 w-3 md:h-4 md:w-4 text-success" />
                   <span className="text-success">8.7%</span>
                 </div>
               </div>
-              <p className="text-sm text-muted-foreground mt-1">vs förra veckan</p>
+              <p className="text-xs md:text-sm text-muted-foreground mt-0.5 md:mt-1">vs förra veckan</p>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
+            <CardHeader className="pb-1 px-2 pt-2 md:p-6 md:pb-2">
+              <CardTitle className="text-[10px] md:text-sm font-medium text-muted-foreground">
                 Nya idag
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-foreground">7</div>
-              <p className="text-sm text-muted-foreground mt-1">3 mer än igår</p>
+            <CardContent className="px-2 pb-2 md:p-6 md:pt-0">
+              <div className="text-xl md:text-3xl font-bold text-foreground">7</div>
+              <p className="text-xs md:text-sm text-muted-foreground mt-0.5 md:mt-1">3 mer än igår</p>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
+            <CardHeader className="pb-1 px-2 pt-2 md:p-6 md:pb-2">
+              <CardTitle className="text-[10px] md:text-sm font-medium text-muted-foreground">
                 Hög Prioritet
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-destructive">15</div>
-              <p className="text-sm text-muted-foreground mt-1">kräver omedelbar åtgärd</p>
+            <CardContent className="px-2 pb-2 md:p-6 md:pt-0">
+              <div className="text-xl md:text-3xl font-bold text-destructive">15</div>
+              <p className="text-xs md:text-sm text-muted-foreground mt-0.5 md:mt-1">kräver omedelbar åtgärd</p>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
+            <CardHeader className="pb-1 px-2 pt-2 md:p-6 md:pb-2">
+              <CardTitle className="text-[10px] md:text-sm font-medium text-muted-foreground">
                 Genomsnittlig Ålder
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-foreground">3.2</div>
-              <p className="text-sm text-muted-foreground mt-1">dagar</p>
+            <CardContent className="px-2 pb-2 md:p-6 md:pt-0">
+              <div className="text-xl md:text-3xl font-bold text-foreground">3.2</div>
+              <p className="text-xs md:text-sm text-muted-foreground mt-0.5 md:mt-1">dagar</p>
             </CardContent>
           </Card>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 md:gap-6">
           {/* Status Distribution */}
           <Card>
-            <CardHeader>
-              <CardTitle>Fördelning per Status</CardTitle>
+            <CardHeader className="px-2 pt-2 md:p-6">
+              <CardTitle className="text-sm md:text-lg">Fördelning per Status</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-2 md:p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="h-48">
+                <div className="h-32 md:h-48">
                   <ChartContainer config={chartConfig} className="h-full">
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
@@ -149,8 +149,8 @@ export default function ActiveLeads() {
                           dataKey="count"
                           cx="50%"
                           cy="50%"
-                          outerRadius={60}
-                          innerRadius={25}
+                          outerRadius={40}
+                          innerRadius={15}
                         >
                           {statusDistribution.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={entry.color} />
@@ -161,19 +161,19 @@ export default function ActiveLeads() {
                     </ResponsiveContainer>
                   </ChartContainer>
                 </div>
-                <div className="space-y-3">
+                <div className="space-y-2 md:space-y-3">
                   {statusDistribution.map((item) => (
                     <div key={item.status} className="flex justify-between items-center">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1.5 md:gap-2">
                         <div 
-                          className="w-3 h-3 rounded-full" 
+                          className="w-2 h-2 md:w-3 md:h-3 rounded-full" 
                           style={{ backgroundColor: item.color }}
                         />
-                        <span className="font-medium">{item.status}</span>
+                        <span className="text-xs md:text-base font-medium">{item.status}</span>
                       </div>
                       <div className="text-right">
-                        <p className="font-bold">{item.count}</p>
-                        <p className="text-xs text-muted-foreground">{item.percentage}%</p>
+                        <p className="text-sm md:text-base font-bold">{item.count}</p>
+                        <p className="text-[9px] md:text-xs text-muted-foreground">{item.percentage}%</p>
                       </div>
                     </div>
                   ))}
@@ -184,11 +184,11 @@ export default function ActiveLeads() {
 
           {/* Source Breakdown */}
           <Card>
-            <CardHeader>
-              <CardTitle>Leads per Källa</CardTitle>
+            <CardHeader className="px-2 pt-2 md:p-6">
+              <CardTitle className="text-sm md:text-lg">Leads per Källa</CardTitle>
             </CardHeader>
-            <CardContent>
-              <ChartContainer config={chartConfig} className="h-64">
+            <CardContent className="p-1 md:p-6">
+              <ChartContainer config={chartConfig} className="h-40 md:h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={sourceBreakdown} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                     <XAxis dataKey="source" />
@@ -204,20 +204,20 @@ export default function ActiveLeads() {
 
         {/* Recent Activity */}
         <Card>
-          <CardHeader>
-            <CardTitle>Senaste Aktivitet</CardTitle>
+          <CardHeader className="px-2 pt-2 md:p-6">
+            <CardTitle className="text-sm md:text-lg">Senaste Aktivitet</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
+          <CardContent className="p-2 md:p-6">
+            <div className="space-y-2 md:space-y-4">
               {recentActivity.map((activity) => (
-                <div key={activity.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-primary/10 rounded-lg">
-                      <Users className="h-4 w-4 text-primary" />
+                <div key={activity.id} className="flex items-center justify-between p-2 md:p-3 border rounded-lg hover:bg-muted/50 transition-colors">
+                  <div className="flex items-center gap-2 md:gap-3">
+                    <div className="p-1 md:p-2 bg-primary/10 rounded-lg">
+                      <Users className="h-3 w-3 md:h-4 md:w-4 text-primary" />
                     </div>
                     <div>
-                      <p className="font-medium">{activity.company}</p>
-                      <p className="text-sm text-muted-foreground">Status: {activity.status}</p>
+                      <p className="text-xs md:text-base font-medium">{activity.company}</p>
+                      <p className="text-[10px] md:text-sm text-muted-foreground">Status: {activity.status}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
@@ -236,34 +236,34 @@ export default function ActiveLeads() {
 
         {/* Priority Actions */}
         <Card>
-          <CardHeader>
-            <CardTitle>Åtgärder Behövs</CardTitle>
+          <CardHeader className="px-2 pt-2 md:p-6">
+            <CardTitle className="text-sm md:text-lg">Åtgärder Behövs</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-start gap-3">
-                <Phone className="h-5 w-5 text-destructive mt-0.5" />
+          <CardContent className="p-2 md:p-6">
+            <div className="space-y-2 md:space-y-4">
+              <div className="flex items-start gap-2 md:gap-3">
+                <Phone className="h-4 w-4 md:h-5 md:w-5 text-destructive mt-0.5" />
                 <div>
-                  <p className="font-medium">15 leads med hög prioritet</p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs md:text-base font-medium">15 leads med hög prioritet</p>
+                  <p className="text-[10px] md:text-sm text-muted-foreground">
                     Kontakta inom 2 timmar för att behålla momentum
                   </p>
                 </div>
               </div>
-              <div className="flex items-start gap-3">
-                <Calendar className="h-5 w-5 text-primary mt-0.5" />
+              <div className="flex items-start gap-2 md:gap-3">
+                <Calendar className="h-4 w-4 md:h-5 md:w-5 text-primary mt-0.5" />
                 <div>
-                  <p className="font-medium">8 leads utan aktivitet i 3+ dagar</p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs md:text-base font-medium">8 leads utan aktivitet i 3+ dagar</p>
+                  <p className="text-[10px] md:text-sm text-muted-foreground">
                     Schemalägg uppföljning för att undvika att förlora intresse
                   </p>
                 </div>
               </div>
-              <div className="flex items-start gap-3">
-                <TrendingUp className="h-5 w-5 text-success mt-0.5" />
+              <div className="flex items-start gap-2 md:gap-3">
+                <TrendingUp className="h-4 w-4 md:h-5 md:w-5 text-success mt-0.5" />
                 <div>
-                  <p className="font-medium">Website genererar flest aktiva leads</p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs md:text-base font-medium">Website genererar flest aktiva leads</p>
+                  <p className="text-[10px] md:text-sm text-muted-foreground">
                     28 aktiva leads från website - 31.5% av totalt
                   </p>
                 </div>
