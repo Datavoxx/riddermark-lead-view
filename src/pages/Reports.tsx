@@ -1,6 +1,7 @@
 import { TopBar } from "@/components/TopBar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { 
   Users, 
@@ -51,9 +52,9 @@ export default function Reports() {
     <div className="min-h-screen bg-background">
       <TopBar title="Rapporter" />
       
-      <main className="p-6 space-y-6">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">KPI Dashboard</h1>
+      <main className="p-3 md:p-6 space-y-4 md:space-y-6">
+        <div className="mb-6 md:mb-8">
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">KPI Dashboard</h1>
           <p className="text-muted-foreground">Översikt över dina viktigaste nyckeltal</p>
         </div>
 
@@ -286,21 +287,46 @@ export default function Reports() {
           <CardHeader>
             <CardTitle>Leads per månad</CardTitle>
           </CardHeader>
-          <CardContent>
-            <ChartContainer config={chartConfig} className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={monthlyData}>
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar 
-                    dataKey="leads" 
-                    fill="hsl(var(--primary))" 
-                    radius={[4, 4, 0, 0]}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </ChartContainer>
+          <CardContent className="p-2 md:p-6">
+            {/* Mobil: horisontell scrolling */}
+            <div className="md:hidden">
+              <ScrollArea className="w-full">
+                <div className="min-w-[600px] pr-4">
+                  <ChartContainer config={chartConfig} className="h-80">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={monthlyData}>
+                        <XAxis dataKey="month" />
+                        <YAxis />
+                        <ChartTooltip content={<ChartTooltipContent />} />
+                        <Bar 
+                          dataKey="leads" 
+                          fill="hsl(var(--primary))" 
+                          radius={[4, 4, 0, 0]}
+                        />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </ChartContainer>
+                </div>
+              </ScrollArea>
+            </div>
+            
+            {/* Desktop: normal display */}
+            <div className="hidden md:block">
+              <ChartContainer config={chartConfig} className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={monthlyData}>
+                    <XAxis dataKey="month" />
+                    <YAxis />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <Bar 
+                      dataKey="leads" 
+                      fill="hsl(var(--primary))" 
+                      radius={[4, 4, 0, 0]}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+                </ChartContainer>
+            </div>
           </CardContent>
         </Card>
       </main>
