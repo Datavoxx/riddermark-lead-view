@@ -46,6 +46,15 @@ const App = () => (
             <Route path="/test" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            
+            {/* AGENT ROUTES - Separat layout med egen sidebar */}
+            <Route path="/agent/*" element={
+              <ProtectedRoute>
+                <Agent />
+              </ProtectedRoute>
+            } />
+            
+            {/* MAIN APP ROUTES - Med AppSidebar */}
             <Route path="/*" element={
               <ProtectedRoute>
                 <SidebarProvider>
@@ -60,16 +69,14 @@ const App = () => (
                         <Route path="/reports/conversion-rate" element={<ConversionRate />} />
                         <Route path="/reports/response-time" element={<ResponseTime />} />
                         <Route path="/reports/active-leads" element={<ActiveLeads />} />
-              <Route path="/blocket/arenden" element={<ArendenList />} />
-              <Route path="/blocket/arenden/:id" element={<ArendeDetail />} />
-              <Route path="/blocket/wayke" element={<Wayke />} />
-              <Route path="/blocket/bytbil" element={<Bytbil />} />
+                        <Route path="/blocket/arenden" element={<ArendenList />} />
+                        <Route path="/blocket/arenden/:id" element={<ArendeDetail />} />
+                        <Route path="/blocket/wayke" element={<Wayke />} />
+                        <Route path="/blocket/bytbil" element={<Bytbil />} />
                         <Route path="/fordonstatus/bilar" element={<Bilar />} />
                         <Route path="/fordonstatus/verkstad" element={<IVerkstad />} />
                         <Route path="/fordonstatus/servicestatus" element={<Servicestatus />} />
                         <Route path="/bilar" element={<Bilar />} />
-                        <Route path="/agent" element={<Agent />} />
-                        <Route path="/agent/:agentId" element={<Agent />} />
                         <Route path="/notiser" element={<Notiser />} />
                         <Route path="/channel/:id" element={<Channel />} />
                         <Route path="*" element={<NotFound />} />
