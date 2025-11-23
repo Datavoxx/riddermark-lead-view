@@ -50,7 +50,7 @@ export function AppSidebar() {
   const { signOut, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const { isMobile, setOpen } = useSidebar();
+  const { isMobile, setOpen, setOpenMobile } = useSidebar();
   const [channelsOpen, setChannelsOpen] = useState(true);
   const [fordonsstatusOpen, setFordonsstatusOpen] = useState(true);
   const [conversations, setConversations] = useState<ConversationWithUser[]>([]);
@@ -60,7 +60,7 @@ export function AppSidebar() {
 
   const handleNavClick = () => {
     if (isMobile) {
-      setOpen(false);
+      setOpenMobile(false);
     }
   };
 
