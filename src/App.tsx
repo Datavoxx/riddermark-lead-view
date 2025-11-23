@@ -67,6 +67,8 @@ const App = () => (
                         <Route path="/fordonstatus/bilar" element={<Bilar />} />
                         <Route path="/fordonstatus/verkstad" element={<IVerkstad />} />
                         <Route path="/fordonstatus/servicestatus" element={<Servicestatus />} />
+                        <Route path="/fordonstatus/agent" element={<Agent />} />
+                        <Route path="/fordonstatus/agent/:agentId" element={<Agent />} />
                         <Route path="/bilar" element={<Bilar />} />
                         <Route path="/agent" element={<Agent />} />
                         <Route path="/agent/:agentId" element={<Agent />} />

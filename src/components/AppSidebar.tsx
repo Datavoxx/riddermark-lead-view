@@ -30,13 +30,13 @@ const navigation = [
   { title: "Blocket", url: "/blocket/arenden", icon: Car },
   { title: "Wayke", url: "/blocket/wayke", icon: Car },
   { title: "Bytbil", url: "/blocket/bytbil", icon: Car },
-  { title: "Agent", url: "/agent", icon: Bot },
 ];
 
 const fordonsstatusItems = [
   { title: "Våra bilar", url: "/fordonstatus/bilar", icon: Car },
   { title: "Verkstad", url: "/fordonstatus/verkstad", icon: Wrench },
   { title: "Servicestatus", url: "/fordonstatus/servicestatus", icon: ClipboardList },
+  { title: "Bil Agent", url: "/fordonstatus/agent", icon: Bot },
 ];
 
 type ConversationWithUser = {
