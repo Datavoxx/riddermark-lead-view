@@ -352,7 +352,7 @@ export const ChatContainer = ({ channelId, agentId, agentName }: ChatContainerPr
   const showSuggestedPrompts = agentId && messages.length === 0;
 
   return (
-    <div className="flex flex-col h-screen bg-background">
+    <div className="flex flex-col h-full bg-background">
       <ChatHeader 
         channelId={channelId} 
         channelName={agentName || channelName || otherUserName}
