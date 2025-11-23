@@ -50,88 +50,88 @@ export default function ResponseTime() {
     <div className="min-h-screen bg-background">
       <TopBar title="Svarstid" />
       
-      <main className="p-6 space-y-6">
-        <div className="flex items-center gap-4 mb-6">
+      <main className="p-2 md:p-6 space-y-2 md:space-y-6">
+        <div className="flex items-center gap-2 md:gap-4 mb-2 md:mb-6">
           <Button 
             variant="ghost" 
             size="sm" 
             onClick={() => navigate("/reports")}
             className="flex items-center gap-2"
           >
-            <ArrowLeft className="h-4 w-4" />
-            Tillbaka till Rapporter
+            <ArrowLeft className="h-3 w-3 md:h-4 md:w-4" />
+            <span className="text-xs md:text-sm">Tillbaka till Rapporter</span>
           </Button>
         </div>
 
         {/* Header Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-6 mb-3 md:mb-8">
           <Card>
-            <CardHeader className="pb-2">
-              <div className="flex items-center gap-2">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <Clock className="h-5 w-5 text-primary" />
+            <CardHeader className="pb-1 px-2 pt-2 md:p-6 md:pb-2">
+              <div className="flex items-center gap-1 md:gap-2">
+                <div className="p-1 md:p-2 bg-primary/10 rounded-lg">
+                  <Clock className="h-3 w-3 md:h-5 md:w-5 text-primary" />
                 </div>
-                <CardTitle className="text-sm font-medium text-muted-foreground">
+                <CardTitle className="text-[10px] md:text-sm font-medium text-muted-foreground">
                   Genomsnittlig Svarstid
                 </CardTitle>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-2 pb-2 md:p-6 md:pt-0">
               <div className="flex items-center gap-2">
-                <div className="text-3xl font-bold text-foreground">45</div>
-                <div className="flex items-center gap-1 text-sm">
-                  <ArrowUpIcon className="h-4 w-4 text-success" />
+                <div className="text-xl md:text-3xl font-bold text-foreground">45</div>
+                <div className="flex items-center gap-0.5 md:gap-1 text-[10px] md:text-sm">
+                  <ArrowUpIcon className="h-3 w-3 md:h-4 md:w-4 text-success" />
                   <span className="text-success">18.3%</span>
                 </div>
               </div>
-              <p className="text-sm text-muted-foreground mt-1">minuter (förbättring)</p>
+              <p className="text-xs md:text-sm text-muted-foreground mt-0.5 md:mt-1">minuter (förbättring)</p>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
+            <CardHeader className="pb-1 px-2 pt-2 md:p-6 md:pb-2">
+              <CardTitle className="text-[10px] md:text-sm font-medium text-muted-foreground">
                 Snabbaste Svar
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-foreground">3</div>
-              <p className="text-sm text-muted-foreground mt-1">minuter</p>
+            <CardContent className="px-2 pb-2 md:p-6 md:pt-0">
+              <div className="text-xl md:text-3xl font-bold text-foreground">3</div>
+              <p className="text-xs md:text-sm text-muted-foreground mt-0.5 md:mt-1">minuter</p>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
+            <CardHeader className="pb-1 px-2 pt-2 md:p-6 md:pb-2">
+              <CardTitle className="text-[10px] md:text-sm font-medium text-muted-foreground">
                 Under Målsättning
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-success">78%</div>
-              <p className="text-sm text-muted-foreground mt-1">av svar under 60 min</p>
+            <CardContent className="px-2 pb-2 md:p-6 md:pt-0">
+              <div className="text-xl md:text-3xl font-bold text-success">78%</div>
+              <p className="text-xs md:text-sm text-muted-foreground mt-0.5 md:mt-1">av svar under 60 min</p>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
+            <CardHeader className="pb-1 px-2 pt-2 md:p-6 md:pb-2">
+              <CardTitle className="text-[10px] md:text-sm font-medium text-muted-foreground">
                 Totala Svar
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-foreground">234</div>
-              <p className="text-sm text-muted-foreground mt-1">denna månad</p>
+            <CardContent className="px-2 pb-2 md:p-6 md:pt-0">
+              <div className="text-xl md:text-3xl font-bold text-foreground">234</div>
+              <p className="text-xs md:text-sm text-muted-foreground mt-0.5 md:mt-1">denna månad</p>
             </CardContent>
           </Card>
         </div>
 
         {/* Response Time Trend */}
         <Card>
-          <CardHeader>
-            <CardTitle>Svarstid över tid (8 veckor)</CardTitle>
+          <CardHeader className="px-2 pt-2 md:p-6">
+            <CardTitle className="text-sm md:text-lg">Svarstid över tid (8 veckor)</CardTitle>
           </CardHeader>
-          <CardContent>
-            <ChartContainer config={chartConfig} className="h-80">
+          <CardContent className="p-1 md:p-6">
+            <ChartContainer config={chartConfig} className="h-48 md:h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={responseTimeData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                   <XAxis dataKey="week" />
@@ -158,14 +158,14 @@ export default function ResponseTime() {
           </CardContent>
         </Card>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 md:gap-6">
           {/* Hourly Performance */}
           <Card>
-            <CardHeader>
-              <CardTitle>Prestanda per timme</CardTitle>
+            <CardHeader className="px-2 pt-2 md:p-6">
+              <CardTitle className="text-sm md:text-lg">Prestanda per timme</CardTitle>
             </CardHeader>
-            <CardContent>
-              <ChartContainer config={chartConfig} className="h-64">
+            <CardContent className="p-1 md:p-6">
+              <ChartContainer config={chartConfig} className="h-40 md:h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={hourlyDistribution} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                     <XAxis dataKey="hour" />
@@ -180,26 +180,26 @@ export default function ResponseTime() {
 
           {/* Team Performance */}
           <Card>
-            <CardHeader>
-              <CardTitle>Teamprestanda</CardTitle>
+            <CardHeader className="px-2 pt-2 md:p-6">
+              <CardTitle className="text-sm md:text-lg">Teamprestanda</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
+            <CardContent className="p-2 md:p-6">
+              <div className="space-y-2 md:space-y-4">
                 {teamPerformance.map((member) => (
-                  <div key={member.member} className="space-y-2">
+                  <div key={member.member} className="space-y-1 md:space-y-2">
                     <div className="flex justify-between items-center">
                       <div>
-                        <p className="font-medium">{member.member}</p>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-xs md:text-base font-medium">{member.member}</p>
+                        <p className="text-[10px] md:text-sm text-muted-foreground">
                           {member.responses} svar • {member.avgTime} min snitt
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="font-bold">{member.score}%</p>
-                        <p className="text-xs text-muted-foreground">poäng</p>
+                        <p className="text-sm md:text-base font-bold">{member.score}%</p>
+                        <p className="text-[9px] md:text-xs text-muted-foreground">poäng</p>
                       </div>
                     </div>
-                    <Progress value={member.score} className="h-2" />
+                    <Progress value={member.score} className="h-1.5 md:h-2" />
                   </div>
                 ))}
               </div>
@@ -209,34 +209,34 @@ export default function ResponseTime() {
 
         {/* Insights */}
         <Card>
-          <CardHeader>
-            <CardTitle>Insikter & Förbättringar</CardTitle>
+          <CardHeader className="px-2 pt-2 md:p-6">
+            <CardTitle className="text-sm md:text-lg">Insikter & Förbättringar</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-start gap-3">
-                <Zap className="h-5 w-5 text-success mt-0.5" />
+          <CardContent className="p-2 md:p-6">
+            <div className="space-y-2 md:space-y-4">
+              <div className="flex items-start gap-2 md:gap-3">
+                <Zap className="h-4 w-4 md:h-5 md:w-5 text-success mt-0.5" />
                 <div>
-                  <p className="font-medium">Stor förbättring</p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs md:text-base font-medium">Stor förbättring</p>
+                  <p className="text-[10px] md:text-sm text-muted-foreground">
                     Svarstiden har förbättrats med 18% de senaste 8 veckorna
                   </p>
                 </div>
               </div>
-              <div className="flex items-start gap-3">
-                <Timer className="h-5 w-5 text-primary mt-0.5" />
+              <div className="flex items-start gap-2 md:gap-3">
+                <Timer className="h-4 w-4 md:h-5 md:w-5 text-primary mt-0.5" />
                 <div>
-                  <p className="font-medium">Lunchpausen påverkar</p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs md:text-base font-medium">Lunchpausen påverkar</p>
+                  <p className="text-[10px] md:text-sm text-muted-foreground">
                     Svarstiden ökar markant mellan 12-13, överväg roterande luncher
                   </p>
                 </div>
               </div>
-              <div className="flex items-start gap-3">
-                <Clock className="h-5 w-5 text-destructive mt-0.5" />
+              <div className="flex items-start gap-2 md:gap-3">
+                <Clock className="h-4 w-4 md:h-5 md:w-5 text-destructive mt-0.5" />
                 <div>
-                  <p className="font-medium">Stöd för Johan</p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs md:text-base font-medium">Stöd för Johan</p>
+                  <p className="text-[10px] md:text-sm text-muted-foreground">
                     Johan har längst svarstid (55 min) - erbjud träning eller mentoring
                   </p>
                 </div>

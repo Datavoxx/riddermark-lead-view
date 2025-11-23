@@ -43,77 +43,77 @@ export default function ConversionRate() {
     <div className="min-h-screen bg-background">
       <TopBar title="Konverteringsgrad" />
       
-      <main className="p-6 space-y-6">
-        <div className="flex items-center gap-4 mb-6">
+      <main className="p-2 md:p-6 space-y-2 md:space-y-6">
+        <div className="flex items-center gap-2 md:gap-4 mb-2 md:mb-6">
           <Button 
             variant="ghost" 
             size="sm" 
             onClick={() => navigate("/reports")}
             className="flex items-center gap-2"
           >
-            <ArrowLeft className="h-4 w-4" />
-            Tillbaka till Rapporter
+            <ArrowLeft className="h-3 w-3 md:h-4 md:w-4" />
+            <span className="text-xs md:text-sm">Tillbaka till Rapporter</span>
           </Button>
         </div>
 
         {/* Header Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-6 mb-3 md:mb-8">
           <Card>
-            <CardHeader className="pb-2">
-              <div className="flex items-center gap-2">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <Target className="h-5 w-5 text-primary" />
+            <CardHeader className="pb-1 px-2 pt-2 md:p-6 md:pb-2">
+              <div className="flex items-center gap-1 md:gap-2">
+                <div className="p-1 md:p-2 bg-primary/10 rounded-lg">
+                  <Target className="h-3 w-3 md:h-5 md:w-5 text-primary" />
                 </div>
-                <CardTitle className="text-sm font-medium text-muted-foreground">
+                <CardTitle className="text-[10px] md:text-sm font-medium text-muted-foreground">
                   Nuvarande Konverteringsgrad
                 </CardTitle>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-2 pb-2 md:p-6 md:pt-0">
               <div className="flex items-center gap-2">
-                <div className="text-3xl font-bold text-foreground">24.8%</div>
-                <div className="flex items-center gap-1 text-sm">
-                  <ArrowDownIcon className="h-4 w-4 text-destructive" />
+                <div className="text-xl md:text-3xl font-bold text-foreground">24.8%</div>
+                <div className="flex items-center gap-0.5 md:gap-1 text-[10px] md:text-sm">
+                  <ArrowDownIcon className="h-3 w-3 md:h-4 md:w-4 text-destructive" />
                   <span className="text-destructive">2.1%</span>
                 </div>
               </div>
-              <Progress value={24.8} className="mt-2 h-2" />
-              <p className="text-sm text-muted-foreground mt-1">vs förra månaden</p>
+              <Progress value={24.8} className="mt-1 md:mt-2 h-1.5 md:h-2" />
+              <p className="text-xs md:text-sm text-muted-foreground mt-0.5 md:mt-1">vs förra månaden</p>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
+            <CardHeader className="pb-1 px-2 pt-2 md:p-6 md:pb-2">
+              <CardTitle className="text-[10px] md:text-sm font-medium text-muted-foreground">
                 Branschgenomsnitt
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-foreground">22.5%</div>
-              <p className="text-sm text-success mt-1">+2.3% över genomsnitt</p>
+            <CardContent className="px-2 pb-2 md:p-6 md:pt-0">
+              <div className="text-xl md:text-3xl font-bold text-foreground">22.5%</div>
+              <p className="text-xs md:text-sm text-success mt-0.5 md:mt-1">+2.3% över genomsnitt</p>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
+            <CardHeader className="pb-1 px-2 pt-2 md:p-6 md:pb-2">
+              <CardTitle className="text-[10px] md:text-sm font-medium text-muted-foreground">
                 Bästa månaden
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-foreground">28.4%</div>
-              <p className="text-sm text-muted-foreground mt-1">April 2024</p>
+            <CardContent className="px-2 pb-2 md:p-6 md:pt-0">
+              <div className="text-xl md:text-3xl font-bold text-foreground">28.4%</div>
+              <p className="text-xs md:text-sm text-muted-foreground mt-0.5 md:mt-1">April 2024</p>
             </CardContent>
           </Card>
         </div>
 
         {/* Conversion Trend */}
         <Card>
-          <CardHeader>
-            <CardTitle>Konverteringsgrad över tid</CardTitle>
+          <CardHeader className="px-2 pt-2 md:p-6">
+            <CardTitle className="text-sm md:text-lg">Konverteringsgrad över tid</CardTitle>
           </CardHeader>
-          <CardContent>
-            <ChartContainer config={chartConfig} className="h-80">
+          <CardContent className="p-1 md:p-6">
+            <ChartContainer config={chartConfig} className="h-48 md:h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={conversionData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                   <XAxis dataKey="month" />
@@ -133,14 +133,14 @@ export default function ConversionRate() {
           </CardContent>
         </Card>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 md:gap-6">
           {/* Conversion Funnel */}
           <Card>
-            <CardHeader>
-              <CardTitle>Konverteringstratt</CardTitle>
+            <CardHeader className="px-2 pt-2 md:p-6">
+              <CardTitle className="text-sm md:text-lg">Konverteringstratt</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
+            <CardContent className="p-2 md:p-6">
+              <div className="space-y-2 md:space-y-4">
                 {funnelData.map((stage, index) => (
                   <div key={stage.stage} className="space-y-2">
                     <div className="flex justify-between text-sm">
@@ -156,22 +156,22 @@ export default function ConversionRate() {
 
           {/* Source Performance */}
           <Card>
-            <CardHeader>
-              <CardTitle>Konvertering per källa</CardTitle>
+            <CardHeader className="px-2 pt-2 md:p-6">
+              <CardTitle className="text-sm md:text-lg">Konvertering per källa</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
+            <CardContent className="p-2 md:p-6">
+              <div className="space-y-2 md:space-y-4">
                 {sourceConversion.map((source) => (
                   <div key={source.source} className="flex items-center justify-between">
-                    <div className="space-y-1">
-                      <p className="font-medium">{source.source}</p>
-                      <p className="text-sm text-muted-foreground">
+                    <div className="space-y-0.5 md:space-y-1">
+                      <p className="text-xs md:text-base font-medium">{source.source}</p>
+                      <p className="text-[10px] md:text-sm text-muted-foreground">
                         {source.converted}/{source.leads} leads
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="font-bold">{source.rate}%</p>
-                      <Progress value={source.rate} className="w-20 h-2" />
+                      <p className="text-sm md:text-base font-bold">{source.rate}%</p>
+                      <Progress value={source.rate} className="w-16 md:w-20 h-1.5 md:h-2" />
                     </div>
                   </div>
                 ))}
@@ -182,34 +182,34 @@ export default function ConversionRate() {
 
         {/* Insights */}
         <Card>
-          <CardHeader>
-            <CardTitle>Insikter & Rekommendationer</CardTitle>
+          <CardHeader className="px-2 pt-2 md:p-6">
+            <CardTitle className="text-sm md:text-lg">Insikter & Rekommendationer</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-start gap-3">
-                <TrendingDown className="h-5 w-5 text-destructive mt-0.5" />
+          <CardContent className="p-2 md:p-6">
+            <div className="space-y-2 md:space-y-4">
+              <div className="flex items-start gap-2 md:gap-3">
+                <TrendingDown className="h-4 w-4 md:h-5 md:w-5 text-destructive mt-0.5" />
                 <div>
-                  <p className="font-medium">Nedgång från april</p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs md:text-base font-medium">Nedgång från april</p>
+                  <p className="text-[10px] md:text-sm text-muted-foreground">
                     Konverteringsgraden har sjunkit 3.6 procentenheter från toppnoteringen i april
                   </p>
                 </div>
               </div>
-              <div className="flex items-start gap-3">
-                <Target className="h-5 w-5 text-primary mt-0.5" />
+              <div className="flex items-start gap-2 md:gap-3">
+                <Target className="h-4 w-4 md:h-5 md:w-5 text-primary mt-0.5" />
                 <div>
-                  <p className="font-medium">Website presterar bäst</p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs md:text-base font-medium">Website presterar bäst</p>
+                  <p className="text-[10px] md:text-sm text-muted-foreground">
                     Website-leads konverterar 31.1%, betydligt högre än andra kanaler
                   </p>
                 </div>
               </div>
-              <div className="flex items-start gap-3">
-                <Users className="h-5 w-5 text-success mt-0.5" />
+              <div className="flex items-start gap-2 md:gap-3">
+                <Users className="h-4 w-4 md:h-5 md:w-5 text-success mt-0.5" />
                 <div>
-                  <p className="font-medium">Förbättra kvalificeringen</p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs md:text-base font-medium">Förbättra kvalificeringen</p>
+                  <p className="text-[10px] md:text-sm text-muted-foreground">
                     37% av leads når kvalificeringsstadiet - fokusera på bättre lead-scoring
                   </p>
                 </div>
