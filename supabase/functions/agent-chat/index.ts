@@ -45,12 +45,20 @@ serve(async (req) => {
     }
 
     const n8nData = await n8nResponse.json();
-    console.log('n8n response:', n8nData);
+    console.log('Full n8n response:', n8nData);
 
-    // Returnera svaret från n8n (förväntar sig JSON med 'response' field)
+    // Extrahera texten från n8n's output-struktur
+    const text = 
+      n8nData?.output?.[0]?.content?.[0]?.text ?? 
+      n8nData?.message ?? 
+      null;
+
+    console.log('Extracted text:', text);
+
+    // Returnera svaret från n8n
     return new Response(
       JSON.stringify({ 
-        response: n8nData.response || 'No response from agent' 
+        response: text || 'No response from agent' 
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
