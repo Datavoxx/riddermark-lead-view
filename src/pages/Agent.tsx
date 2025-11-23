@@ -1,5 +1,7 @@
 import { useParams, Navigate } from 'react-router-dom';
 import { ChatContainer } from '@/components/ChatInterface/ChatContainer';
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { AgentSidebar } from '@/components/AgentSidebar';
 
 const agentNames: Record<string, string> = {
   'agent-1': 'Agent 1',
@@ -21,9 +23,19 @@ export default function Agent() {
   }
 
   return (
-    <ChatContainer 
-      agentId={agentId}
-      agentName={agentNames[agentId]}
-    />
+    <SidebarProvider>
+      <div className="flex w-full h-screen">
+        <AgentSidebar />
+        <div className="flex-1 flex flex-col">
+          <div className="h-14 border-b border-border bg-background flex items-center px-4">
+            <SidebarTrigger />
+          </div>
+          <ChatContainer 
+            agentId={agentId}
+            agentName={agentNames[agentId]}
+          />
+        </div>
+      </div>
+    </SidebarProvider>
   );
 }
