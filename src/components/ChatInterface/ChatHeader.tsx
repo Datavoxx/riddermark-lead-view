@@ -1,5 +1,6 @@
 import { Clock, Hash, RotateCcw, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { SidebarTrigger } from '@/components/ui/sidebar';
 import { ChannelParticipants } from './ChannelParticipants';
 
 interface ChatHeaderProps {
@@ -16,7 +17,11 @@ export const ChatHeader = ({ channelId, channelName, onClearMessages, isGroupCha
   return (
     <div className="flex items-center justify-between p-4 border-b">
       <div className="flex items-center gap-2">
-        <Icon className="w-5 h-5 text-muted-foreground" />
+        {!channelId ? (
+          <SidebarTrigger />
+        ) : (
+          <Icon className="w-5 h-5 text-muted-foreground" />
+        )}
         <span className="text-sm text-muted-foreground">{displayName}</span>
       </div>
       <div className="flex items-center gap-2">
