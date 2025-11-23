@@ -59,27 +59,27 @@ export default function Reports() {
         </div>
 
         {/* KPI Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
           {/* Total Leads */}
           <Card 
             className="relative overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
             onClick={() => navigate("/reports/total-leads")}
           >
-            <CardHeader className="pb-2">
+            <CardHeader className="pb-2 px-3 pt-3 md:p-6 md:pb-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="p-2 bg-primary/10 rounded-lg">
-                    <Users className="h-5 w-5 text-primary" />
+                  <div className="p-1.5 md:p-2 bg-primary/10 rounded-lg">
+                    <Users className="h-4 w-4 md:h-5 md:w-5 text-primary" />
                   </div>
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                  <CardTitle className="text-xs md:text-sm font-medium text-muted-foreground">
                     Totala Leads
                   </CardTitle>
                 </div>
-                <div className="flex items-center gap-1 text-sm">
+                <div className="flex items-center gap-0.5 md:gap-1 text-xs md:text-sm">
                   {kpiData.totalLeads.trend === "up" ? (
-                    <ArrowUpIcon className="h-4 w-4 text-success" />
+                    <ArrowUpIcon className="h-3 w-3 md:h-4 md:w-4 text-success" />
                   ) : (
-                    <ArrowDownIcon className="h-4 w-4 text-destructive" />
+                    <ArrowDownIcon className="h-3 w-3 md:h-4 md:w-4 text-destructive" />
                   )}
                   <span className={kpiData.totalLeads.trend === "up" ? "text-success" : "text-destructive"}>
                     {Math.abs(kpiData.totalLeads.change)}%
@@ -87,12 +87,12 @@ export default function Reports() {
                 </div>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-3 pb-3 md:p-6 md:pt-0">
               <div className="flex items-end justify-between">
-                <div className="text-3xl font-bold text-foreground">
+                <div className="text-2xl md:text-3xl font-bold text-foreground">
                   {kpiData.totalLeads.value.toLocaleString()}
                 </div>
-                <div className="w-24 h-12">
+                <div className="w-16 h-8 md:w-24 md:h-12">
                   <ChartContainer config={chartConfig} className="h-full">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={monthlyData.slice(-4)}>
@@ -110,21 +110,21 @@ export default function Reports() {
             className="relative overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
             onClick={() => navigate("/reports/conversion-rate")}
           >
-            <CardHeader className="pb-2">
+            <CardHeader className="pb-2 px-3 pt-3 md:p-6 md:pb-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="p-2 bg-primary/10 rounded-lg">
-                    <Target className="h-5 w-5 text-primary" />
+                  <div className="p-1.5 md:p-2 bg-primary/10 rounded-lg">
+                    <Target className="h-4 w-4 md:h-5 md:w-5 text-primary" />
                   </div>
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                  <CardTitle className="text-xs md:text-sm font-medium text-muted-foreground">
                     Konverteringsgrad
                   </CardTitle>
                 </div>
-                <div className="flex items-center gap-1 text-sm">
+                <div className="flex items-center gap-0.5 md:gap-1 text-xs md:text-sm">
                   {kpiData.conversionRate.trend === "up" ? (
-                    <ArrowUpIcon className="h-4 w-4 text-success" />
+                    <ArrowUpIcon className="h-3 w-3 md:h-4 md:w-4 text-success" />
                   ) : (
-                    <ArrowDownIcon className="h-4 w-4 text-destructive" />
+                    <ArrowDownIcon className="h-3 w-3 md:h-4 md:w-4 text-destructive" />
                   )}
                   <span className={kpiData.conversionRate.trend === "up" ? "text-success" : "text-destructive"}>
                     {Math.abs(kpiData.conversionRate.change)}%
@@ -132,14 +132,14 @@ export default function Reports() {
                 </div>
               </div>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="text-3xl font-bold text-foreground">
+            <CardContent className="px-3 pb-3 md:p-6 md:pt-0">
+              <div className="space-y-3 md:space-y-4">
+                <div className="text-2xl md:text-3xl font-bold text-foreground">
                   {kpiData.conversionRate.value}%
                 </div>
                 <div className="space-y-2">
-                  <Progress value={kpiData.conversionRate.value} className="h-3" />
-                  <div className="w-16 h-8">
+                  <Progress value={kpiData.conversionRate.value} className="h-2 md:h-3" />
+                  <div className="w-12 h-6 md:w-16 md:h-8">
                     <ChartContainer config={chartConfig} className="h-full">
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
@@ -173,21 +173,21 @@ export default function Reports() {
             className="relative overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
             onClick={() => navigate("/reports/response-time")}
           >
-            <CardHeader className="pb-2">
+            <CardHeader className="pb-2 px-3 pt-3 md:p-6 md:pb-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="p-2 bg-primary/10 rounded-lg">
-                    <Clock className="h-5 w-5 text-primary" />
+                  <div className="p-1.5 md:p-2 bg-primary/10 rounded-lg">
+                    <Clock className="h-4 w-4 md:h-5 md:w-5 text-primary" />
                   </div>
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                  <CardTitle className="text-xs md:text-sm font-medium text-muted-foreground">
                     Avg. Svarstid
                   </CardTitle>
                 </div>
-                <div className="flex items-center gap-1 text-sm">
+                <div className="flex items-center gap-0.5 md:gap-1 text-xs md:text-sm">
                   {kpiData.avgResponseTime.trend === "up" ? (
-                    <ArrowUpIcon className="h-4 w-4 text-success" />
+                    <ArrowUpIcon className="h-3 w-3 md:h-4 md:w-4 text-success" />
                   ) : (
-                    <ArrowDownIcon className="h-4 w-4 text-destructive" />
+                    <ArrowDownIcon className="h-3 w-3 md:h-4 md:w-4 text-destructive" />
                   )}
                   <span className="text-success">
                     {Math.abs(kpiData.avgResponseTime.change)}%
@@ -195,15 +195,15 @@ export default function Reports() {
                 </div>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-3 pb-3 md:p-6 md:pt-0">
               <div className="flex items-end justify-between">
-                <div className="space-y-1">
-                  <div className="text-3xl font-bold text-foreground">
+                <div className="space-y-0.5 md:space-y-1">
+                  <div className="text-2xl md:text-3xl font-bold text-foreground">
                     {kpiData.avgResponseTime.value}
                   </div>
-                  <div className="text-sm text-muted-foreground">minuter</div>
+                  <div className="text-xs md:text-sm text-muted-foreground">minuter</div>
                 </div>
-                <div className="w-24 h-12">
+                <div className="w-16 h-8 md:w-24 md:h-12">
                   <ChartContainer config={chartConfig} className="h-full">
                     <ResponsiveContainer width="100%" height="100%">
                       <LineChart data={monthlyData.slice(-6).map((d, i) => ({
@@ -214,7 +214,7 @@ export default function Reports() {
                           type="monotone" 
                           dataKey="responseTime" 
                           stroke="hsl(var(--primary))" 
-                          strokeWidth={3}
+                          strokeWidth={2}
                           dot={false}
                         />
                       </LineChart>
@@ -230,21 +230,21 @@ export default function Reports() {
             className="relative overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
             onClick={() => navigate("/reports/active-leads")}
           >
-            <CardHeader className="pb-2">
+            <CardHeader className="pb-2 px-3 pt-3 md:p-6 md:pb-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="p-2 bg-primary/10 rounded-lg">
-                    <TrendingUp className="h-5 w-5 text-primary" />
+                  <div className="p-1.5 md:p-2 bg-primary/10 rounded-lg">
+                    <TrendingUp className="h-4 w-4 md:h-5 md:w-5 text-primary" />
                   </div>
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                  <CardTitle className="text-xs md:text-sm font-medium text-muted-foreground">
                     Aktiva Leads
                   </CardTitle>
                 </div>
-                <div className="flex items-center gap-1 text-sm">
+                <div className="flex items-center gap-0.5 md:gap-1 text-xs md:text-sm">
                   {kpiData.activeLeads.trend === "up" ? (
-                    <ArrowUpIcon className="h-4 w-4 text-success" />
+                    <ArrowUpIcon className="h-3 w-3 md:h-4 md:w-4 text-success" />
                   ) : (
-                    <ArrowDownIcon className="h-4 w-4 text-destructive" />
+                    <ArrowDownIcon className="h-3 w-3 md:h-4 md:w-4 text-destructive" />
                   )}
                   <span className="text-success">
                     {Math.abs(kpiData.activeLeads.change)}%
@@ -252,12 +252,12 @@ export default function Reports() {
                 </div>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-3 pb-3 md:p-6 md:pt-0">
               <div className="flex items-end justify-between">
-                <div className="text-3xl font-bold text-foreground">
+                <div className="text-2xl md:text-3xl font-bold text-foreground">
                   {kpiData.activeLeads.value}
                 </div>
-                <div className="w-20 h-12">
+                <div className="w-16 h-8 md:w-20 md:h-12">
                   <ChartContainer config={chartConfig} className="h-full">
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
@@ -266,8 +266,8 @@ export default function Reports() {
                           dataKey="value"
                           cx="50%"
                           cy="50%"
-                          outerRadius={24}
-                          innerRadius={12}
+                          outerRadius={20}
+                          innerRadius={10}
                         >
                           {statusData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={entry.color} />
@@ -284,19 +284,19 @@ export default function Reports() {
 
         {/* Detailed Chart */}
         <Card>
-          <CardHeader>
-            <CardTitle>Leads per månad</CardTitle>
+          <CardHeader className="px-3 pt-3 md:p-6">
+            <CardTitle className="text-base md:text-lg">Leads per månad</CardTitle>
           </CardHeader>
           <CardContent className="p-2 md:p-6">
             {/* Mobil: horisontell scrolling */}
             <div className="md:hidden">
-              <ScrollArea className="w-full">
-                <div className="min-w-[600px] pr-4">
-                  <ChartContainer config={chartConfig} className="h-80">
+              <ScrollArea className="w-full whitespace-nowrap rounded-md border">
+                <div className="min-w-[500px] p-4">
+                  <ChartContainer config={chartConfig} className="h-64">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={monthlyData}>
-                        <XAxis dataKey="month" />
-                        <YAxis />
+                        <XAxis dataKey="month" tick={{ fontSize: 11 }} />
+                        <YAxis tick={{ fontSize: 11 }} />
                         <ChartTooltip content={<ChartTooltipContent />} />
                         <Bar 
                           dataKey="leads" 
@@ -325,7 +325,7 @@ export default function Reports() {
                     />
                   </BarChart>
                 </ResponsiveContainer>
-                </ChartContainer>
+              </ChartContainer>
             </div>
           </CardContent>
         </Card>

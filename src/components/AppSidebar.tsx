@@ -21,6 +21,7 @@ import {
   SidebarHeader,
   SidebarFooter,
   SidebarSeparator,
+  useSidebar,
 } from "@/components/ui/sidebar";
 
 const navigation = [
@@ -49,12 +50,19 @@ export function AppSidebar() {
   const { signOut, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const { isMobile, setOpen } = useSidebar();
   const [channelsOpen, setChannelsOpen] = useState(true);
   const [fordonsstatusOpen, setFordonsstatusOpen] = useState(true);
   const [conversations, setConversations] = useState<ConversationWithUser[]>([]);
   const [showCreateChannelDialog, setShowCreateChannelDialog] = useState(false);
   const [groupChannels, setGroupChannels] = useState<any[]>([]);
   const { unreadCounts } = useUnreadMessages(user?.id);
+
+  const handleNavClick = () => {
+    if (isMobile) {
+      setOpen(false);
+    }
+  };
 
   const fetchConversations = async () => {
     if (!user?.id) return;
@@ -183,6 +191,7 @@ export function AppSidebar() {
                       to={item.url} 
                       end={item.url === '/dashboard'}
                       className={getNavClassName}
+                      onClick={handleNavClick}
                     >
                       <item.icon className="h-4 w-4" />
                       <span>{item.title}</span>
@@ -213,7 +222,7 @@ export function AppSidebar() {
                     asChild
                     className={location.pathname === item.url ? "bg-accent text-accent-foreground font-medium hover:bg-accent" : "hover:bg-accent/50"}
                   >
-                    <NavLink to={item.url}>
+                    <NavLink to={item.url} onClick={handleNavClick}>
                       <item.icon className="h-4 w-4" />
                       <span>{item.title}</span>
                     </NavLink>
@@ -260,6 +269,7 @@ export function AppSidebar() {
                     <NavLink 
                       to={`/channel/${conv.conversation_id}`}
                       className="flex items-center justify-between w-full"
+                      onClick={handleNavClick}
                     >
                       <div className="flex items-center gap-2">
                         <Hash className="h-4 w-4" />
@@ -287,6 +297,7 @@ export function AppSidebar() {
                     <NavLink 
                       to={`/channel/${channel.id}`}
                       className="flex items-center justify-between w-full"
+                      onClick={handleNavClick}
                     >
                       <div className="flex items-center gap-2 flex-1 min-w-0">
                         <Users className="h-4 w-4 flex-shrink-0" />
@@ -337,7 +348,7 @@ export function AppSidebar() {
                   asChild
                   className={location.pathname === '/notiser' ? "bg-accent text-accent-foreground font-medium hover:bg-accent" : ""}
                 >
-                  <NavLink to="/notiser">
+                  <NavLink to="/notiser" onClick={handleNavClick}>
                     <Bell className="h-4 w-4" />
                     <span>Notiser</span>
                   </NavLink>
