@@ -1,12 +1,27 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Loader2, Edit } from "lucide-react";
 import { format } from "date-fns";
 import { sv } from "date-fns/locale";
+import { UpdateWorkshopStatusDialog } from "./UpdateWorkshopStatusDialog";
+
+const statusConfig = {
+  in_workshop: { label: "I verkstad", color: "bg-blue-500/10 text-blue-700 dark:text-blue-400" },
+  in_progress: { label: "Pågående arbete", color: "bg-blue-500/10 text-blue-700 dark:text-blue-400" },
+  waiting_for_parts: { label: "Väntar på del", color: "bg-yellow-500/10 text-yellow-700 dark:text-yellow-400" },
+  completed: { label: "Klar", color: "bg-green-500/10 text-green-700 dark:text-green-400" },
+  picked_up: { label: "Uthämtad", color: "bg-green-500/10 text-green-700 dark:text-green-400" },
+  relocated: { label: "Flyttad", color: "bg-purple-500/10 text-purple-700 dark:text-purple-400" },
+};
 
 export function WorkshopEntriesList() {
+  const [selectedEntry, setSelectedEntry] = useState<any>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+
   const { data: entries, isLoading } = useQuery({
     queryKey: ['workshop-entries'],
     queryFn: async () => {
@@ -43,40 +58,73 @@ export function WorkshopEntriesList() {
     );
   }
 
+  const handleEditClick = (entry: any) => {
+    setSelectedEntry(entry);
+    setDialogOpen(true);
+  };
+
   return (
-    <Card>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Bil-ID</TableHead>
-            <TableHead>Verkstad</TableHead>
-            <TableHead>Adress</TableHead>
-            <TableHead>Incheckad</TableHead>
-            <TableHead>Status</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {entries.map((entry) => (
-            <TableRow key={entry.id}>
-              <TableCell className="font-mono text-sm">
-                {entry.car_id.substring(0, 8)}...
-              </TableCell>
-              <TableCell className="font-medium">{entry.workshop_name}</TableCell>
-              <TableCell className="text-muted-foreground">
-                {entry.workshop_address || '—'}
-              </TableCell>
-              <TableCell>
-                {format(new Date(entry.checked_in_at), 'PPp', { locale: sv })}
-              </TableCell>
-              <TableCell>
-                <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-primary/10 text-primary">
-                  {entry.status === 'in_workshop' ? 'I verkstad' : entry.status}
-                </span>
-              </TableCell>
+    <>
+      <Card>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Bil-ID</TableHead>
+              <TableHead>Verkstad</TableHead>
+              <TableHead>Adress</TableHead>
+              <TableHead>Incheckad</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Anteckningar</TableHead>
+              <TableHead className="text-right">Åtgärder</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </Card>
+          </TableHeader>
+          <TableBody>
+            {entries.map((entry) => {
+              const config = statusConfig[entry.status as keyof typeof statusConfig] || statusConfig.in_workshop;
+              
+              return (
+                <TableRow key={entry.id}>
+                  <TableCell className="font-mono text-sm">
+                    {entry.car_id.substring(0, 8)}...
+                  </TableCell>
+                  <TableCell className="font-medium">{entry.workshop_name}</TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {entry.workshop_address || '—'}
+                  </TableCell>
+                  <TableCell>
+                    {format(new Date(entry.checked_in_at), 'PPp', { locale: sv })}
+                  </TableCell>
+                  <TableCell>
+                    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${config.color}`}>
+                      {config.label}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-sm text-muted-foreground max-w-xs truncate">
+                    {entry.notes || '—'}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleEditClick(entry)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </Card>
+
+      {selectedEntry && (
+        <UpdateWorkshopStatusDialog
+          open={dialogOpen}
+          onOpenChange={setDialogOpen}
+          entry={selectedEntry}
+        />
+      )}
+    </>
   );
 }
