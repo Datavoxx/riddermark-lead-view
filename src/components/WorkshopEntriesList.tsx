@@ -73,6 +73,7 @@ export function WorkshopEntriesList() {
               <TableHead>Verkstad</TableHead>
               <TableHead>Adress</TableHead>
               <TableHead>Incheckad</TableHead>
+              <TableHead>Uppdaterad</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Anteckningar</TableHead>
               <TableHead className="text-right">Åtgärder</TableHead>
@@ -93,6 +94,9 @@ export function WorkshopEntriesList() {
                   </TableCell>
                   <TableCell>
                     {format(new Date(entry.checked_in_at), 'PPp', { locale: sv })}
+                  </TableCell>
+                  <TableCell>
+                    {format(new Date(entry.updated_at), 'PPp', { locale: sv })}
                   </TableCell>
                   <TableCell>
                     <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${config.color}`}>
