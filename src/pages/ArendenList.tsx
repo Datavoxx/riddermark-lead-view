@@ -18,6 +18,7 @@ import {
   ArrowRight, ChevronRight 
 } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce";
+import { NotificationPermissionBanner } from "@/components/NotificationPermissionBanner";
 
 const statusFilters = [
   { key: 'all', label: 'Alla' },
@@ -181,6 +182,9 @@ export default function ArendenList() {
       <TopBar title="Ärenden" />
       
       <main className="container mx-auto p-4 lg:p-6 space-y-6 max-w-7xl">
+        {/* Notification Permission Banner */}
+        <NotificationPermissionBanner />
+
         {/* Header Section */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
