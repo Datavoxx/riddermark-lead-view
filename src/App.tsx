@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { GoogleMapsProvider } from "@/contexts/GoogleMapsContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { RoleProtectedRoute } from "@/components/RoleProtectedRoute";
 import { AppSidebar } from "@/components/AppSidebar";
 import { EmailDraftModal } from "@/components/EmailDraftModal";
 import Login from "./pages/Login";
@@ -53,27 +54,27 @@ const App = () => (
                     <AppSidebar />
                     <main className="flex-1">
                       <Routes>
-                        <Route path="/" element={<Dashboard />} />
-                        <Route path="/dashboard" element={<Dashboard />} />
-                        <Route path="/reports" element={<Reports />} />
-                        <Route path="/reports/total-leads" element={<TotalLeads />} />
-                        <Route path="/reports/conversion-rate" element={<ConversionRate />} />
-                        <Route path="/reports/response-time" element={<ResponseTime />} />
-                        <Route path="/reports/active-leads" element={<ActiveLeads />} />
-              <Route path="/blocket/arenden" element={<ArendenList />} />
-              <Route path="/blocket/arenden/:id" element={<ArendeDetail />} />
-              <Route path="/blocket/wayke" element={<Wayke />} />
-              <Route path="/blocket/bytbil" element={<Bytbil />} />
-                        <Route path="/fordonstatus/bilar" element={<Bilar />} />
-                        <Route path="/fordonstatus/verkstad" element={<IVerkstad />} />
-                        <Route path="/fordonstatus/servicestatus" element={<Servicestatus />} />
-                        <Route path="/fordonstatus/agent" element={<Agent />} />
-                        <Route path="/fordonstatus/agent/:agentId" element={<Agent />} />
-                        <Route path="/bilar" element={<Bilar />} />
-                        <Route path="/agent" element={<Agent />} />
-                        <Route path="/agent/:agentId" element={<Agent />} />
-                        <Route path="/notiser" element={<Notiser />} />
-                        <Route path="/channel/:id" element={<Channel />} />
+                        <Route path="/" element={<RoleProtectedRoute><Dashboard /></RoleProtectedRoute>} />
+                        <Route path="/dashboard" element={<RoleProtectedRoute><Dashboard /></RoleProtectedRoute>} />
+                        <Route path="/reports" element={<RoleProtectedRoute><Reports /></RoleProtectedRoute>} />
+                        <Route path="/reports/total-leads" element={<RoleProtectedRoute><TotalLeads /></RoleProtectedRoute>} />
+                        <Route path="/reports/conversion-rate" element={<RoleProtectedRoute><ConversionRate /></RoleProtectedRoute>} />
+                        <Route path="/reports/response-time" element={<RoleProtectedRoute><ResponseTime /></RoleProtectedRoute>} />
+                        <Route path="/reports/active-leads" element={<RoleProtectedRoute><ActiveLeads /></RoleProtectedRoute>} />
+              <Route path="/blocket/arenden" element={<RoleProtectedRoute allowedForBlocketOnly><ArendenList /></RoleProtectedRoute>} />
+              <Route path="/blocket/arenden/:id" element={<RoleProtectedRoute allowedForBlocketOnly><ArendeDetail /></RoleProtectedRoute>} />
+              <Route path="/blocket/wayke" element={<RoleProtectedRoute><Wayke /></RoleProtectedRoute>} />
+              <Route path="/blocket/bytbil" element={<RoleProtectedRoute><Bytbil /></RoleProtectedRoute>} />
+                        <Route path="/fordonstatus/bilar" element={<RoleProtectedRoute><Bilar /></RoleProtectedRoute>} />
+                        <Route path="/fordonstatus/verkstad" element={<RoleProtectedRoute><IVerkstad /></RoleProtectedRoute>} />
+                        <Route path="/fordonstatus/servicestatus" element={<RoleProtectedRoute><Servicestatus /></RoleProtectedRoute>} />
+                        <Route path="/fordonstatus/agent" element={<RoleProtectedRoute><Agent /></RoleProtectedRoute>} />
+                        <Route path="/fordonstatus/agent/:agentId" element={<RoleProtectedRoute><Agent /></RoleProtectedRoute>} />
+                        <Route path="/bilar" element={<RoleProtectedRoute><Bilar /></RoleProtectedRoute>} />
+                        <Route path="/agent" element={<RoleProtectedRoute><Agent /></RoleProtectedRoute>} />
+                        <Route path="/agent/:agentId" element={<RoleProtectedRoute><Agent /></RoleProtectedRoute>} />
+                        <Route path="/notiser" element={<RoleProtectedRoute><Notiser /></RoleProtectedRoute>} />
+                        <Route path="/channel/:id" element={<RoleProtectedRoute><Channel /></RoleProtectedRoute>} />
                         <Route path="*" element={<NotFound />} />
                       </Routes>
                     </main>

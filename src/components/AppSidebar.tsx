@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Home, FileText, Archive, LogOut, Car, Bot, Hash, ChevronDown, Bell, Plus, Users, Wrench, ClipboardList, ShoppingCart } from "lucide-react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useUserRole } from "@/hooks/useUserRole";
 import Logo from "@/assets/Logo";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
@@ -48,6 +49,7 @@ type ConversationWithUser = {
 
 export function AppSidebar() {
   const { signOut, user } = useAuth();
+  const { isBlocketOnly, loading: roleLoading } = useUserRole();
   const navigate = useNavigate();
   const location = useLocation();
   const { isMobile, setOpen, setOpenMobile } = useSidebar();
@@ -57,6 +59,11 @@ export function AppSidebar() {
   const [showCreateChannelDialog, setShowCreateChannelDialog] = useState(false);
   const [groupChannels, setGroupChannels] = useState<any[]>([]);
   const { unreadCounts } = useUnreadMessages(user?.id);
+
+  // Filter navigation based on role
+  const visibleNavigation = isBlocketOnly 
+    ? [{ title: "Blocket", url: "/blocket/arenden", icon: Car }]
+    : navigation;
 
   const handleNavClick = () => {
     if (isMobile) {
@@ -184,7 +191,7 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navigation.map((item) => (
+              {visibleNavigation.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                      <NavLink 
@@ -203,160 +210,163 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarSeparator className="my-2" />
+        {!isBlocketOnly && (
+          <>
+            <SidebarSeparator className="my-2" />
 
-        <SidebarGroup>
-          <SidebarGroupLabel 
-            className="text-xs font-semibold text-muted-foreground px-2 flex items-center gap-1 cursor-pointer hover:bg-accent/50 rounded-md"
-            onClick={() => setFordonsstatusOpen(!fordonsstatusOpen)}
-          >
-            <ChevronDown className={`h-3 w-3 transition-transform ${fordonsstatusOpen ? '' : '-rotate-90'}`} />
-            Fordonstatus
-          </SidebarGroupLabel>
-          {fordonsstatusOpen && (
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {fordonsstatusItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild
-                    className={location.pathname === item.url ? "bg-accent text-accent-foreground font-medium hover:bg-accent" : "hover:bg-accent/50"}
-                  >
-                    <NavLink to={item.url} onClick={handleNavClick}>
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.title}</span>
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-          )}
-        </SidebarGroup>
-
-        <SidebarSeparator className="my-2" />
-
-        <SidebarGroup>
-          <SidebarGroupLabel 
-            className="text-xs font-semibold text-muted-foreground px-2 flex items-center justify-between cursor-pointer hover:bg-accent/50 rounded-md"
-            onClick={() => setChannelsOpen(!channelsOpen)}
-          >
-            <div className="flex items-center gap-1">
-              <ChevronDown className={`h-3 w-3 transition-transform ${channelsOpen ? '' : '-rotate-90'}`} />
-              Kanaler
-            </div>
-            <Button
-              size="icon"
-              variant="ghost"
-              className="h-5 w-5 p-0 hover:bg-accent"
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowCreateChannelDialog(true);
-              }}
-            >
-              <Plus className="h-3 w-3" />
-            </Button>
-          </SidebarGroupLabel>
-          {channelsOpen && (
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {conversations.map((conv) => (
-                <SidebarMenuItem key={conv.conversation_id}>
-                  <SidebarMenuButton 
-                    asChild
-                    className={location.pathname === `/channel/${conv.conversation_id}` ? "bg-accent text-accent-foreground font-medium hover:bg-accent" : ""}
-                  >
-                    <NavLink 
-                      to={`/channel/${conv.conversation_id}`}
-                      className="flex items-center justify-between w-full"
-                      onClick={handleNavClick}
-                    >
-                      <div className="flex items-center gap-2">
-                        <Hash className="h-4 w-4" />
-                        <span>{conv.other_user_name}</span>
-                      </div>
-                      {unreadCounts[conv.conversation_id] > 0 && (
-                        <Badge 
-                          variant="default" 
-                          className="ml-auto h-5 min-w-5 rounded-full px-1.5 text-xs font-medium bg-primary text-primary-foreground"
-                        >
-                          {unreadCounts[conv.conversation_id]}
-                        </Badge>
-                      )}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-
-              {groupChannels.map((channel) => (
-                <SidebarMenuItem key={channel.id} className="group">
-                  <SidebarMenuButton 
-                    asChild
-                    className={location.pathname === `/channel/${channel.id}` ? "bg-accent text-accent-foreground font-medium hover:bg-accent" : ""}
-                  >
-                    <NavLink 
-                      to={`/channel/${channel.id}`}
-                      className="flex items-center justify-between w-full"
-                      onClick={handleNavClick}
-                    >
-                      <div className="flex items-center gap-2 flex-1 min-w-0">
-                        <Users className="h-4 w-4 flex-shrink-0" />
-                        <span className="truncate">{channel.name}</span>
-                      </div>
-                      <div className="flex items-center gap-1 ml-2">
-                        {unreadCounts[channel.id] > 0 && (
-                          <Badge 
-                            variant="default" 
-                            className="h-5 min-w-5 rounded-full px-1.5 text-xs font-medium bg-primary text-primary-foreground"
-                          >
-                            {unreadCounts[channel.id]}
-                          </Badge>
-                        )}
-                        <GroupChannelMenu
-                          channelId={channel.id}
-                          channelName={channel.name}
-                          createdBy={channel.created_by}
-                          currentChannelId={location.pathname.split('/')[2]}
-                          onSuccess={() => {
-                            fetchGroupChannels();
-                          }}
-                        />
-                      </div>
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-
-              {conversations.length === 0 && groupChannels.length === 0 && (
-                <SidebarMenuItem>
-                  <div className="px-2 py-1 text-xs text-muted-foreground">
-                    Inga konversationer tillgängliga
-                  </div>
-                </SidebarMenuItem>
+            <SidebarGroup>
+              <SidebarGroupLabel 
+                className="text-xs font-semibold text-muted-foreground px-2 flex items-center gap-1 cursor-pointer hover:bg-accent/50 rounded-md"
+                onClick={() => setFordonsstatusOpen(!fordonsstatusOpen)}
+              >
+                <ChevronDown className={`h-3 w-3 transition-transform ${fordonsstatusOpen ? '' : '-rotate-90'}`} />
+                Fordonstatus
+              </SidebarGroupLabel>
+              {fordonsstatusOpen && (
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {fordonsstatusItems.map((item) => (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton 
+                        asChild
+                        className={location.pathname === item.url ? "bg-accent text-accent-foreground font-medium hover:bg-accent" : "hover:bg-accent/50"}
+                      >
+                        <NavLink to={item.url} onClick={handleNavClick}>
+                          <item.icon className="h-4 w-4" />
+                          <span>{item.title}</span>
+                        </NavLink>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
               )}
-            </SidebarMenu>
-          </SidebarGroupContent>
-          )}
-        </SidebarGroup>
+            </SidebarGroup>
 
+            <SidebarSeparator className="my-2" />
 
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton 
-                  asChild
-                  className={location.pathname === '/notiser' ? "bg-accent text-accent-foreground font-medium hover:bg-accent" : ""}
+            <SidebarGroup>
+              <SidebarGroupLabel 
+                className="text-xs font-semibold text-muted-foreground px-2 flex items-center justify-between cursor-pointer hover:bg-accent/50 rounded-md"
+                onClick={() => setChannelsOpen(!channelsOpen)}
+              >
+                <div className="flex items-center gap-1">
+                  <ChevronDown className={`h-3 w-3 transition-transform ${channelsOpen ? '' : '-rotate-90'}`} />
+                  Kanaler
+                </div>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-5 w-5 p-0 hover:bg-accent"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowCreateChannelDialog(true);
+                  }}
                 >
-                  <NavLink to="/notiser" onClick={handleNavClick}>
-                    <Bell className="h-4 w-4" />
-                    <span>Notiser</span>
-                  </NavLink>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+                  <Plus className="h-3 w-3" />
+                </Button>
+              </SidebarGroupLabel>
+              {channelsOpen && (
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {conversations.map((conv) => (
+                    <SidebarMenuItem key={conv.conversation_id}>
+                      <SidebarMenuButton 
+                        asChild
+                        className={location.pathname === `/channel/${conv.conversation_id}` ? "bg-accent text-accent-foreground font-medium hover:bg-accent" : ""}
+                      >
+                        <NavLink 
+                          to={`/channel/${conv.conversation_id}`}
+                          className="flex items-center justify-between w-full"
+                          onClick={handleNavClick}
+                        >
+                          <div className="flex items-center gap-2">
+                            <Hash className="h-4 w-4" />
+                            <span>{conv.other_user_name}</span>
+                          </div>
+                          {unreadCounts[conv.conversation_id] > 0 && (
+                            <Badge 
+                              variant="default" 
+                              className="ml-auto h-5 min-w-5 rounded-full px-1.5 text-xs font-medium bg-primary text-primary-foreground"
+                            >
+                              {unreadCounts[conv.conversation_id]}
+                            </Badge>
+                          )}
+                        </NavLink>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+
+                  {groupChannels.map((channel) => (
+                    <SidebarMenuItem key={channel.id} className="group">
+                      <SidebarMenuButton 
+                        asChild
+                        className={location.pathname === `/channel/${channel.id}` ? "bg-accent text-accent-foreground font-medium hover:bg-accent" : ""}
+                      >
+                        <NavLink 
+                          to={`/channel/${channel.id}`}
+                          className="flex items-center justify-between w-full"
+                          onClick={handleNavClick}
+                        >
+                          <div className="flex items-center gap-2 flex-1 min-w-0">
+                            <Users className="h-4 w-4 flex-shrink-0" />
+                            <span className="truncate">{channel.name}</span>
+                          </div>
+                          <div className="flex items-center gap-1 ml-2">
+                            {unreadCounts[channel.id] > 0 && (
+                              <Badge 
+                                variant="default" 
+                                className="h-5 min-w-5 rounded-full px-1.5 text-xs font-medium bg-primary text-primary-foreground"
+                              >
+                                {unreadCounts[channel.id]}
+                              </Badge>
+                            )}
+                            <GroupChannelMenu
+                              channelId={channel.id}
+                              channelName={channel.name}
+                              createdBy={channel.created_by}
+                              currentChannelId={location.pathname.split('/')[2]}
+                              onSuccess={() => {
+                                fetchGroupChannels();
+                              }}
+                            />
+                          </div>
+                        </NavLink>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+
+                  {conversations.length === 0 && groupChannels.length === 0 && (
+                    <SidebarMenuItem>
+                      <div className="px-2 py-1 text-xs text-muted-foreground">
+                        Inga konversationer tillgängliga
+                      </div>
+                    </SidebarMenuItem>
+                  )}
+                </SidebarMenu>
+              </SidebarGroupContent>
+              )}
+            </SidebarGroup>
+
+            <SidebarGroup>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton 
+                      asChild
+                      className={location.pathname === '/notiser' ? "bg-accent text-accent-foreground font-medium hover:bg-accent" : ""}
+                    >
+                      <NavLink to="/notiser" onClick={handleNavClick}>
+                        <Bell className="h-4 w-4" />
+                        <span>Notiser</span>
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </>
+        )}
       </SidebarContent>
 
       <div className="my-4 h-px bg-sidebar-border" />
