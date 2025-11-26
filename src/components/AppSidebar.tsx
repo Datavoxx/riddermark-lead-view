@@ -212,6 +212,38 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
+        <SidebarSeparator className="my-2" />
+
+        {/* Notiser section - visible for all users */}
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton 
+                  asChild
+                  className={location.pathname === '/notiser' ? "bg-accent text-accent-foreground font-medium hover:bg-accent" : ""}
+                >
+                  <NavLink 
+                    to="/notiser" 
+                    onClick={handleNavClick}
+                    className="flex items-center justify-between w-full"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Bell className="h-4 w-4" />
+                      <span>Notiser</span>
+                    </div>
+                    {unreadNotificationCount > 0 && (
+                      <Badge variant="default" className="ml-auto">
+                        {unreadNotificationCount}
+                      </Badge>
+                    )}
+                  </NavLink>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
         {!isBlocketOnly && (
           <>
             <SidebarSeparator className="my-2" />
@@ -348,35 +380,6 @@ export function AppSidebar() {
                 </SidebarMenu>
               </SidebarGroupContent>
               )}
-            </SidebarGroup>
-
-            <SidebarGroup>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton 
-                      asChild
-                      className={location.pathname === '/notiser' ? "bg-accent text-accent-foreground font-medium hover:bg-accent" : ""}
-                    >
-                      <NavLink 
-                        to="/notiser" 
-                        onClick={handleNavClick}
-                        className="flex items-center justify-between w-full"
-                      >
-                        <div className="flex items-center gap-2">
-                          <Bell className="h-4 w-4" />
-                          <span>Notiser</span>
-                        </div>
-                        {unreadNotificationCount > 0 && (
-                          <Badge variant="default" className="ml-auto">
-                            {unreadNotificationCount}
-                          </Badge>
-                        )}
-                      </NavLink>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                </SidebarMenu>
-              </SidebarGroupContent>
             </SidebarGroup>
           </>
         )}
