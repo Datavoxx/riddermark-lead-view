@@ -59,6 +59,9 @@ export function useNotifications(userId: string | undefined) {
         },
         (payload) => {
           const newNotification = payload.new as Notification;
+          console.log('New notification received:', newNotification);
+          console.log('Current permission:', permission);
+          
           setNotifications((prev) => [newNotification, ...prev]);
           
           // Show toast for new notification
@@ -69,11 +72,14 @@ export function useNotifications(userId: string | undefined) {
 
           // Show browser push notification
           if (permission === 'granted') {
+            console.log('Showing browser notification');
             showNotification(newNotification.title, {
               body: newNotification.message,
               tag: newNotification.id,
               requireInteraction: false,
             });
+          } else {
+            console.log('Permission not granted, skipping browser notification');
           }
         }
       )
@@ -97,7 +103,7 @@ export function useNotifications(userId: string | undefined) {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [userId, toast]);
+  }, [userId, toast, permission, showNotification]);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
