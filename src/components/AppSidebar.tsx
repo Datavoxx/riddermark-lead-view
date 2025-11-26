@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
+import { useNotifications } from "@/hooks/useNotifications";
 import { CreateChannelDialog } from "@/components/CreateChannelDialog";
 import { GroupChannelMenu } from "@/components/GroupChannelMenu";
 import {
@@ -59,6 +60,7 @@ export function AppSidebar() {
   const [showCreateChannelDialog, setShowCreateChannelDialog] = useState(false);
   const [groupChannels, setGroupChannels] = useState<any[]>([]);
   const { unreadCounts } = useUnreadMessages(user?.id);
+  const { unreadCount: unreadNotificationCount } = useNotifications(user?.id);
 
   // Filter navigation based on role
   const visibleNavigation = isBlocketOnly 
@@ -356,9 +358,20 @@ export function AppSidebar() {
                       asChild
                       className={location.pathname === '/notiser' ? "bg-accent text-accent-foreground font-medium hover:bg-accent" : ""}
                     >
-                      <NavLink to="/notiser" onClick={handleNavClick}>
-                        <Bell className="h-4 w-4" />
-                        <span>Notiser</span>
+                      <NavLink 
+                        to="/notiser" 
+                        onClick={handleNavClick}
+                        className="flex items-center justify-between w-full"
+                      >
+                        <div className="flex items-center gap-2">
+                          <Bell className="h-4 w-4" />
+                          <span>Notiser</span>
+                        </div>
+                        {unreadNotificationCount > 0 && (
+                          <Badge variant="default" className="ml-auto">
+                            {unreadNotificationCount}
+                          </Badge>
+                        )}
                       </NavLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
