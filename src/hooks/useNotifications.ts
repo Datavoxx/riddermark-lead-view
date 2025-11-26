@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { usePushNotifications } from '@/hooks/usePushNotifications';
 
 export interface Notification {
   id: string;
@@ -18,6 +19,7 @@ export function useNotifications(userId: string | undefined) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const { showNotification, permission } = usePushNotifications();
 
   // Fetch notifications
   useEffect(() => {
@@ -64,6 +66,15 @@ export function useNotifications(userId: string | undefined) {
             title: newNotification.title,
             description: newNotification.message,
           });
+
+          // Show browser push notification
+          if (permission === 'granted') {
+            showNotification(newNotification.title, {
+              body: newNotification.message,
+              tag: newNotification.id,
+              requireInteraction: false,
+            });
+          }
         }
       )
       .on(

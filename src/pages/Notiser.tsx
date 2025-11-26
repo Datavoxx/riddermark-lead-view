@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 import { sv } from 'date-fns/locale';
 import { useEffect, useState } from 'react';
+import { NotificationPermissionBanner } from '@/components/NotificationPermissionBanner';
 
 const getIcon = (type: string) => {
   switch (type) {
@@ -69,6 +70,8 @@ export default function Notiser() {
             Håll koll på dina uppdateringar och notifikationer
           </p>
         </div>
+
+        <NotificationPermissionBanner />
 
         <Card>
           <CardHeader>
