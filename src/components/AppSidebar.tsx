@@ -394,7 +394,12 @@ export function AppSidebar() {
         </div>
         
         <SidebarMenuButton 
-          onClick={handleLogout}
+          type="button"
+          onClick={(e) => {
+            console.log('Logout button clicked');
+            e.preventDefault();
+            handleLogout();
+          }}
           className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
         >
           <LogOut className="h-4 w-4" />
