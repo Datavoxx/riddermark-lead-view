@@ -32,6 +32,7 @@ export const EmailDraftModal = () => {
           filter: 'status=eq.pending'
         },
         (payload) => {
+          console.log('📧 New email draft received:', payload.new);
           const newDraft = payload.new as EmailDraft;
           setDraft(newDraft);
           setDraftText(newDraft.text);
