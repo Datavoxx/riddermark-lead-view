@@ -64,19 +64,43 @@ serve(async (req) => {
 
     // Handle voice messages
     if (messageType === 'voice' && audioFile) {
-      console.log('Processing voice message - converting to base64');
+      // Create storage path
+      const storagePath = `voice/${threadId}/${correlationId}.webm`;
       
-      // Convert audio to base64 instead of storing
+      // Upload to Supabase storage
       const arrayBuffer = await audioFile.arrayBuffer();
-      const uint8Array = new Uint8Array(arrayBuffer);
-      const base64Audio = btoa(String.fromCharCode(...uint8Array));
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('voice-recordings')
+        .upload(`${user.id}/${storagePath}`, arrayBuffer, {
+          contentType: 'audio/webm',
+          upsert: false
+        });
 
-      console.log('Audio converted to base64, size:', base64Audio.length);
+      if (uploadError) {
+        console.error('Upload error:', uploadError);
+        throw new Error(`Failed to upload audio: ${uploadError.message}`);
+      }
+
+      console.log('Audio uploaded successfully:', uploadData.path);
+
+      // Get signed URL (valid for 1 hour)
+      const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+        .from('voice-recordings')
+        .createSignedUrl(`${user.id}/${storagePath}`, 3600);
+
+      if (signedUrlError) {
+        console.error('Signed URL error:', signedUrlError);
+        throw new Error('Failed to create signed URL');
+      }
+
+      const audioUrl = signedUrlData.signedUrl;
+      console.log('Generated signed URL');
 
       webhookPayload = {
         ...webhookPayload,
         duration_ms: durationMs,
-        audio_base64: base64Audio
+        storage_path: storagePath,
+        audio_url: audioUrl
       };
     }
     
@@ -108,12 +132,19 @@ serve(async (req) => {
     const webhookResult = await webhookResponse.json();
     console.log('Webhook response:', webhookResult);
 
+    const responseData: any = { 
+      success: true,
+      correlation_id: correlationId,
+      webhook_response: webhookResult
+    };
+
+    // Only include storage_path for voice messages
+    if (messageType === 'voice' && storagePath) {
+      responseData.storage_path = storagePath;
+    }
+
     return new Response(
-      JSON.stringify({ 
-        success: true,
-        correlation_id: correlationId,
-        webhook_response: webhookResult
-      }),
+      JSON.stringify(responseData),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
