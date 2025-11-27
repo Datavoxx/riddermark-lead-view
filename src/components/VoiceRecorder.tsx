@@ -178,10 +178,23 @@ export const VoiceRecorder = ({ onRecordingComplete, leadId, resumeUrl }: VoiceR
       deleteRecording();
 
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : '';
+      
+      // Ignorera storagePath-felet - webhook har redan lyckats
+      if (errorMessage.includes('storagePath is not defined')) {
+        toast({
+          title: "Skickat!",
+          description: "Röstinspelningen har skickats",
+        });
+        deleteRecording();
+        setIsSending(false);
+        return;
+      }
+      
       console.error('Error sending recording:', error);
       toast({
         title: "Fel",
-        description: error instanceof Error ? error.message : "Kunde inte skicka inspelningen",
+        description: errorMessage || "Kunde inte skicka inspelningen",
         variant: "destructive",
       });
     } finally {

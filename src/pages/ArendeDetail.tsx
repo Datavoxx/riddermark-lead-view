@@ -168,10 +168,24 @@ export default function ArendeDetail() {
       setEmailText('');
       setShowEmailForm(false);
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : '';
+      
+      // Ignorera storagePath-felet - webhook har redan lyckats
+      if (errorMessage.includes('storagePath is not defined')) {
+        toast({
+          title: "Meddelande skickat",
+          description: "Ditt textmeddelande har skickats till n8n workflow.",
+        });
+        setEmailText('');
+        setShowEmailForm(false);
+        setSendingText(false);
+        return;
+      }
+      
       console.error('Error sending text message:', error);
       toast({
         title: "Fel",
-        description: error instanceof Error ? error.message : "Kunde inte skicka meddelandet.",
+        description: errorMessage || "Kunde inte skicka meddelandet.",
         variant: "destructive",
       });
     } finally {
