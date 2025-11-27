@@ -60,6 +60,7 @@ serve(async (req) => {
       lead_id: leadId,
       correlation_id: correlationId,
       lang: 'sv',
+      user_id: user.id,
     };
 
     // Handle voice messages
