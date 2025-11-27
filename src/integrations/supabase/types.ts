@@ -115,7 +115,6 @@ export type Database = {
           resume_url: string | null
           status: string
           text: string
-          user_id: string | null
         }
         Insert: {
           correlation_id: string
@@ -125,7 +124,6 @@ export type Database = {
           resume_url?: string | null
           status?: string
           text: string
-          user_id?: string | null
         }
         Update: {
           correlation_id?: string
@@ -135,7 +133,6 @@ export type Database = {
           resume_url?: string | null
           status?: string
           text?: string
-          user_id?: string | null
         }
         Relationships: []
       }

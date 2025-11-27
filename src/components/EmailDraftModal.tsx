@@ -4,7 +4,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { useAuth } from "@/contexts/AuthContext";
 
 interface EmailDraft {
   id: string;
@@ -16,15 +15,12 @@ interface EmailDraft {
 }
 
 export const EmailDraftModal = () => {
-  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [draft, setDraft] = useState<EmailDraft | null>(null);
   const [draftText, setDraftText] = useState("");
   const [isSending, setIsSending] = useState(false);
 
   useEffect(() => {
-    if (!user?.id) return;
-
     const channel = supabase
       .channel('email-drafts-changes')
       .on(
@@ -33,7 +29,7 @@ export const EmailDraftModal = () => {
           event: 'INSERT',
           schema: 'public',
           table: 'email_drafts',
-          filter: `status=eq.pending,user_id=eq.${user.id}`
+          filter: 'status=eq.pending'
         },
         (payload) => {
           const newDraft = payload.new as EmailDraft;
@@ -47,7 +43,7 @@ export const EmailDraftModal = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [user?.id]);
+  }, []);
 
   const handleAction = async (action: 'send' | 'redo') => {
     if (!draft || !draft.resume_url) {
