@@ -202,7 +202,7 @@ export default function ArendeDetail() {
           <Button 
             variant="ghost" 
             onClick={() => navigate('/blocket/arenden')}
-            className="gap-2"
+            className="gap-2 rounded-xl hover:bg-accent/60"
           >
             <ArrowLeft className="h-4 w-4" />
             Tillbaka till ärenden
@@ -213,26 +213,26 @@ export default function ArendeDetail() {
           <div className="grid gap-6 lg:grid-cols-3">
             <div className="lg:col-span-2 space-y-6">
               {[1, 2].map((i) => (
-                <Card key={i}>
+                <Card key={i} className="rounded-2xl border border-border/50">
                   <CardHeader>
-                    <Skeleton className="h-6 w-1/3" />
-                    <Skeleton className="h-4 w-1/2 mt-2" />
+                    <Skeleton className="h-6 w-1/3 rounded-full" />
+                    <Skeleton className="h-4 w-1/2 mt-2 rounded-full" />
                   </CardHeader>
                   <CardContent className="space-y-3">
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-3/4" />
-                    <Skeleton className="h-4 w-2/3" />
+                    <Skeleton className="h-4 w-full rounded-full" />
+                    <Skeleton className="h-4 w-3/4 rounded-full" />
+                    <Skeleton className="h-4 w-2/3 rounded-full" />
                   </CardContent>
                 </Card>
               ))}
             </div>
             <div className="space-y-6">
-              <Card>
+              <Card className="rounded-2xl border border-border/50">
                 <CardHeader>
-                  <Skeleton className="h-6 w-1/2" />
+                  <Skeleton className="h-6 w-1/2 rounded-full" />
                 </CardHeader>
                 <CardContent>
-                  <Skeleton className="h-48 w-full" />
+                  <Skeleton className="h-48 w-full rounded-xl" />
                 </CardContent>
               </Card>
             </div>
@@ -257,42 +257,42 @@ export default function ArendeDetail() {
             {/* Left Column - Main Content */}
             <div className="lg:col-span-2 space-y-6">
               {/* Summary Card */}
-              <Card className="shadow-sm">
+              <Card className="rounded-2xl border border-border/50 shadow-sm hover:shadow-md transition-shadow duration-200">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-lg">Sammanfattning</CardTitle>
-                  <CardDescription>
-                    Snabb översikt av meddelande, kontakt och ärendestatus.
+                  <CardTitle className="text-base font-semibold">Sammanfattning</CardTitle>
+                  <CardDescription className="text-sm">
+                    Översikt av meddelande och ärendestatus
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex flex-wrap items-center gap-2">
                     <Badge 
                       variant={lead.claimed ? "default" : "destructive"}
-                      className="gap-1.5"
+                      className="gap-1.5 px-3 py-1 rounded-full text-xs font-medium"
                     >
                       {lead.claimed ? (
                         <>
-                          <CheckCircle2 className="h-4 w-4" />
+                          <CheckCircle2 className="h-3.5 w-3.5" />
                           Upplockad
                         </>
                       ) : (
                         <>
-                          <Clock className="h-4 w-4" />
+                          <Clock className="h-3.5 w-3.5" />
                           Ny lead
                         </>
                       )}
                     </Badge>
-                    <Badge variant="outline" className="gap-1.5">
-                      <Clock className="h-4 w-4" />
+                    <Badge variant="outline" className="gap-1.5 px-3 py-1 rounded-full text-xs">
+                      <Clock className="h-3.5 w-3.5" />
                       {formatDate(lead.created_at)}
                     </Badge>
-                    <Badge variant="outline" className="gap-1.5">
-                      <Car className="h-4 w-4" />
-                      Regnr: {lead.regnr}
+                    <Badge variant="outline" className="gap-1.5 px-3 py-1 rounded-full text-xs">
+                      <Car className="h-3.5 w-3.5" />
+                      {lead.regnr}
                     </Badge>
-                    <Badge variant="outline" className="gap-1.5">
-                      <Store className="h-4 w-4" />
-                      Källa: Blocket
+                    <Badge variant="outline" className="gap-1.5 px-3 py-1 rounded-full text-xs">
+                      <Store className="h-3.5 w-3.5" />
+                      Blocket
                     </Badge>
                   </div>
                   
@@ -303,16 +303,16 @@ export default function ArendeDetail() {
                 <CardFooter className="flex flex-col gap-4 pt-0">
                   <div className="flex flex-wrap gap-2 w-full">
                     <Button 
-                      className="gap-2"
+                      className="gap-2 rounded-xl font-medium h-9"
                       onClick={handleClaim}
                       disabled={lead.claimed}
                     >
                       <CheckCircle2 className="h-4 w-4" />
-                      Ta över ärendet
+                      Ta över
                     </Button>
                     <Button 
                       variant="outline" 
-                      className="gap-2"
+                      className="gap-2 rounded-xl font-medium h-9"
                       onClick={() => setShowEmailForm(!showEmailForm)}
                     >
                       <Mail className="h-4 w-4" />
@@ -320,12 +320,12 @@ export default function ArendeDetail() {
                     </Button>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="gap-2">
+                        <Button variant="ghost" className="gap-2 rounded-xl h-9">
                           <MoreVertical className="h-4 w-4" />
                           Mer
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
+                      <DropdownMenuContent align="end" className="rounded-xl">
                         <DropdownMenuItem>Skapa uppgift</DropdownMenuItem>
                         <DropdownMenuItem>Markera som spam</DropdownMenuItem>
                         <DropdownMenuItem>Stäng ärende</DropdownMenuItem>
@@ -334,9 +334,9 @@ export default function ArendeDetail() {
                   </div>
 
                   {/* Voice Recording Section */}
-                  <div className="w-full border-t pt-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-sm font-medium">🎙️ Spela röstmeddelande</span>
+                  <div className="w-full border-t border-border/50 pt-4">
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="text-sm font-semibold">🎙️ Spela röstmeddelande</span>
                     </div>
                     <VoiceRecorder
                       leadId={lead.id}
@@ -349,21 +349,22 @@ export default function ArendeDetail() {
 
                   {/* Email Form Section */}
                   {showEmailForm && (
-                    <div className="w-full border-t pt-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="text-sm font-medium">✉️ Skriv text</span>
+                    <div className="w-full border-t border-border/50 pt-4">
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="text-sm font-semibold">✉️ Skriv text</span>
                       </div>
                       <Textarea
                         value={emailText}
                         onChange={(e) => setEmailText(e.target.value)}
                         placeholder="Skriv ditt meddelande här..."
-                        className="min-h-[120px] mb-2"
+                        className="min-h-[120px] mb-2 rounded-xl"
                       />
                       <div className="flex gap-2">
                         <Button 
                           size="sm"
                           onClick={sendTextMessage}
                           disabled={!emailText.trim() || sendingText}
+                          className="rounded-xl"
                         >
                           {sendingText ? "Skickar..." : "Skicka"}
                         </Button>
@@ -374,6 +375,7 @@ export default function ArendeDetail() {
                             setEmailText("");
                             setShowEmailForm(false);
                           }}
+                          className="rounded-xl"
                         >
                           Avbryt
                         </Button>
@@ -384,23 +386,22 @@ export default function ArendeDetail() {
               </Card>
 
               {/* Message Details Card */}
-              <Card className="shadow-sm">
+              <Card className="rounded-2xl border border-border/50 shadow-sm hover:shadow-md transition-shadow duration-200">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-lg">Meddelande</CardTitle>
-                  <CardDescription>Inkommet via Blocket</CardDescription>
+                  <CardTitle className="text-base font-semibold">Meddelande</CardTitle>
+                  <CardDescription className="text-sm">Inkommet via Blocket</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-3">
                     <div>
-                      <div className="text-sm font-medium mb-1">Mejl från Blocket</div>
-                      <div className="text-sm text-muted-foreground mb-2">Ämne</div>
-                      <div className="rounded-lg border p-3 text-sm bg-muted/30">
+                      <div className="text-xs text-muted-foreground mb-2">Ämne</div>
+                      <div className="rounded-xl border border-border/50 p-3 text-sm bg-muted/20">
                         {lead.subject}
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={openBlocketUrl}
-                          className="ml-2 h-6 px-2"
+                          className="ml-2 h-6 px-2 rounded-lg"
                         >
                           <ExternalLink className="h-3 w-3" />
                         </Button>
@@ -437,13 +438,13 @@ export default function ArendeDetail() {
                     </div>
 
                     <div>
-                      <div className="text-sm text-muted-foreground mb-2">Meddelande</div>
-                      <div className="rounded-xl border p-4 text-lg tracking-wide bg-background">
+                      <div className="text-xs text-muted-foreground mb-2">Meddelande</div>
+                      <div className="rounded-xl border border-border/50 p-4 text-base leading-relaxed bg-muted/10">
                         {lead.summary}
                       </div>
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        <Badge variant="secondary">Kort fråga</Badge>
-                        <Badge variant="outline">Behöver tolkning</Badge>
+                      <div className="flex flex-wrap gap-2 mt-3">
+                        <Badge variant="secondary" className="rounded-full px-3 py-1 text-xs">Kort fråga</Badge>
+                        <Badge variant="outline" className="rounded-full px-3 py-1 text-xs">Behöver tolkning</Badge>
                       </div>
                     </div>
                   </div>
@@ -454,13 +455,13 @@ export default function ArendeDetail() {
             {/* Right Column - Sidebar */}
             <div className="space-y-6">
               {/* Listing Preview Card */}
-              <Card className="shadow-sm overflow-hidden">
+              <Card className="rounded-2xl border border-border/50 shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <Store className="h-5 w-5" />
+                  <CardTitle className="text-base font-semibold flex items-center gap-2">
+                    <Store className="h-4 w-4" />
                     Annons
                   </CardTitle>
-                  <CardDescription>Från Blocket</CardDescription>
+                  <CardDescription className="text-sm">Från Blocket</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   {lead.preview_image_url && (
@@ -508,7 +509,7 @@ export default function ArendeDetail() {
                 <CardFooter className="flex flex-wrap gap-2 pt-0">
                   <Button 
                     variant="secondary" 
-                    className="gap-2"
+                    className="gap-2 rounded-xl font-medium h-9"
                     onClick={openBlocketUrl}
                   >
                     <ExternalLink className="h-4 w-4" />
@@ -518,22 +519,22 @@ export default function ArendeDetail() {
               </Card>
 
               {/* Notes Card */}
-              <Card className="shadow-sm">
+              <Card className="rounded-2xl border border-border/50 shadow-sm hover:shadow-md transition-shadow duration-200">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-lg">Anteckningar</CardTitle>
-                  <CardDescription>Privata noteringar för teamet</CardDescription>
+                  <CardTitle className="text-base font-semibold">Anteckningar</CardTitle>
+                  <CardDescription className="text-sm">Privata noteringar</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <Textarea 
-                    placeholder="Lägg till en snabb anteckning till ärendet..."
-                    className="min-h-[100px]"
+                    placeholder="Lägg till anteckning..."
+                    className="min-h-[100px] rounded-xl"
                   />
                   <div className="flex justify-between">
-                    <Button variant="outline" className="gap-2">
+                    <Button variant="outline" className="gap-2 rounded-xl h-9">
                       <Paperclip className="h-4 w-4" />
                       Bifoga
                     </Button>
-                    <Button className="gap-2">
+                    <Button className="gap-2 rounded-xl h-9">
                       <CheckCircle2 className="h-4 w-4" />
                       Spara
                     </Button>
@@ -542,10 +543,10 @@ export default function ArendeDetail() {
               </Card>
 
               {/* Timeline Card */}
-              <Card className="shadow-sm">
+              <Card className="rounded-2xl border border-border/50 shadow-sm hover:shadow-md transition-shadow duration-200">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-lg">Historik</CardTitle>
-                  <CardDescription>Senaste händelser</CardDescription>
+                  <CardTitle className="text-base font-semibold">Historik</CardTitle>
+                  <CardDescription className="text-sm">Senaste händelser</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-start gap-3">
