@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { 
   ArrowLeft, Clock, Car, Store, CheckCircle2, 
-  Mail, ExternalLink, ChevronDown, Mic,
+  ExternalLink, ChevronDown,
   User, FileText, History, Building2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -31,7 +31,6 @@ export function MobileArendeDetail({
   formatDate 
 }: MobileArendeDetailProps) {
   const navigate = useNavigate();
-  const [showTextInput, setShowTextInput] = useState(false);
   const [emailText, setEmailText] = useState("");
   const [customerInfoOpen, setCustomerInfoOpen] = useState(false);
   const [notesOpen, setNotesOpen] = useState(false);
@@ -41,7 +40,6 @@ export function MobileArendeDetail({
     if (!emailText.trim()) return;
     await onSendText(emailText);
     setEmailText("");
-    setShowTextInput(false);
   };
 
   const openBlocketUrl = () => {
@@ -328,83 +326,46 @@ export function MobileArendeDetail({
         </TabsContent>
       </Tabs>
 
-      {/* Voice Recorder Section (only visible when expanded) */}
-      {!showTextInput && (
-        <div className="px-3 mt-3">
-          <div className="bg-card rounded-2xl border border-border/50 p-4">
-            <div className="text-xs font-semibold text-muted-foreground mb-3">🎙️ RÖSTMEDDELANDE</div>
-            <VoiceRecorder
-              leadId={lead.id}
-              resumeUrl={lead.resume_url || undefined}
-              onRecordingComplete={(audioBlob) => {
-                console.log("Recording complete:", audioBlob);
-              }}
-            />
-          </div>
+      {/* Communication Section - Both options visible */}
+      <div className="px-3 mt-3 space-y-3">
+        {/* Voice Recorder */}
+        <div className="bg-card rounded-2xl border border-border/50 p-4">
+          <div className="text-xs font-semibold text-muted-foreground mb-3">🎙️ RÖSTMEDDELANDE</div>
+          <VoiceRecorder
+            leadId={lead.id}
+            resumeUrl={lead.resume_url || undefined}
+            onRecordingComplete={(audioBlob) => {
+              console.log("Recording complete:", audioBlob);
+            }}
+          />
         </div>
-      )}
 
-      {/* Text Input Section (expandable) */}
-      {showTextInput && (
-        <div className="px-3 mt-3">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-card rounded-2xl border border-border/50 p-4"
+        {/* Text Input */}
+        <div className="bg-card rounded-2xl border border-border/50 p-4">
+          <div className="text-xs font-semibold text-muted-foreground mb-2">✉️ SKRIV MEDDELANDE</div>
+          <Textarea
+            value={emailText}
+            onChange={(e) => setEmailText(e.target.value)}
+            placeholder="Skriv ditt meddelande här..."
+            className="min-h-[80px] rounded-xl text-sm"
+          />
+          <Button 
+            size="sm"
+            onClick={handleSendText}
+            disabled={!emailText.trim() || sendingText}
+            className="w-full mt-2 rounded-xl h-9 text-xs"
           >
-            <div className="text-xs font-semibold text-muted-foreground mb-2">✉️ SKRIV TEXT</div>
-            <Textarea
-              value={emailText}
-              onChange={(e) => setEmailText(e.target.value)}
-              placeholder="Skriv ditt meddelande här..."
-              className="min-h-[100px] rounded-xl text-sm"
-              autoFocus
-            />
-            <div className="flex gap-2 mt-2">
-              <Button 
-                size="sm"
-                onClick={handleSendText}
-                disabled={!emailText.trim() || sendingText}
-                className="flex-1 rounded-xl h-9 text-xs"
-              >
-                {sendingText ? "Skickar..." : "Skicka"}
-              </Button>
-              <Button 
-                size="sm"
-                variant="outline"
-                onClick={() => {
-                  setEmailText("");
-                  setShowTextInput(false);
-                }}
-                className="rounded-xl h-9 text-xs"
-              >
-                Avbryt
-              </Button>
-            </div>
-          </motion.div>
+            {sendingText ? "Skickar..." : "Skicka meddelande"}
+          </Button>
         </div>
-      )}
+      </div>
 
-      {/* Sticky Action Bar */}
+      {/* Sticky Action Bar - Simplified */}
       <div className="fixed bottom-16 left-0 right-0 z-40 px-3 pb-3 pt-2
         bg-gradient-to-t from-background via-background to-transparent">
         <div className="bg-card/95 backdrop-blur-lg rounded-2xl border border-border/50 
           shadow-lg shadow-black/5 p-2 flex items-center gap-2">
           
-          {/* Voice Button */}
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-10 w-10 p-0 rounded-xl flex-shrink-0"
-            onClick={() => {
-              setShowTextInput(false);
-              // Scroll to voice recorder
-              window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-            }}
-          >
-            <Mic className="h-4 w-4" />
-          </Button>
-
           {/* Claim Button */}
           <Button 
             size="sm"
@@ -416,16 +377,18 @@ export function MobileArendeDetail({
             {lead.claimed ? "Upplockad" : "Ta över"}
           </Button>
 
-          {/* Text Button */}
-          <Button 
-            variant="outline"
-            size="sm"
-            onClick={() => setShowTextInput(!showTextInput)}
-            className="h-10 flex-1 rounded-xl text-xs font-medium gap-1.5"
-          >
-            <Mail className="h-4 w-4" />
-            Skriv text
-          </Button>
+          {/* Blocket Link */}
+          {lead.blocket_url && (
+            <Button 
+              variant="outline"
+              size="sm"
+              onClick={openBlocketUrl}
+              className="h-10 px-4 rounded-xl text-xs font-medium gap-1.5"
+            >
+              <ExternalLink className="h-4 w-4" />
+              Blocket
+            </Button>
+          )}
         </div>
       </div>
     </div>
