@@ -62,6 +62,7 @@ export default function Bilannonsgenerator() {
   const [apiKey, setApiKey] = useState("");
   const [selectedModel, setSelectedModel] = useState("gpt-5-mini");
   const [systemPrompt, setSystemPrompt] = useState(defaultSystemPrompt);
+  const [isValidating, setIsValidating] = useState(false);
 
   // Load settings from localStorage
   useEffect(() => {
@@ -74,7 +75,21 @@ export default function Bilannonsgenerator() {
     if (savedPrompt) setSystemPrompt(savedPrompt);
   }, []);
 
-  const saveSettings = () => {
+  const validateApiKey = async (key: string): Promise<boolean> => {
+    try {
+      const response = await fetch('https://api.openai.com/v1/models', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${key}`,
+        },
+      });
+      return response.ok;
+    } catch (error) {
+      return false;
+    }
+  };
+
+  const saveSettings = async () => {
     if (!apiKey.trim()) {
       toast.error("API-nyckel krävs för att spara inställningarna");
       return;
@@ -83,10 +98,20 @@ export default function Bilannonsgenerator() {
       toast.error("Ogiltig API-nyckel. Den ska börja med 'sk-'");
       return;
     }
+    
+    setIsValidating(true);
+    const isValid = await validateApiKey(apiKey);
+    setIsValidating(false);
+    
+    if (!isValid) {
+      toast.error("API-nyckeln fungerar inte. Kontrollera att den är korrekt och aktiv.");
+      return;
+    }
+    
     localStorage.setItem("bilannonsgenerator_apiKey", apiKey);
     localStorage.setItem("bilannonsgenerator_model", selectedModel);
     localStorage.setItem("bilannonsgenerator_prompt", systemPrompt);
-    toast.success("Inställningar sparade");
+    toast.success("Inställningar sparade - API-nyckel verifierad ✓");
     setShowSettings(false);
   };
 
@@ -368,8 +393,15 @@ ${funktioner ? `✨ Utrustning & funktioner:\n${funktioner}\n\n` : ""}${ytterlig
             <Button variant="outline" className="flex-1" onClick={() => setShowSettings(false)}>
               Avbryt
             </Button>
-            <Button className="flex-1" onClick={saveSettings} disabled={!isSettingsValid}>
-              Spara inställningar
+            <Button className="flex-1" onClick={saveSettings} disabled={!isSettingsValid || isValidating}>
+              {isValidating ? (
+                <>
+                  <span className="h-4 w-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin mr-2" />
+                  Verifierar...
+                </>
+              ) : (
+                "Spara inställningar"
+              )}
             </Button>
           </div>
         </SheetContent>
