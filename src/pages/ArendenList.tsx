@@ -15,7 +15,7 @@ import { Lead } from "@/types/lead";
 import { 
   Search, Plus, FileX, Clock, User, Mail, 
   Phone, Car, Store, CheckCircle2, MapPin, 
-  ArrowRight, ChevronRight 
+  ArrowRight, ChevronRight, MessageSquare 
 } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { NotificationPermissionBanner } from "@/components/NotificationPermissionBanner";
@@ -362,13 +362,10 @@ export default function ArendenList() {
                   </CardHeader>
 
                   <CardContent className="space-y-4 pb-4 flex-1">
-                    {lead.summary && (
-                      <div className="space-y-2">
-                        <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Meddelande</h4>
-                        <p className="text-sm text-foreground/90 line-clamp-3 leading-relaxed bg-muted/20 rounded-lg p-3 border">
-                          {lead.summary}
-                        </p>
-                      </div>
+                    {lead.summering && (
+                      <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed">
+                        {lead.summering}
+                      </p>
                     )}
                     
                     <div className="space-y-2.5 text-sm bg-muted/30 rounded-lg p-3 border">
@@ -386,6 +383,13 @@ export default function ArendenList() {
                         <Car className="h-4 w-4 flex-shrink-0 text-primary" />
                         <span className="font-mono font-semibold">{lead.regnr}</span>
                       </div>
+                      
+                      {lead.summary && (
+                        <div className="flex items-start gap-3 text-foreground/80 pt-2 border-t hover:text-foreground transition-colors">
+                          <MessageSquare className="h-4 w-4 flex-shrink-0 text-primary mt-0.5" />
+                          <span className="line-clamp-2">{lead.summary}</span>
+                        </div>
+                      )}
                     </div>
 
                     {lead.preview_image_url && (
