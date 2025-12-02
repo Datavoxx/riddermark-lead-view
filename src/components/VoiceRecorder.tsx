@@ -241,63 +241,65 @@ export const VoiceRecorder = ({ onRecordingComplete, leadId, resumeUrl }: VoiceR
       </div>
 
       {audioURL && (
-        <div className="flex items-center gap-3 bg-muted/30 p-3 rounded-md">
-          <audio
-            ref={audioRef}
-            src={audioURL}
-            onEnded={() => setIsPlaying(false)}
-            onPlay={() => setIsPlaying(true)}
-            onPause={() => setIsPlaying(false)}
-          />
-          
-          <Button
-            onClick={togglePlayback}
-            variant="secondary"
-            size="sm"
-            className="flex items-center gap-2"
-          >
-            {isPlaying ? (
-              <>
-                <Pause className="h-4 w-4" />
-                Pausa
-              </>
-            ) : (
-              <>
-                <Play className="h-4 w-4" />
-                Spela upp
-              </>
-            )}
-          </Button>
+        <div className="space-y-3">
+          {/* Playback controls */}
+          <div className="flex flex-wrap items-center gap-2 bg-muted/30 p-3 rounded-xl">
+            <audio
+              ref={audioRef}
+              src={audioURL}
+              onEnded={() => setIsPlaying(false)}
+              onPlay={() => setIsPlaying(true)}
+              onPause={() => setIsPlaying(false)}
+            />
+            
+            <Button
+              onClick={togglePlayback}
+              variant="secondary"
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              {isPlaying ? (
+                <>
+                  <Pause className="h-4 w-4" />
+                  Pausa
+                </>
+              ) : (
+                <>
+                  <Play className="h-4 w-4" />
+                  Spela upp
+                </>
+              )}
+            </Button>
 
-          <Button
-            onClick={startRecording}
-            variant="outline"
-            size="sm"
-            className="flex items-center gap-2"
-          >
-            <Mic className="h-4 w-4" />
-            Spela in igen
-          </Button>
+            <Button
+              onClick={startRecording}
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              <Mic className="h-4 w-4" />
+              Spela in igen
+            </Button>
 
-          <Button
-            onClick={deleteRecording}
-            variant="ghost"
-            size="sm"
-            className="flex items-center gap-2 text-destructive hover:text-destructive"
-          >
-            <Trash2 className="h-4 w-4" />
-            Ta bort
-          </Button>
+            <Button
+              onClick={deleteRecording}
+              variant="ghost"
+              size="sm"
+              className="flex items-center gap-2 text-destructive hover:text-destructive"
+            >
+              <Trash2 className="h-4 w-4" />
+              Ta bort
+            </Button>
+          </div>
 
+          {/* Send button - always visible, full width */}
           <Button
             onClick={sendRecording}
-            variant="default"
-            size="sm"
-            className="flex items-center gap-2"
+            className="w-full rounded-xl h-11 active:scale-[0.98] transition-all"
             disabled={isSending}
           >
-            <Send className="h-4 w-4" />
-            {isSending ? 'Skickar...' : 'Skicka'}
+            <Send className="h-4 w-4 mr-2" />
+            {isSending ? 'Skickar...' : 'Skicka röstmeddelande'}
           </Button>
         </div>
       )}
