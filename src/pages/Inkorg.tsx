@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { InboxMessage } from '@/types/inbox';
 import { TopBar } from '@/components/TopBar';
+import { ComposeEmailModal } from '@/components/ComposeEmailModal';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -44,6 +45,7 @@ export default function Inkorg() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [selectedMessages, setSelectedMessages] = useState<Set<string>>(new Set());
+  const [isComposeOpen, setIsComposeOpen] = useState(false);
   const navigate = useNavigate();
 
   const fetchMessages = async () => {
@@ -298,14 +300,14 @@ export default function Inkorg() {
               <DropdownMenuContent align="start" className="rounded-xl">
                 <DropdownMenuItem 
                   className="rounded-lg cursor-pointer"
-                  onClick={() => toast.info('Funktionen kommer snart!')}
+                  onClick={() => setIsComposeOpen(true)}
                 >
                   <Mail className="h-4 w-4 mr-2" />
                   Nytt meddelande
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   className="rounded-lg cursor-pointer"
-                  onClick={() => toast.info('Funktionen kommer snart!')}
+                  onClick={() => setIsComposeOpen(true)}
                 >
                   <PenLine className="h-4 w-4 mr-2" />
                   Snabbsvar
@@ -580,6 +582,11 @@ export default function Inkorg() {
           )}
         </ScrollArea>
       </div>
+
+      <ComposeEmailModal 
+        open={isComposeOpen} 
+        onOpenChange={setIsComposeOpen} 
+      />
     </div>
   );
 }
