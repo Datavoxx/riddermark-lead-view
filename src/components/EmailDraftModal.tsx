@@ -4,7 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Sparkles, Send, RotateCcw, Loader2 } from "lucide-react";
+import { Mail, Send, RotateCcw, Loader2, Phone } from "lucide-react";
 
 interface EmailDraft {
   id: string;
@@ -21,6 +21,13 @@ export const EmailDraftModal = () => {
   const [draftText, setDraftText] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [isRedoing, setIsRedoing] = useState(false);
+
+  const insertPhoneNumber = () => {
+    const phoneSignature = "\n\nDu når mig på 0707747731";
+    if (!draftText.includes("Du når mig på")) {
+      setDraftText(prev => prev.trimEnd() + phoneSignature);
+    }
+  };
 
   useEffect(() => {
     const channel = supabase
@@ -106,12 +113,12 @@ export const EmailDraftModal = () => {
         <div className="bg-gradient-to-r from-primary/15 via-primary/10 to-primary/5 px-6 py-5 border-b border-border/50">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-xl bg-primary/20 flex items-center justify-center">
-              <Sparkles className="h-5 w-5 text-primary" />
+              <Mail className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-foreground">AI-genererat e-postutkast</h2>
+              <h2 className="text-lg font-semibold text-foreground">Meddelande redo</h2>
               <p className="text-sm text-muted-foreground">
-                Baserat på ditt röstmeddelande
+                Granska och skicka
               </p>
             </div>
           </div>
@@ -132,6 +139,21 @@ export const EmailDraftModal = () => {
             <span className="text-xs text-muted-foreground tabular-nums">
               {draftText.length} tecken
             </span>
+          </div>
+          
+          {/* Quick insert buttons */}
+          <div className="flex items-center gap-2 mt-4 pt-4 border-t border-border/30">
+            <span className="text-xs text-muted-foreground">Lägg till:</span>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={insertPhoneNumber}
+              className="rounded-full px-3 h-7 text-xs bg-primary/5 border-primary/20 hover:bg-primary/10 hover:border-primary/30 transition-all"
+            >
+              <Phone className="h-3 w-3 mr-1.5" />
+              Telefonnummer
+            </Button>
           </div>
         </div>
 
