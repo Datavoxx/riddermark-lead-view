@@ -362,10 +362,13 @@ export default function ArendenList() {
                   </CardHeader>
 
                   <CardContent className="space-y-4 pb-4 flex-1">
-                    {lead.summering && (
-                      <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed">
-                        {lead.summering}
-                      </p>
+                    {lead.summary && (
+                      <div className="space-y-2">
+                        <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Meddelande</h4>
+                        <p className="text-sm text-foreground/90 line-clamp-3 leading-relaxed bg-muted/20 rounded-lg p-3 border">
+                          {lead.summary}
+                        </p>
+                      </div>
                     )}
                     
                     <div className="space-y-2.5 text-sm bg-muted/30 rounded-lg p-3 border">
