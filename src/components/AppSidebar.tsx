@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Home, FileText, Archive, LogOut, Car, Bot, Hash, ChevronDown, Bell, Plus, Users, Wrench, ClipboardList, ShoppingCart } from "lucide-react";
+import { Home, FileText, Archive, LogOut, Car, Bot, Hash, ChevronDown, Bell, Plus, Users, Wrench, ClipboardList, ShoppingCart, Inbox } from "lucide-react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { useNotifications } from "@/hooks/useNotifications";
+import { useInboxMessages } from "@/hooks/useInboxMessages";
 import { CreateChannelDialog } from "@/components/CreateChannelDialog";
 import { GroupChannelMenu } from "@/components/GroupChannelMenu";
 import {
@@ -61,6 +62,7 @@ export function AppSidebar() {
   const [groupChannels, setGroupChannels] = useState<any[]>([]);
   const { unreadCounts } = useUnreadMessages(user?.id);
   const { unreadCount: unreadNotificationCount } = useNotifications(user?.id);
+  const { unreadCount: unreadInboxCount } = useInboxMessages(user?.id);
 
   // Filter navigation based on role
   const visibleNavigation = isBlocketOnly 
@@ -235,6 +237,38 @@ export function AppSidebar() {
                     {unreadNotificationCount > 0 && (
                       <Badge variant="default" className="ml-auto">
                         {unreadNotificationCount}
+                      </Badge>
+                    )}
+                  </NavLink>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarSeparator className="my-2" />
+
+        {/* Inkorg section - visible for all users */}
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton 
+                  asChild
+                  className={location.pathname.startsWith('/inkorg') ? "bg-accent text-accent-foreground font-medium hover:bg-accent" : ""}
+                >
+                  <NavLink 
+                    to="/inkorg" 
+                    onClick={handleNavClick}
+                    className="flex items-center justify-between w-full"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Inbox className="h-4 w-4" />
+                      <span>Inkorg</span>
+                    </div>
+                    {unreadInboxCount > 0 && (
+                      <Badge variant="default" className="ml-auto">
+                        {unreadInboxCount}
                       </Badge>
                     )}
                   </NavLink>
