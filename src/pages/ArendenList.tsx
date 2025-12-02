@@ -192,19 +192,19 @@ export default function ArendenList() {
           className="space-y-4"
         >
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">Ärenden</h1>
-              <p className="text-muted-foreground text-sm mt-1.5 font-medium">
-                Hantera och följ upp inkommande leads från Blocket
-              </p>
-            </div>
+          <div>
+            <h1 className="text-2xl font-semibold tracking-tight text-foreground">Ärenden</h1>
+            <p className="text-muted-foreground text-sm mt-1">
+              Hantera inkommande leads från Blocket
+            </p>
+          </div>
             
             <Button 
               onClick={() => setShowCreateDialog(true)}
-              className="gap-2 shadow-md hover:shadow-lg font-semibold"
-              size="lg"
+              className="gap-2 rounded-xl font-medium"
+              size="default"
             >
-              <Plus className="h-5 w-5" />
+              <Plus className="h-4 w-4" />
               Skapa test-lead
             </Button>
           </div>
@@ -215,15 +215,15 @@ export default function ArendenList() {
               {statusFilters.map((filter) => (
                 <Badge
                   key={filter.key}
-                  variant={statusFilter === filter.key ? "default" : "outline"}
-                  className={`cursor-pointer px-5 py-2 transition-all hover:scale-105 rounded-full font-semibold shadow-sm ${
-                    statusFilter === filter.key ? 'shadow-md' : ''
+                  variant={statusFilter === filter.key ? "default" : "secondary"}
+                  className={`cursor-pointer px-4 py-1.5 rounded-full font-medium text-sm transition-all duration-200 ${
+                    statusFilter === filter.key ? 'shadow-sm' : 'hover:bg-muted/80'
                   }`}
                   onClick={() => setStatusFilter(filter.key)}
                 >
                   {filter.label}
                   {filter.key !== 'all' && (
-                    <span className="ml-2 text-xs opacity-80 font-bold">
+                    <span className="ml-1.5 text-xs opacity-70">
                       {leads.filter(l => {
                         if (filter.key === 'unclaimed') return !l.claimed;
                         if (filter.key === 'claimed') return l.claimed;
@@ -237,44 +237,41 @@ export default function ArendenList() {
           </div>
 
           {/* Search */}
-          <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+          <div className="relative w-full max-w-md">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
             <Input
-              placeholder="Sök på ämne, namn, e-post eller regnummer..."
+              placeholder="Sök..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-12 h-12 text-base shadow-sm border-2 focus:border-primary/50 rounded-lg"
+              className="pl-11 h-11 rounded-full bg-muted/40 border-transparent focus:bg-background focus:border-primary/30 focus:ring-2 focus:ring-primary/10 transition-all duration-200 placeholder:text-muted-foreground/50"
             />
           </div>
         </motion.div>
 
         {/* Leads List */}
         {loading ? (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {Array.from({ length: 6 }).map((_, i) => (
-              <Card key={i} className="overflow-hidden border-2">
-                <CardHeader className="pb-4">
-                  <div className="flex items-start justify-between gap-2 mb-3">
-                    <Skeleton className="h-7 w-24 rounded-full" />
-                    <Skeleton className="h-7 w-20 rounded-full" />
+              <Card key={i} className="overflow-hidden rounded-2xl border border-border/50">
+                <CardHeader className="pb-3 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <Skeleton className="h-5 w-20 rounded-full" />
+                    <Skeleton className="h-4 w-16 rounded-full" />
                   </div>
-                  <Skeleton className="h-6 w-full" />
-                  <Skeleton className="h-5 w-3/4 mt-2" />
-                  <Skeleton className="h-4 w-20 mt-2" />
+                  <Skeleton className="h-5 w-full" />
+                  <Skeleton className="h-5 w-3/4" />
                 </CardHeader>
-                <CardContent className="space-y-3">
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-2/3" />
-                  <div className="space-y-2 mt-4">
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-full" />
+                <CardContent className="space-y-4 pb-4">
+                  <div className="space-y-2 bg-muted/20 rounded-xl p-3">
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-4 w-40" />
+                    <Skeleton className="h-4 w-24" />
                   </div>
-                  <Skeleton className="h-40 w-full rounded-xl mt-4" />
+                  <Skeleton className="h-36 w-full rounded-xl" />
                 </CardContent>
-                <CardFooter className="pt-4 border-t-2 flex gap-2">
-                  <Skeleton className="h-9 flex-1 rounded-md" />
-                  <Skeleton className="h-9 flex-1 rounded-md" />
+                <CardFooter className="pt-3 border-t border-border/50 flex gap-2">
+                  <Skeleton className="h-9 flex-1 rounded-xl" />
+                  <Skeleton className="h-9 flex-1 rounded-xl" />
                 </CardFooter>
               </Card>
             ))}
@@ -284,29 +281,29 @@ export default function ArendenList() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
           >
-            <Card className="border-dashed border-2 bg-gradient-to-br from-card to-muted/20">
-              <CardContent className="p-12 text-center">
-                <div className="mb-6 inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 shadow-inner">
-                  <FileX className="h-10 w-10 text-primary" />
+            <Card className="border border-dashed border-border/60 bg-transparent">
+              <CardContent className="py-16 text-center">
+                <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-muted/50">
+                  <FileX className="h-8 w-8 text-muted-foreground/60" />
                 </div>
-                <h3 className="text-2xl font-bold mb-3">Inga ärenden hittades</h3>
-                <p className="text-muted-foreground mb-8 max-w-md mx-auto text-base leading-relaxed">
+                <h3 className="text-lg font-semibold mb-2">Inga ärenden hittades</h3>
+                <p className="text-sm text-muted-foreground mb-6 max-w-sm mx-auto">
                   {searchQuery.trim() 
                     ? "Försök med andra söktermer eller ändra filtret."
-                    : "Det finns inga ärenden att visa just nu. Skapa ett test-lead för att komma igång."
+                    : "Det finns inga ärenden just nu."
                   }
                 </p>
                 {!searchQuery.trim() && (
-                  <Button onClick={() => setShowCreateDialog(true)} size="lg" className="gap-2 shadow-lg font-semibold">
-                    <Plus className="h-5 w-5" />
-                    Skapa ett test-lead
+                  <Button onClick={() => setShowCreateDialog(true)} className="rounded-xl">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Skapa test-lead
                   </Button>
                 )}
               </CardContent>
             </Card>
           </motion.div>
         ) : (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {filteredLeads.map((lead, index) => {
               const isNew = newLeadIds.has(lead.id);
               return (
@@ -322,88 +319,77 @@ export default function ArendenList() {
                   }}
                 >
                   <Card 
-                    className={`group hover:shadow-xl transition-all duration-300 cursor-pointer border-2 hover:border-primary/40 overflow-hidden h-full flex flex-col hover:scale-[1.02] bg-gradient-to-br from-card to-card/50 ${
-                      isNew ? 'border-primary/70 bg-primary/10 animate-fade-in shadow-lg shadow-primary/20' : ''
+                    className={`group relative overflow-hidden bg-card border border-border/50 rounded-2xl transition-all duration-300 ease-out hover:border-border hover:shadow-lg hover:shadow-black/5 hover:-translate-y-1 cursor-pointer ${
+                      isNew ? 'border-primary/50 bg-primary/5 shadow-md shadow-primary/10' : ''
                     }`}
                     onClick={() => navigate(`/blocket/arenden/${lead.id}`)}
                   >
-                  <CardHeader className="pb-4 bg-gradient-to-br from-background/50 to-transparent">
-                    <div className="flex items-start justify-between gap-2 mb-3">
+                  {/* Subtle hover overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-muted/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  
+                  <CardHeader className="relative pb-3 space-y-3">
+                    <div className="flex items-center justify-between">
                       <Badge 
-                        variant={lead.claimed ? "default" : "destructive"}
-                        className="gap-1.5 px-3 py-1 rounded-full font-semibold shadow-sm"
+                        variant={lead.claimed ? "secondary" : "destructive"}
+                        className="gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium"
                       >
                         {lead.claimed ? (
                           <>
-                            <CheckCircle2 className="h-3.5 w-3.5" />
+                            <CheckCircle2 className="h-3 w-3" />
                             Upplockad
                           </>
                         ) : (
                           <>
-                            <Clock className="h-3.5 w-3.5" />
+                            <div className="h-1.5 w-1.5 rounded-full bg-current animate-pulse" />
                             Obevakad
                           </>
                         )}
                       </Badge>
-                      <Badge variant="outline" className="gap-1.5 text-xs px-3 py-1 rounded-full border-2 font-medium">
-                        <Store className="h-3.5 w-3.5" />
-                        Blocket
-                      </Badge>
+                      <span className="text-xs text-muted-foreground flex items-center gap-1.5">
+                        <Clock className="h-3 w-3" />
+                        {formatRelativeTime(lead.created_at)}
+                      </span>
                     </div>
                     
-                    <CardTitle className="text-lg font-bold line-clamp-2 group-hover:text-primary transition-colors leading-tight">
+                    <CardTitle className="text-base font-semibold line-clamp-2 leading-snug">
                       {lead.subject}
                     </CardTitle>
-                    
-                    <CardDescription className="flex items-center gap-2 text-xs mt-2 font-medium">
-                      <Clock className="h-3.5 w-3.5" />
-                      {formatRelativeTime(lead.created_at)}
-                    </CardDescription>
                   </CardHeader>
 
-                  <CardContent className="space-y-4 pb-4 flex-1">
+                  <CardContent className="relative space-y-4 pb-4">
                     {lead.summering && (
-                      <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed">
+                      <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
                         {lead.summering}
                       </p>
                     )}
                     
-                    <div className="space-y-2.5 text-sm bg-muted/30 rounded-lg p-3 border">
-                      <div className="flex items-center gap-3 text-foreground/80 hover:text-foreground transition-colors">
-                        <User className="h-4 w-4 flex-shrink-0 text-primary" />
-                        <span className="truncate font-medium">{lead.lead_namn}</span>
+                    <div className="space-y-2 text-sm bg-muted/30 rounded-xl p-3">
+                      <div className="flex items-center gap-2.5 text-foreground/80">
+                        <User className="h-3.5 w-3.5 text-muted-foreground" />
+                        <span className="font-medium">{lead.lead_namn}</span>
                       </div>
-                      
-                      <div className="flex items-center gap-3 text-foreground/80 hover:text-foreground transition-colors">
-                        <Mail className="h-4 w-4 flex-shrink-0 text-primary" />
-                        <span className="truncate">{lead.lead_email}</span>
+                      <div className="flex items-center gap-2.5 text-foreground/70">
+                        <Mail className="h-3.5 w-3.5 text-muted-foreground" />
+                        <span className="truncate text-xs">{lead.lead_email}</span>
                       </div>
-                      
-                      <div className="flex items-center gap-3 text-foreground/80 hover:text-foreground transition-colors">
-                        <Car className="h-4 w-4 flex-shrink-0 text-primary" />
-                        <span className="font-mono font-semibold">{lead.regnr}</span>
+                      <div className="flex items-center gap-2.5 text-foreground/80">
+                        <Car className="h-3.5 w-3.5 text-muted-foreground" />
+                        <span className="font-mono text-xs font-semibold tracking-wide">{lead.regnr}</span>
                       </div>
-                      
-                      {lead.summary && (
-                        <div className="flex items-start gap-3 text-foreground/80 pt-2 border-t hover:text-foreground transition-colors">
-                          <MessageSquare className="h-4 w-4 flex-shrink-0 text-primary mt-0.5" />
-                          <span className="line-clamp-2">{lead.summary}</span>
-                        </div>
-                      )}
                     </div>
 
                     {lead.preview_image_url && (
-                      <div className="rounded-xl overflow-hidden border-2 shadow-md group-hover:shadow-lg transition-shadow">
+                      <div className="rounded-xl overflow-hidden">
                         <img 
                           src={lead.preview_image_url} 
-                          alt="Fordonsannons"
-                          className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+                          alt="Fordon"
+                          className="w-full h-36 object-cover transition-transform duration-500 group-hover:scale-105"
                         />
                       </div>
                     )}
                   </CardContent>
 
-                  <CardFooter className="pt-4 border-t-2 flex gap-2 bg-gradient-to-br from-background/30 to-transparent">
+                  <CardFooter className="relative pt-3 pb-4 px-4 border-t border-border/50 flex gap-2">
                     {!lead.claimed && (
                       <Button
                         size="sm"
@@ -411,13 +397,11 @@ export default function ArendenList() {
                           e.stopPropagation();
                           handleClaim(lead.id);
                         }}
-                        className="flex-1 gap-2 font-semibold shadow-sm"
+                        className="flex-1 rounded-xl font-medium h-9"
                       >
-                        <CheckCircle2 className="h-4 w-4" />
                         Ta över
                       </Button>
                     )}
-                    
                     <Button
                       size="sm"
                       variant={lead.claimed ? "default" : "outline"}
@@ -425,10 +409,10 @@ export default function ArendenList() {
                         e.stopPropagation();
                         navigate(`/blocket/arenden/${lead.id}`);
                       }}
-                      className={`gap-2 font-semibold shadow-sm ${!lead.claimed ? 'flex-1' : 'flex-1'}`}
+                      className="flex-1 rounded-xl font-medium h-9"
                     >
                       Visa
-                      <ArrowRight className="h-4 w-4" />
+                      <ArrowRight className="h-3.5 w-3.5 ml-1.5" />
                     </Button>
                   </CardFooter>
                 </Card>
