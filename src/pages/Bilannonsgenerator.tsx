@@ -38,10 +38,13 @@ Håll en professionell men tillgänglig ton.
 Strukturera annonsen tydligt med sektioner.`;
 
 const llmModels = [
-  { value: "gpt-4o", label: "GPT-4o (Rekommenderad)" },
-  { value: "gpt-4o-mini", label: "GPT-4o Mini (Snabbare)" },
-  { value: "gpt-4-turbo", label: "GPT-4 Turbo" },
-  { value: "gpt-3.5-turbo", label: "GPT-3.5 Turbo (Billigast)" },
+  { value: "gpt-5.1", label: "GPT-5.1 (Mest avancerad)" },
+  { value: "gpt-5", label: "GPT-5 (Rekommenderad)" },
+  { value: "gpt-5-pro", label: "GPT-5 Pro (Mest precis)" },
+  { value: "gpt-5-mini", label: "GPT-5 Mini (Balanserad)" },
+  { value: "gpt-5-nano", label: "GPT-5 Nano (Snabbast & billigast)" },
+  { value: "gpt-4o", label: "GPT-4o (Legacy)" },
+  { value: "gpt-4o-mini", label: "GPT-4o Mini (Legacy)" },
 ];
 
 export default function Bilannonsgenerator() {
@@ -57,7 +60,7 @@ export default function Bilannonsgenerator() {
   // Settings state
   const [showSettings, setShowSettings] = useState(false);
   const [apiKey, setApiKey] = useState("");
-  const [selectedModel, setSelectedModel] = useState("gpt-4o-mini");
+  const [selectedModel, setSelectedModel] = useState("gpt-5-mini");
   const [systemPrompt, setSystemPrompt] = useState(defaultSystemPrompt);
 
   // Load settings from localStorage
@@ -346,7 +349,7 @@ ${funktioner ? `✨ Utrustning & funktioner:\n${funktioner}\n\n` : ""}${ytterlig
                 </SelectContent>
               </Select>
               <p className="text-xs text-muted-foreground">
-                GPT-4o är mest kapabel, GPT-3.5 är snabbast och billigast
+                GPT-5.1 är mest avancerad, GPT-5 Mini är balanserad, GPT-5 Nano är snabbast
               </p>
             </div>
           </div>
