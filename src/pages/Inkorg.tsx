@@ -15,8 +15,16 @@ import {
   MailOpen, 
   Mail,
   Search,
-  RefreshCw
+  RefreshCw,
+  PenLine,
+  ChevronDown
 } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
@@ -268,7 +276,61 @@ export default function Inkorg() {
       
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Toolbar */}
-        <div className="border-b bg-background/95 backdrop-blur-sm px-4 py-3 flex items-center gap-2 shadow-sm rounded-xl mx-2 mt-2">
+        <div className="border-b bg-background/95 backdrop-blur-sm px-4 py-3 flex items-center gap-3 shadow-sm rounded-xl mx-2 mt-2">
+          {/* Ny e-post button */}
+          <div className="flex items-center">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button 
+                  className={cn(
+                    "h-10 px-4 rounded-l-xl rounded-r-none",
+                    "bg-primary text-primary-foreground",
+                    "hover:bg-primary/90",
+                    "shadow-lg shadow-primary/25",
+                    "transition-all duration-200",
+                    "font-medium"
+                  )}
+                >
+                  <PenLine className="h-4 w-4 mr-2" />
+                  Ny e-post
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="rounded-xl">
+                <DropdownMenuItem 
+                  className="rounded-lg cursor-pointer"
+                  onClick={() => toast.info('Funktionen kommer snart!')}
+                >
+                  <Mail className="h-4 w-4 mr-2" />
+                  Nytt meddelande
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  className="rounded-lg cursor-pointer"
+                  onClick={() => toast.info('Funktionen kommer snart!')}
+                >
+                  <PenLine className="h-4 w-4 mr-2" />
+                  Snabbsvar
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Button
+              variant="default"
+              size="icon"
+              className={cn(
+                "h-10 w-9 rounded-l-none rounded-r-xl",
+                "bg-primary text-primary-foreground",
+                "hover:bg-primary/90",
+                "shadow-lg shadow-primary/25",
+                "border-l border-primary-foreground/20",
+                "transition-all duration-200"
+              )}
+              onClick={() => toast.info('Välj e-posttyp från menyn')}
+            >
+              <ChevronDown className="h-4 w-4" />
+            </Button>
+          </div>
+
+          <div className="h-6 w-px bg-border/50" />
+
           <Checkbox
             checked={selectedMessages.size === messages.length && messages.length > 0}
             onCheckedChange={handleSelectAll}
