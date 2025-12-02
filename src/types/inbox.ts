@@ -12,4 +12,5 @@ export interface InboxMessage {
   created_at: string;
   updated_at: string;
   metadata: Record<string, any> | null;
+  starred: boolean;
 }
