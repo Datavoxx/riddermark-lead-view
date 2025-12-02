@@ -28,9 +28,9 @@ All colors MUST be HSL.
     --muted: 0 0% 95%;
     --muted-foreground: 0 0% 45%;
 
-    /* Riddermark Accent - Peach/Orange */
-    --accent: 27 87% 67%;
-    --accent-foreground: 0 0% 15%;
+    /* Autolane Blue Accent */
+    --accent: 205 50% 90%;
+    --accent-foreground: 205 65% 30%;
 
     --destructive: 0 70% 55%;
     --destructive-foreground: 0 0% 98%;
@@ -96,9 +96,9 @@ All colors MUST be HSL.
     --muted: 0 0% 15%;
     --muted-foreground: 0 0% 65%;
 
-    /* Riddermark Accent for dark mode */
-    --accent: 27 82% 72%;
-    --accent-foreground: 0 0% 10%;
+    /* Autolane Blue Accent for dark mode */
+    --accent: 205 50% 20%;
+    --accent-foreground: 205 65% 90%;
 
     --destructive: 0 65% 50%;
     --destructive-foreground: 0 0% 98%;
