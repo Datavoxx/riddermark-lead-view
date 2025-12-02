@@ -163,6 +163,54 @@ export type Database = {
         }
         Relationships: []
       }
+      inbox_messages: {
+        Row: {
+          assigned_to: string | null
+          body: string
+          created_at: string
+          from_email: string
+          from_name: string | null
+          id: string
+          metadata: Json | null
+          read_at: string | null
+          received_at: string
+          source: string
+          status: string
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          body: string
+          created_at?: string
+          from_email: string
+          from_name?: string | null
+          id?: string
+          metadata?: Json | null
+          read_at?: string | null
+          received_at?: string
+          source?: string
+          status?: string
+          subject: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          body?: string
+          created_at?: string
+          from_email?: string
+          from_name?: string | null
+          id?: string
+          metadata?: Json | null
+          read_at?: string | null
+          received_at?: string
+          source?: string
+          status?: string
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           blocket_url: string | null

@@ -31,6 +31,8 @@ import IVerkstad from "./pages/IVerkstad";
 import Servicestatus from "./pages/Servicestatus";
 import Wayke from "./pages/Wayke";
 import Bytbil from "./pages/Bytbil";
+import Inkorg from "./pages/Inkorg";
+import InkorgDetail from "./pages/InkorgDetail";
 
 const queryClient = new QueryClient();
 
@@ -74,6 +76,8 @@ const App = () => (
                         <Route path="/agent" element={<RoleProtectedRoute><Agent /></RoleProtectedRoute>} />
                         <Route path="/agent/:agentId" element={<RoleProtectedRoute><Agent /></RoleProtectedRoute>} />
                         <Route path="/notiser" element={<RoleProtectedRoute><Notiser /></RoleProtectedRoute>} />
+                        <Route path="/inkorg" element={<RoleProtectedRoute><Inkorg /></RoleProtectedRoute>} />
+                        <Route path="/inkorg/:id" element={<RoleProtectedRoute><InkorgDetail /></RoleProtectedRoute>} />
                         <Route path="/channel/:id" element={<RoleProtectedRoute><Channel /></RoleProtectedRoute>} />
                         <Route path="*" element={<NotFound />} />
                       </Routes>
