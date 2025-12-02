@@ -1,9 +1,10 @@
-import { useState } from "react";
-import { Car, Sparkles, Settings, Check } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Car, Sparkles, Settings, Key, Brain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -11,6 +12,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
+import { toast } from "sonner";
 
 const currentYear = new Date().getFullYear();
 const years = Array.from({ length: 30 }, (_, i) => currentYear - i);
@@ -22,6 +31,19 @@ const defaultStandardInfo = `*Bilfinansiering via LF Finans, Santander och DNB
 *Helförsäkring ingår alltid på våra fordon
 *Fordonshistorik finns att ta del av`;
 
+const defaultSystemPrompt = `Du är en expert på att skriva engagerande och professionella bilannonser. 
+Skapa en säljande annons baserat på informationen som ges. 
+Använd emojis sparsamt men effektivt.
+Håll en professionell men tillgänglig ton.
+Strukturera annonsen tydligt med sektioner.`;
+
+const llmModels = [
+  { value: "gpt-4o", label: "GPT-4o (Rekommenderad)" },
+  { value: "gpt-4o-mini", label: "GPT-4o Mini (Snabbare)" },
+  { value: "gpt-4-turbo", label: "GPT-4 Turbo" },
+  { value: "gpt-3.5-turbo", label: "GPT-3.5 Turbo (Billigast)" },
+];
+
 export default function Bilannonsgenerator() {
   const [markeModell, setMarkeModell] = useState("");
   const [arsmodell, setArsmodell] = useState<string>("");
@@ -31,6 +53,31 @@ export default function Bilannonsgenerator() {
   const [standardInfo, setStandardInfo] = useState(defaultStandardInfo);
   const [generatedAd, setGeneratedAd] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
+
+  // Settings state
+  const [showSettings, setShowSettings] = useState(false);
+  const [apiKey, setApiKey] = useState("");
+  const [selectedModel, setSelectedModel] = useState("gpt-4o-mini");
+  const [systemPrompt, setSystemPrompt] = useState(defaultSystemPrompt);
+
+  // Load settings from localStorage
+  useEffect(() => {
+    const savedApiKey = localStorage.getItem("bilannonsgenerator_apiKey");
+    const savedModel = localStorage.getItem("bilannonsgenerator_model");
+    const savedPrompt = localStorage.getItem("bilannonsgenerator_prompt");
+    
+    if (savedApiKey) setApiKey(savedApiKey);
+    if (savedModel) setSelectedModel(savedModel);
+    if (savedPrompt) setSystemPrompt(savedPrompt);
+  }, []);
+
+  const saveSettings = () => {
+    localStorage.setItem("bilannonsgenerator_apiKey", apiKey);
+    localStorage.setItem("bilannonsgenerator_model", selectedModel);
+    localStorage.setItem("bilannonsgenerator_prompt", systemPrompt);
+    toast.success("Inställningar sparade");
+    setShowSettings(false);
+  };
 
   const handleGenerateAd = async () => {
     setIsGenerating(true);
@@ -68,7 +115,7 @@ ${funktioner ? `✨ Utrustning & funktioner:\n${funktioner}\n\n` : ""}${ytterlig
                 <span className="h-2 w-2 rounded-full bg-success animate-pulse" />
                 Redo att skapa
               </div>
-              <Button variant="outline" size="sm" className="gap-2">
+              <Button variant="outline" size="sm" className="gap-2" onClick={() => setShowSettings(true)}>
                 <Settings className="h-4 w-4" />
                 <span className="hidden md:inline">Inställningar</span>
               </Button>
@@ -233,6 +280,87 @@ ${funktioner ? `✨ Utrustning & funktioner:\n${funktioner}\n\n` : ""}${ytterlig
           </Card>
         </div>
       </div>
+
+      {/* Settings Sheet */}
+      <Sheet open={showSettings} onOpenChange={setShowSettings}>
+        <SheetContent className="w-full sm:max-w-md overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle className="flex items-center gap-2">
+              <Settings className="h-5 w-5" />
+              Inställningar
+            </SheetTitle>
+            <SheetDescription>
+              Konfigurera AI-modell och anpassa prompten
+            </SheetDescription>
+          </SheetHeader>
+          
+          <div className="space-y-6 py-6">
+            {/* System Prompt */}
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2">
+                <Brain className="h-4 w-4 text-muted-foreground" />
+                System Prompt
+              </Label>
+              <Textarea
+                value={systemPrompt}
+                onChange={(e) => setSystemPrompt(e.target.value)}
+                placeholder="Skriv instruktioner för hur AI:n ska generera annonser..."
+                className="min-h-[150px] resize-none"
+              />
+              <p className="text-xs text-muted-foreground">
+                Denna prompt styr hur AI:n genererar annonser
+              </p>
+            </div>
+
+            {/* API Key */}
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2">
+                <Key className="h-4 w-4 text-muted-foreground" />
+                OpenAI API Key
+              </Label>
+              <Input
+                type="password"
+                value={apiKey}
+                onChange={(e) => setApiKey(e.target.value)}
+                placeholder="sk-..."
+                className="font-mono"
+              />
+              <p className="text-xs text-muted-foreground">
+                Din API-nyckel sparas lokalt i webbläsaren
+              </p>
+            </div>
+
+            {/* Model Selector */}
+            <div className="space-y-2">
+              <Label>Välj AI-modell</Label>
+              <Select value={selectedModel} onValueChange={setSelectedModel}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Välj modell" />
+                </SelectTrigger>
+                <SelectContent>
+                  {llmModels.map((model) => (
+                    <SelectItem key={model.value} value={model.value}>
+                      {model.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">
+                GPT-4o är mest kapabel, GPT-3.5 är snabbast och billigast
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-3 pt-4 border-t">
+            <Button variant="outline" className="flex-1" onClick={() => setShowSettings(false)}>
+              Avbryt
+            </Button>
+            <Button className="flex-1" onClick={saveSettings}>
+              Spara inställningar
+            </Button>
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
