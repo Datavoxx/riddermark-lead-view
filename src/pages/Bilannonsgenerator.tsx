@@ -75,12 +75,22 @@ export default function Bilannonsgenerator() {
   }, []);
 
   const saveSettings = () => {
+    if (!apiKey.trim()) {
+      toast.error("API-nyckel krävs för att spara inställningarna");
+      return;
+    }
+    if (!apiKey.startsWith("sk-")) {
+      toast.error("Ogiltig API-nyckel. Den ska börja med 'sk-'");
+      return;
+    }
     localStorage.setItem("bilannonsgenerator_apiKey", apiKey);
     localStorage.setItem("bilannonsgenerator_model", selectedModel);
     localStorage.setItem("bilannonsgenerator_prompt", systemPrompt);
     toast.success("Inställningar sparade");
     setShowSettings(false);
   };
+
+  const isSettingsValid = apiKey.trim() !== "" && apiKey.startsWith("sk-");
 
   const handleGenerateAd = async () => {
     setIsGenerating(true);
@@ -358,7 +368,7 @@ ${funktioner ? `✨ Utrustning & funktioner:\n${funktioner}\n\n` : ""}${ytterlig
             <Button variant="outline" className="flex-1" onClick={() => setShowSettings(false)}>
               Avbryt
             </Button>
-            <Button className="flex-1" onClick={saveSettings}>
+            <Button className="flex-1" onClick={saveSettings} disabled={!isSettingsValid}>
               Spara inställningar
             </Button>
           </div>
