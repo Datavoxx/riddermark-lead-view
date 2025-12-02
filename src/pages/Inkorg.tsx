@@ -268,7 +268,7 @@ export default function Inkorg() {
       
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Toolbar */}
-        <div className="border-b bg-background px-4 py-2 flex items-center gap-2">
+        <div className="border-b bg-background/95 backdrop-blur-sm px-4 py-3 flex items-center gap-2 shadow-sm rounded-xl mx-2 mt-2">
           <Checkbox
             checked={selectedMessages.size === messages.length && messages.length > 0}
             onCheckedChange={handleSelectAll}
@@ -324,26 +324,31 @@ export default function Inkorg() {
 
           <div className="ml-auto flex items-center gap-2">
             <div className="relative w-64">
-              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Sök i Inkorg..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8"
+                className={cn(
+                  "pl-10 rounded-full",
+                  "bg-muted/50 border-transparent",
+                  "focus:bg-background focus:border-primary",
+                  "transition-all duration-200"
+                )}
               />
             </div>
           </div>
         </div>
 
         {/* Filter tabs */}
-        <div className="border-b bg-background px-4 py-2 flex items-center gap-4">
+        <div className="bg-background/50 px-4 py-3 flex items-center gap-3">
           <button
             onClick={() => setStatusFilter('all')}
             className={cn(
-              "px-3 py-1 text-sm rounded-md transition-colors",
+              "px-4 py-2 text-sm rounded-full transition-all duration-200",
               statusFilter === 'all' 
-                ? "bg-primary text-primary-foreground" 
-                : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                ? "bg-primary text-primary-foreground shadow-md shadow-primary/20" 
+                : "text-muted-foreground hover:text-foreground hover:bg-muted/70"
             )}
           >
             Alla
@@ -351,10 +356,10 @@ export default function Inkorg() {
           <button
             onClick={() => setStatusFilter('unread')}
             className={cn(
-              "px-3 py-1 text-sm rounded-md transition-colors",
+              "px-4 py-2 text-sm rounded-full transition-all duration-200",
               statusFilter === 'unread' 
-                ? "bg-primary text-primary-foreground" 
-                : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                ? "bg-primary text-primary-foreground shadow-md shadow-primary/20" 
+                : "text-muted-foreground hover:text-foreground hover:bg-muted/70"
             )}
           >
             Olästa
@@ -362,10 +367,10 @@ export default function Inkorg() {
           <button
             onClick={() => setStatusFilter('starred')}
             className={cn(
-              "px-3 py-1 text-sm rounded-md transition-colors",
+              "px-4 py-2 text-sm rounded-full transition-all duration-200",
               statusFilter === 'starred' 
-                ? "bg-primary text-primary-foreground" 
-                : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                ? "bg-primary text-primary-foreground shadow-md shadow-primary/20" 
+                : "text-muted-foreground hover:text-foreground hover:bg-muted/70"
             )}
           >
             Stjärnmärkta
@@ -373,10 +378,10 @@ export default function Inkorg() {
           <button
             onClick={() => setStatusFilter('archived')}
             className={cn(
-              "px-3 py-1 text-sm rounded-md transition-colors",
+              "px-4 py-2 text-sm rounded-full transition-all duration-200",
               statusFilter === 'archived' 
-                ? "bg-primary text-primary-foreground" 
-                : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                ? "bg-primary text-primary-foreground shadow-md shadow-primary/20" 
+                : "text-muted-foreground hover:text-foreground hover:bg-muted/70"
             )}
           >
             Arkiverade
@@ -390,9 +395,11 @@ export default function Inkorg() {
               <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
             </div>
           ) : messages.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-              <Mail className="h-16 w-16 mb-4" />
-              <p className="text-lg">Inga meddelanden</p>
+            <div className="flex flex-col items-center justify-center h-full text-muted-foreground animate-fade-in">
+              <div className="p-8 rounded-2xl bg-muted/30">
+                <Mail className="h-20 w-20 text-muted-foreground/50" />
+              </div>
+              <p className="mt-6 text-lg">Inga meddelanden</p>
             </div>
           ) : (
             <div>
@@ -406,9 +413,12 @@ export default function Inkorg() {
                     key={message.id}
                     onClick={() => handleMessageClick(message.id)}
                     className={cn(
-                      "group flex items-center gap-3 px-4 py-3 border-b cursor-pointer transition-colors",
-                      isUnread ? "bg-accent/20" : "hover:bg-muted/50",
-                      isSelected && "bg-accent/40"
+                      "group flex items-center gap-4 px-5 py-4 cursor-pointer",
+                      "rounded-xl mx-2 my-1",
+                      "transition-all duration-200 ease-out",
+                      "hover:bg-accent/60 hover:shadow-md hover:-translate-y-0.5 hover:scale-[1.01]",
+                      isUnread && "bg-primary/5 border-l-4 border-primary",
+                      isSelected && "bg-accent ring-2 ring-primary/20"
                     )}
                   >
                     <Checkbox
@@ -423,10 +433,12 @@ export default function Inkorg() {
                     >
                       <Star
                         className={cn(
-                          "h-5 w-5 transition-colors",
+                          "h-5 w-5 cursor-pointer",
+                          "transition-all duration-200",
+                          "hover:scale-125",
                           message.starred 
-                            ? "fill-yellow-400 text-yellow-400" 
-                            : "text-muted-foreground hover:text-foreground"
+                            ? "fill-yellow-400 text-yellow-400 animate-star-pop" 
+                            : "text-muted-foreground hover:text-yellow-400"
                         )}
                       />
                     </button>
@@ -451,8 +463,12 @@ export default function Inkorg() {
                       </div>
 
                       <Badge 
-                        variant="outline" 
-                        className={cn("flex-shrink-0 text-xs", sourceConfig[message.source]?.color)}
+                        className={cn(
+                          "flex-shrink-0 text-xs rounded-full px-3 py-1",
+                          "shadow-sm transition-all duration-200",
+                          "group-hover:shadow-md",
+                          sourceConfig[message.source]?.color
+                        )}
                       >
                         {sourceConfig[message.source]?.label}
                       </Badge>
@@ -461,11 +477,16 @@ export default function Inkorg() {
                         {formatRelativeTime(message.received_at)}
                       </span>
 
-                      <div className="hidden group-hover:flex items-center gap-1 flex-shrink-0">
+                      <div className={cn(
+                        "flex items-center gap-1 flex-shrink-0",
+                        "opacity-0 group-hover:opacity-100",
+                        "transition-all duration-200",
+                        "translate-x-2 group-hover:translate-x-0"
+                      )}>
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8"
+                          className="h-8 w-8 rounded-full hover:scale-110 transition-transform"
                           onClick={(e) => handleArchive(e, message.id)}
                         >
                           <Archive className="h-4 w-4" />
@@ -473,7 +494,7 @@ export default function Inkorg() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8"
+                          className="h-8 w-8 rounded-full hover:scale-110 transition-transform"
                           onClick={(e) => handleDelete(e, message.id)}
                         >
                           <Trash2 className="h-4 w-4" />
@@ -482,7 +503,7 @@ export default function Inkorg() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8"
+                            className="h-8 w-8 rounded-full hover:scale-110 transition-transform"
                             onClick={(e) => handleMarkAsRead(e, message.id)}
                           >
                             <MailOpen className="h-4 w-4" />
