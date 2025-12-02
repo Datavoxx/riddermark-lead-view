@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Home, FileText, Archive, LogOut, Car, Bot, Hash, ChevronDown, Bell, Plus, Users, Wrench, ClipboardList, ShoppingCart, Inbox } from "lucide-react";
+import { Home, FileText, Archive, LogOut, Car, Bot, Hash, ChevronDown, Bell, Plus, Users, Wrench, ClipboardList, ShoppingCart, Inbox, FileEdit } from "lucide-react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -33,6 +33,7 @@ const navigation = [
   { title: "Blocket", url: "/blocket/arenden", icon: Car },
   { title: "Wayke", url: "/blocket/wayke", icon: Car },
   { title: "Bytbil", url: "/blocket/bytbil", icon: Car },
+  { title: "Bilannonsgenerator", url: "/bilannonsgenerator", icon: FileEdit },
 ];
 
 const fordonsstatusItems = [
