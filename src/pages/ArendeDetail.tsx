@@ -11,6 +11,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { VoiceRecorder } from "@/components/VoiceRecorder";
+import { MobileArendeDetail } from "@/components/MobileArendeDetail";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { 
   ArrowLeft, Clock, Car, Store, CheckCircle2, 
   Mail, ExternalLink, FileText, MapPin, 
@@ -26,6 +28,7 @@ import {
 export default function ArendeDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const [lead, setLead] = useState<Lead | null>(null);
   const [loading, setLoading] = useState(true);
   const [showEmailForm, setShowEmailForm] = useState(false);
@@ -193,6 +196,114 @@ export default function ArendeDetail() {
     }
   };
 
+  const sendTextMessageHandler = async (text: string) => {
+    if (!lead || !text.trim()) return;
+
+    try {
+      setSendingText(true);
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        throw new Error('Not authenticated');
+      }
+
+      const formData = new FormData();
+      formData.append('text_message', text);
+      formData.append('message_type', 'text');
+      formData.append('lead_id', lead.id);
+      formData.append('thread_id', lead.id);
+      if (lead.resume_url) {
+        formData.append('wait_webhook', lead.resume_url);
+      }
+
+      const response = await fetch(
+        'https://fjqsaixszaqceviqwboz.functions.supabase.co/voice-upload',
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+          },
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to send message');
+      }
+
+      toast({
+        title: "Meddelande skickat",
+        description: "Ditt textmeddelande har skickats till n8n workflow.",
+      });
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : '';
+      
+      // Ignorera storagePath-felet - webhook har redan lyckats
+      if (errorMessage.includes('storagePath is not defined')) {
+        toast({
+          title: "Meddelande skickat",
+          description: "Ditt textmeddelande har skickats till n8n workflow.",
+        });
+        setSendingText(false);
+        return;
+      }
+      
+      console.error('Error sending text message:', error);
+      toast({
+        title: "Fel",
+        description: errorMessage || "Kunde inte skicka meddelandet.",
+        variant: "destructive",
+      });
+    } finally {
+      setSendingText(false);
+    }
+  };
+
+  // Mobile Layout
+  if (isMobile) {
+    if (loading) {
+      return (
+        <div className="min-h-screen bg-background p-4 space-y-4">
+          <Skeleton className="h-52 w-full rounded-none" />
+          <div className="px-3 space-y-3">
+            <Skeleton className="h-10 w-full rounded-xl" />
+            <Skeleton className="h-24 w-full rounded-2xl" />
+            <Skeleton className="h-14 w-full rounded-2xl" />
+            <Skeleton className="h-14 w-full rounded-2xl" />
+          </div>
+        </div>
+      );
+    }
+
+    if (!lead) {
+      return (
+        <div className="min-h-screen bg-background flex items-center justify-center p-4">
+          <div className="text-center">
+            <h2 className="text-lg font-semibold mb-2">Ärendet hittades inte</h2>
+            <p className="text-sm text-muted-foreground mb-4">
+              Det ärendet du söker efter existerar inte.
+            </p>
+            <Button onClick={() => navigate('/blocket/arenden')} className="rounded-xl">
+              Tillbaka till ärenden
+            </Button>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <MobileArendeDetail 
+        lead={lead}
+        onClaim={handleClaim}
+        onSendText={sendTextMessageHandler}
+        sendingText={sendingText}
+        formatDate={formatDate}
+      />
+    );
+  }
+
+  // Desktop Layout
   return (
     <div className="min-h-screen bg-background">
       <TopBar title={lead?.subject || "Ärende"} />
