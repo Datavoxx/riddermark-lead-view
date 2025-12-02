@@ -155,18 +155,21 @@ export default function Bilar() {
   });
 
   return (
-    <div className="min-h-screen bg-background p-8">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold">Våra bilar</h1>
+    <div className="min-h-screen bg-background p-6 md:p-8">
+      <div className="max-w-6xl mx-auto space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">Våra bilar</h1>
+            <p className="text-muted-foreground mt-1">Hantera företagets fordonsflotta</p>
+          </div>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button onClick={() => handleDialogClose()}>
+              <Button onClick={() => handleDialogClose()} className="rounded-xl">
                 <Plus className="mr-2 h-4 w-4" />
                 Lägg till bil
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="rounded-2xl">
               <DialogHeader>
                 <DialogTitle>
                   {editingCar ? "Redigera bil" : "Lägg till ny bil"}
@@ -182,6 +185,7 @@ export default function Bilar() {
                       setFormData({ ...formData, marke_modell: e.target.value })
                     }
                     placeholder="t.ex. Volvo V90"
+                    className="rounded-xl"
                     required
                   />
                 </div>
@@ -199,6 +203,7 @@ export default function Bilar() {
                     }
                     min="1900"
                     max={new Date().getFullYear() + 1}
+                    className="rounded-xl"
                     required
                   />
                 </div>
@@ -211,6 +216,7 @@ export default function Bilar() {
                       setFormData({ ...formData, regnr: e.target.value.toUpperCase() })
                     }
                     placeholder="t.ex. ABC123"
+                    className="rounded-xl"
                     required
                   />
                 </div>
@@ -219,10 +225,11 @@ export default function Bilar() {
                     type="button"
                     variant="outline"
                     onClick={handleDialogClose}
+                    className="rounded-xl"
                   >
                     Avbryt
                   </Button>
-                  <Button type="submit">
+                  <Button type="submit" className="rounded-xl">
                     {editingCar ? "Uppdatera" : "Lägg till"}
                   </Button>
                 </div>
@@ -231,20 +238,18 @@ export default function Bilar() {
           </Dialog>
         </div>
 
-        <div className="mb-6">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="text"
-              placeholder="Sök på märke, modell, årsmodell eller registreringsnummer..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
-            />
-          </div>
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            type="text"
+            placeholder="Sök på märke, modell, årsmodell eller registreringsnummer..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10 rounded-xl"
+          />
         </div>
 
-        <div className="bg-card rounded-lg border">
+        <div className="bg-card rounded-2xl border border-border/50 shadow-sm overflow-hidden">
           <Table>
             <TableHeader>
               <TableRow>
@@ -259,7 +264,7 @@ export default function Bilar() {
             <TableBody>
               {filteredCars.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                  <TableCell colSpan={6} className="text-center text-muted-foreground py-12">
                     {cars.length === 0 
                       ? "Inga bilar ännu. Lägg till din första bil!"
                       : "Inga bilar matchar din sökning."}
@@ -267,10 +272,10 @@ export default function Bilar() {
                 </TableRow>
               ) : (
                 filteredCars.map((car) => (
-                  <TableRow key={car.id}>
+                  <TableRow key={car.id} className="hover:bg-accent/50 transition-colors">
                     <TableCell className="font-medium">{car.marke_modell}</TableCell>
                     <TableCell>{car.arsmodell}</TableCell>
-                    <TableCell>{car.regnr}</TableCell>
+                    <TableCell className="font-mono">{car.regnr}</TableCell>
                     <TableCell className="text-muted-foreground text-sm">
                       {format(new Date(car.created_at), "d MMM yyyy HH:mm", { locale: sv })}
                     </TableCell>
@@ -283,6 +288,7 @@ export default function Bilar() {
                           variant="ghost"
                           size="icon"
                           onClick={() => handleEdit(car)}
+                          className="rounded-xl hover:bg-accent/60"
                         >
                           <Pencil className="h-4 w-4" />
                         </Button>
@@ -290,6 +296,7 @@ export default function Bilar() {
                           variant="ghost"
                           size="icon"
                           onClick={() => handleDelete(car.id)}
+                          className="rounded-xl hover:bg-destructive/10 hover:text-destructive"
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>

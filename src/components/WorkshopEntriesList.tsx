@@ -50,7 +50,7 @@ export function WorkshopEntriesList() {
 
   if (!entries || entries.length === 0) {
     return (
-      <Card className="p-6">
+      <Card className="rounded-2xl border border-border/50 shadow-sm p-12">
         <p className="text-muted-foreground text-center">
           Inga bilar i verkstad just nu
         </p>
@@ -65,7 +65,7 @@ export function WorkshopEntriesList() {
 
   return (
     <>
-      <Card>
+      <Card className="rounded-2xl border border-border/50 shadow-sm overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow>
@@ -84,7 +84,7 @@ export function WorkshopEntriesList() {
               const config = statusConfig[entry.status as keyof typeof statusConfig] || statusConfig.in_workshop;
               
               return (
-                <TableRow key={entry.id}>
+                <TableRow key={entry.id} className="hover:bg-accent/50 transition-colors">
                   <TableCell className="font-mono text-sm">
                     {entry.car_id.substring(0, 8)}...
                   </TableCell>
@@ -92,10 +92,10 @@ export function WorkshopEntriesList() {
                   <TableCell className="text-muted-foreground">
                     {entry.workshop_address || '—'}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="text-sm">
                     {format(new Date(entry.checked_in_at), 'PPp', { locale: sv })}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="text-sm">
                     {format(new Date(entry.updated_at), 'PPp', { locale: sv })}
                   </TableCell>
                   <TableCell>
@@ -111,6 +111,7 @@ export function WorkshopEntriesList() {
                       variant="ghost"
                       size="sm"
                       onClick={() => handleEditClick(entry)}
+                      className="rounded-xl hover:bg-accent/60"
                     >
                       <Edit className="h-4 w-4" />
                     </Button>
