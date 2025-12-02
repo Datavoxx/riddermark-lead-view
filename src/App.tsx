@@ -10,6 +10,7 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { RoleProtectedRoute } from "@/components/RoleProtectedRoute";
 import { AppSidebar } from "@/components/AppSidebar";
 import { EmailDraftModal } from "@/components/EmailDraftModal";
+import { MobileBottomNav } from "@/components/MobileBottomNav";
 import Login from "./pages/Login";
 import ResetPassword from "./pages/ResetPassword";
 import Dashboard from "./pages/Dashboard";
@@ -54,7 +55,7 @@ const App = () => (
                 <SidebarProvider>
                   <div className="min-h-screen flex w-full">
                     <AppSidebar />
-                    <main className="flex-1">
+                    <main className="flex-1 pb-20 md:pb-0">
                       <Routes>
                         <Route path="/" element={<RoleProtectedRoute><Dashboard /></RoleProtectedRoute>} />
                         <Route path="/dashboard" element={<RoleProtectedRoute><Dashboard /></RoleProtectedRoute>} />
@@ -82,6 +83,7 @@ const App = () => (
                         <Route path="*" element={<NotFound />} />
                       </Routes>
                     </main>
+                    <MobileBottomNav />
                   </div>
                 </SidebarProvider>
               </ProtectedRoute>
