@@ -34,6 +34,7 @@ import Wayke from "./pages/Wayke";
 import Bytbil from "./pages/Bytbil";
 import Inkorg from "./pages/Inkorg";
 import InkorgDetail from "./pages/InkorgDetail";
+import Bilannonsgenerator from "./pages/Bilannonsgenerator";
 
 const queryClient = new QueryClient();
 
@@ -79,6 +80,7 @@ const App = () => (
                         <Route path="/notiser" element={<RoleProtectedRoute><Notiser /></RoleProtectedRoute>} />
                         <Route path="/inkorg" element={<RoleProtectedRoute><Inkorg /></RoleProtectedRoute>} />
                         <Route path="/inkorg/:id" element={<RoleProtectedRoute><InkorgDetail /></RoleProtectedRoute>} />
+                        <Route path="/bilannonsgenerator" element={<RoleProtectedRoute><Bilannonsgenerator /></RoleProtectedRoute>} />
                         <Route path="/channel/:id" element={<RoleProtectedRoute><Channel /></RoleProtectedRoute>} />
                         <Route path="*" element={<NotFound />} />
                       </Routes>
