@@ -120,12 +120,12 @@ export function AddCarToWorkshopDialog() {
   return (
     <Dialog modal={false} open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
+        <Button className="rounded-xl">
           <Plus className="mr-2 h-4 w-4" />
           Lägg till bil i verkstad
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]" onInteractOutside={(e) => e.preventDefault()}>
+      <DialogContent className="sm:max-w-[500px] rounded-2xl" onInteractOutside={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>Lägg till bil i verkstad</DialogTitle>
           <DialogDescription>
@@ -136,10 +136,10 @@ export function AddCarToWorkshopDialog() {
           <div className="space-y-2">
             <Label htmlFor="car">Bil</Label>
             <Select value={selectedCarId} onValueChange={setSelectedCarId} required>
-              <SelectTrigger id="car">
+              <SelectTrigger id="car" className="rounded-xl">
                 <SelectValue placeholder={carsLoading ? "Laddar bilar..." : "Välj bil"} />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="rounded-xl">
                 {cars?.map((car) => (
                   <SelectItem key={car.id} value={car.id}>
                     {car.marke_modell} - {car.regnr}
@@ -164,6 +164,7 @@ export function AddCarToWorkshopDialog() {
                   id="workshop"
                   placeholder="Sök efter verkstad..."
                   onChange={(e) => setManualWorkshopInput(e.target.value)}
+                  className="rounded-xl"
                   required
                 />
               </Autocomplete>
@@ -171,15 +172,16 @@ export function AddCarToWorkshopDialog() {
               <Input
                 id="workshop"
                 placeholder="Laddar Google Maps..."
+                className="rounded-xl"
                 disabled
               />
             )}
           </div>
           <div className="flex justify-end gap-3">
-            <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isSubmitting}>
+            <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isSubmitting} className="rounded-xl">
               Avbryt
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button type="submit" disabled={isSubmitting} className="rounded-xl">
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
