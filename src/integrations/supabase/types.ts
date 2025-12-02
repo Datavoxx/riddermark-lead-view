@@ -175,6 +175,7 @@ export type Database = {
           read_at: string | null
           received_at: string
           source: string
+          starred: boolean
           status: string
           subject: string
           updated_at: string
@@ -190,6 +191,7 @@ export type Database = {
           read_at?: string | null
           received_at?: string
           source?: string
+          starred?: boolean
           status?: string
           subject: string
           updated_at?: string
@@ -205,6 +207,7 @@ export type Database = {
           read_at?: string | null
           received_at?: string
           source?: string
+          starred?: boolean
           status?: string
           subject?: string
           updated_at?: string
