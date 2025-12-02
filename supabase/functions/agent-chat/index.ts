@@ -27,7 +27,7 @@ serve(async (req) => {
     console.log('Sending message to n8n webhook:', { message, userId });
 
     // Skicka till n8n webhook
-    const n8nResponse = await fetch('https://datavox.app.n8n.cloud/webhook-test/oliver-agent', {
+    const n8nResponse = await fetch('https://datavox.app.n8n.cloud/webhook/oliver-agent', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
