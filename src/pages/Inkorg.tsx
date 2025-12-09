@@ -280,7 +280,10 @@ export default function Inkorg() {
       
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Toolbar */}
-        <div className="border-b bg-background/95 backdrop-blur-sm px-4 py-3 flex items-center gap-3 shadow-sm rounded-xl mx-2 mt-2">
+        <div className={cn(
+          "border-b bg-background/95 backdrop-blur-sm flex items-center gap-2 shadow-sm",
+          isMobile ? "px-3 py-2" : "px-4 py-3 rounded-xl mx-2 mt-2"
+        )}>
           {/* Ny e-post button - hidden on mobile since FAB handles it */}
           {!isMobile && (
             <>
@@ -342,43 +345,48 @@ export default function Inkorg() {
           <Checkbox
             checked={selectedMessages.size === messages.length && messages.length > 0}
             onCheckedChange={handleSelectAll}
+            className="flex-shrink-0"
           />
           
           {selectedMessages.size > 0 ? (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 md:gap-2 flex-wrap">
               <Button 
                 variant="ghost" 
                 size="sm"
+                className="h-8 px-2 md:px-3"
                 onClick={handleBulkArchive}
               >
-                <Archive className="h-4 w-4 mr-2" />
-                Arkivera
+                <Archive className="h-4 w-4 md:mr-2" />
+                <span className="hidden md:inline">Arkivera</span>
               </Button>
               <Button 
                 variant="ghost" 
                 size="sm"
+                className="h-8 px-2 md:px-3"
                 onClick={handleBulkDelete}
               >
-                <Trash2 className="h-4 w-4 mr-2" />
-                Ta bort
+                <Trash2 className="h-4 w-4 md:mr-2" />
+                <span className="hidden md:inline">Ta bort</span>
               </Button>
               <Button 
                 variant="ghost" 
                 size="sm"
+                className="h-8 px-2 md:px-3"
                 onClick={handleBulkMarkAsRead}
               >
-                <MailOpen className="h-4 w-4 mr-2" />
-                Markera läst
+                <MailOpen className="h-4 w-4 md:mr-2" />
+                <span className="hidden md:inline">Markera läst</span>
               </Button>
               <Button 
                 variant="ghost" 
                 size="sm"
+                className="h-8 px-2 md:px-3"
                 onClick={handleBulkMarkAsUnread}
               >
-                <Mail className="h-4 w-4 mr-2" />
-                Markera oläst
+                <Mail className="h-4 w-4 md:mr-2" />
+                <span className="hidden md:inline">Markera oläst</span>
               </Button>
-              <span className="text-sm text-muted-foreground ml-2">
+              <span className="text-xs md:text-sm text-muted-foreground ml-1">
                 {selectedMessages.size} valda
               </span>
             </div>
@@ -386,36 +394,58 @@ export default function Inkorg() {
             <Button 
               variant="ghost" 
               size="sm"
+              className="h-8 w-8 p-0"
               onClick={fetchMessages}
             >
               <RefreshCw className="h-4 w-4" />
             </Button>
           )}
 
-          <div className="ml-auto flex items-center gap-2">
-            <div className="relative w-64">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Sök i Inkorg..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className={cn(
-                  "pl-10 rounded-full",
-                  "bg-muted/50 border-transparent",
-                  "focus:bg-background focus:border-primary",
-                  "transition-all duration-200"
-                )}
-              />
+          {/* Search - hidden on mobile, show icon instead */}
+          {!isMobile && (
+            <div className="ml-auto flex items-center gap-2">
+              <div className="relative w-64">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Sök i Inkorg..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className={cn(
+                    "pl-10 rounded-full",
+                    "bg-muted/50 border-transparent",
+                    "focus:bg-background focus:border-primary",
+                    "transition-all duration-200"
+                  )}
+                />
+              </div>
             </div>
-          </div>
+          )}
+          
+          {isMobile && (
+            <Button 
+              variant="ghost" 
+              size="sm"
+              className="h-8 w-8 p-0 ml-auto"
+              onClick={() => {
+                const query = prompt('Sök i inkorg:');
+                if (query !== null) setSearchQuery(query);
+              }}
+            >
+              <Search className="h-4 w-4" />
+            </Button>
+          )}
         </div>
 
         {/* Filter tabs */}
-        <div className="bg-background/50 px-4 py-3 flex items-center gap-3">
+        <div className={cn(
+          "bg-background/50 flex items-center overflow-x-auto",
+          isMobile ? "px-3 py-2 gap-2" : "px-4 py-3 gap-3"
+        )}>
           <button
             onClick={() => setStatusFilter('all')}
             className={cn(
-              "px-4 py-2 text-sm rounded-full transition-all duration-200",
+              "text-sm rounded-full transition-all duration-200 flex-shrink-0",
+              isMobile ? "px-3 py-1.5" : "px-4 py-2",
               statusFilter === 'all' 
                 ? "bg-primary text-primary-foreground shadow-md shadow-primary/20" 
                 : "text-muted-foreground hover:text-foreground hover:bg-muted/70"
@@ -426,7 +456,8 @@ export default function Inkorg() {
           <button
             onClick={() => setStatusFilter('unread')}
             className={cn(
-              "px-4 py-2 text-sm rounded-full transition-all duration-200",
+              "text-sm rounded-full transition-all duration-200 flex-shrink-0",
+              isMobile ? "px-3 py-1.5" : "px-4 py-2",
               statusFilter === 'unread' 
                 ? "bg-primary text-primary-foreground shadow-md shadow-primary/20" 
                 : "text-muted-foreground hover:text-foreground hover:bg-muted/70"
@@ -437,7 +468,8 @@ export default function Inkorg() {
           <button
             onClick={() => setStatusFilter('starred')}
             className={cn(
-              "px-4 py-2 text-sm rounded-full transition-all duration-200",
+              "text-sm rounded-full transition-all duration-200 flex-shrink-0",
+              isMobile ? "px-3 py-1.5" : "px-4 py-2",
               statusFilter === 'starred' 
                 ? "bg-primary text-primary-foreground shadow-md shadow-primary/20" 
                 : "text-muted-foreground hover:text-foreground hover:bg-muted/70"
@@ -448,7 +480,8 @@ export default function Inkorg() {
           <button
             onClick={() => setStatusFilter('archived')}
             className={cn(
-              "px-4 py-2 text-sm rounded-full transition-all duration-200",
+              "text-sm rounded-full transition-all duration-200 flex-shrink-0",
+              isMobile ? "px-3 py-1.5" : "px-4 py-2",
               statusFilter === 'archived' 
                 ? "bg-primary text-primary-foreground shadow-md shadow-primary/20" 
                 : "text-muted-foreground hover:text-foreground hover:bg-muted/70"
@@ -476,8 +509,91 @@ export default function Inkorg() {
               {messages.map((message) => {
                 const isUnread = message.status === 'unread';
                 const isSelected = selectedMessages.has(message.id);
-                const bodyPreview = message.body.substring(0, 100).replace(/\n/g, ' ');
+                const bodyPreview = message.body.substring(0, 80).replace(/\n/g, ' ');
 
+                // OUTLOOK-STIL MOBIL LAYOUT
+                if (isMobile) {
+                  return (
+                    <div
+                      key={message.id}
+                      onClick={() => handleMessageClick(message.id)}
+                      className={cn(
+                        "flex items-start gap-3 px-3 py-3 cursor-pointer",
+                        "border-b border-border/50",
+                        "active:bg-accent/80",
+                        isUnread && "bg-primary/5",
+                        isSelected && "bg-accent"
+                      )}
+                    >
+                      {/* Checkbox */}
+                      <Checkbox
+                        checked={isSelected}
+                        onCheckedChange={() => handleSelectMessage(message.id)}
+                        onClick={(e) => e.stopPropagation()}
+                        className="mt-1 flex-shrink-0"
+                      />
+
+                      {/* Avatar cirkel */}
+                      <div className={cn(
+                        "w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0",
+                        isUnread ? "bg-primary/20" : "bg-muted"
+                      )}>
+                        <span className={cn(
+                          "text-sm font-semibold",
+                          isUnread ? "text-primary" : "text-muted-foreground"
+                        )}>
+                          {(message.from_name || message.from_email)[0].toUpperCase()}
+                        </span>
+                      </div>
+                      
+                      {/* Innehåll - vertikal stack */}
+                      <div className="flex-1 min-w-0">
+                        {/* Rad 1: Avsändare + stjärna + tid */}
+                        <div className="flex items-center gap-2">
+                          <span className={cn(
+                            "flex-1 truncate text-sm",
+                            isUnread ? "font-semibold text-foreground" : "text-muted-foreground"
+                          )}>
+                            {message.from_name || message.from_email}
+                          </span>
+                          
+                          {message.starred && (
+                            <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400 flex-shrink-0" />
+                          )}
+                          
+                          <span className="text-xs text-muted-foreground flex-shrink-0">
+                            {formatRelativeTime(message.received_at)}
+                          </span>
+                        </div>
+                        
+                        {/* Rad 2: Ämne */}
+                        <p className={cn(
+                          "text-sm truncate mt-0.5",
+                          isUnread ? "font-medium text-foreground" : "text-muted-foreground"
+                        )}>
+                          {message.subject}
+                        </p>
+                        
+                        {/* Rad 3: Förhandsgranskning + badge */}
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <p className="text-xs text-muted-foreground truncate flex-1">
+                            {bodyPreview}
+                          </p>
+                          <Badge 
+                            className={cn(
+                              "text-[10px] rounded-full px-2 py-0.5 flex-shrink-0",
+                              sourceConfig[message.source]?.color
+                            )}
+                          >
+                            {sourceConfig[message.source]?.label}
+                          </Badge>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
+
+                // DESKTOP LAYOUT - behåll befintlig
                 return (
                   <div
                     key={message.id}
