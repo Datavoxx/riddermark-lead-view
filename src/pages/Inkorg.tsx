@@ -511,35 +511,27 @@ export default function Inkorg() {
                 const isSelected = selectedMessages.has(message.id);
                 const bodyPreview = message.body.substring(0, 80).replace(/\n/g, ' ');
 
-                // OUTLOOK-STIL MOBIL LAYOUT
+                // OUTLOOK-STIL MOBIL LAYOUT - Super kompakt
                 if (isMobile) {
                   return (
                     <div
                       key={message.id}
                       onClick={() => handleMessageClick(message.id)}
                       className={cn(
-                        "flex items-start gap-3 px-3 py-3 cursor-pointer",
-                        "border-b border-border/50",
+                        "flex items-start gap-2.5 px-3 py-2.5 cursor-pointer",
+                        "border-b border-border/30",
                         "active:bg-accent/80",
                         isUnread && "bg-primary/5",
                         isSelected && "bg-accent"
                       )}
                     >
-                      {/* Checkbox */}
-                      <Checkbox
-                        checked={isSelected}
-                        onCheckedChange={() => handleSelectMessage(message.id)}
-                        onClick={(e) => e.stopPropagation()}
-                        className="mt-1 flex-shrink-0"
-                      />
-
-                      {/* Avatar cirkel */}
+                      {/* Avatar cirkel - mindre */}
                       <div className={cn(
-                        "w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0",
+                        "w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0",
                         isUnread ? "bg-primary/20" : "bg-muted"
                       )}>
                         <span className={cn(
-                          "text-sm font-semibold",
+                          "text-xs font-semibold",
                           isUnread ? "text-primary" : "text-muted-foreground"
                         )}>
                           {(message.from_name || message.from_email)[0].toUpperCase()}
@@ -547,41 +539,37 @@ export default function Inkorg() {
                       </div>
                       
                       {/* Innehåll - vertikal stack */}
-                      <div className="flex-1 min-w-0">
+                      <div className="flex-1 min-w-0 overflow-hidden">
                         {/* Rad 1: Avsändare + stjärna + tid */}
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1.5">
                           <span className={cn(
-                            "flex-1 truncate text-sm",
+                            "truncate text-[13px]",
                             isUnread ? "font-semibold text-foreground" : "text-muted-foreground"
                           )}>
                             {message.from_name || message.from_email}
                           </span>
                           
-                          {message.starred && (
-                            <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400 flex-shrink-0" />
-                          )}
-                          
-                          <span className="text-xs text-muted-foreground flex-shrink-0">
-                            {formatRelativeTime(message.received_at)}
-                          </span>
+                          <div className="flex items-center gap-1 ml-auto flex-shrink-0">
+                            {message.starred && (
+                              <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                            )}
+                            <span className="text-[11px] text-muted-foreground">
+                              {formatRelativeTime(message.received_at)}
+                            </span>
+                          </div>
                         </div>
                         
-                        {/* Rad 2: Ämne */}
-                        <p className={cn(
-                          "text-sm truncate mt-0.5",
-                          isUnread ? "font-medium text-foreground" : "text-muted-foreground"
-                        )}>
-                          {message.subject}
-                        </p>
-                        
-                        {/* Rad 3: Förhandsgranskning + badge */}
-                        <div className="flex items-center gap-2 mt-0.5">
-                          <p className="text-xs text-muted-foreground truncate flex-1">
-                            {bodyPreview}
+                        {/* Rad 2: Ämne + badge */}
+                        <div className="flex items-center gap-1.5 mt-0.5">
+                          <p className={cn(
+                            "text-[13px] truncate",
+                            isUnread ? "font-medium text-foreground" : "text-muted-foreground"
+                          )}>
+                            {message.subject}
                           </p>
                           <Badge 
                             className={cn(
-                              "text-[10px] rounded-full px-2 py-0.5 flex-shrink-0",
+                              "text-[9px] rounded-full px-1.5 py-0 h-4 flex-shrink-0 ml-auto",
                               sourceConfig[message.source]?.color
                             )}
                           >
