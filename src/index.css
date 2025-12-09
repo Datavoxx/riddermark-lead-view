@@ -8,7 +8,7 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Riddermark Brand Colors */
+    /* Express Bilar Brand Colors */
     --background: 0 0% 98%;
     --foreground: 0 0% 5%;
 
@@ -18,26 +18,26 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 5%;
 
-    /* Autolane Blue Primary */
-    --primary: 205 65% 55%;
+    /* Express Bilar Red Primary */
+    --primary: 0 75% 50%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 0 0% 96%;
-    --secondary-foreground: 205 65% 55%;
+    --secondary-foreground: 0 75% 50%;
 
     --muted: 0 0% 95%;
     --muted-foreground: 0 0% 45%;
 
-    /* Autolane Blue Accent */
-    --accent: 205 50% 90%;
-    --accent-foreground: 205 65% 30%;
+    /* Express Bilar Red Accent */
+    --accent: 0 50% 95%;
+    --accent-foreground: 0 75% 35%;
 
     --destructive: 0 70% 55%;
     --destructive-foreground: 0 0% 98%;
 
     --border: 0 0% 88%;
     --input: 0 0% 88%;
-    --ring: 205 65% 55%;
+    --ring: 0 75% 50%;
 
     /* Success states */
     --success: 120 60% 45%;
@@ -49,8 +49,8 @@ All colors MUST be HSL.
     --slack-hover: 0 0% 98%;
     --slack-tag: 0 0% 95%;
 
-    /* Autolane dark blue variant */
-    --primary-dark: 205 70% 45%;
+    /* Express Bilar dark red variant */
+    --primary-dark: 0 80% 40%;
 
     /* Gradients */
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-dark)));
@@ -62,21 +62,21 @@ All colors MUST be HSL.
 
     --sidebar-foreground: 0 0% 15%;
 
-    --sidebar-primary: 205 65% 55%;
+    --sidebar-primary: 0 75% 50%;
 
     --sidebar-primary-foreground: 0 0% 100%;
 
     --sidebar-accent: 0 0% 95%;
 
-    --sidebar-accent-foreground: 205 65% 55%;
+    --sidebar-accent-foreground: 0 75% 50%;
 
     --sidebar-border: 0 0% 88%;
 
-    --sidebar-ring: 205 65% 55%;
+    --sidebar-ring: 0 75% 50%;
   }
 
   .dark {
-    /* Dark mode with Riddermark branding */
+    /* Dark mode with Express Bilar branding */
     --background: 0 0% 8%;
     --foreground: 0 0% 95%;
 
@@ -86,8 +86,8 @@ All colors MUST be HSL.
     --popover: 0 0% 12%;
     --popover-foreground: 0 0% 95%;
 
-    /* Autolane Blue for dark mode - slightly lighter */
-    --primary: 205 65% 60%;
+    /* Express Bilar Red for dark mode - slightly lighter */
+    --primary: 0 70% 55%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 0 0% 18%;
@@ -96,16 +96,16 @@ All colors MUST be HSL.
     --muted: 0 0% 15%;
     --muted-foreground: 0 0% 65%;
 
-    /* Autolane Blue Accent for dark mode */
-    --accent: 205 50% 20%;
-    --accent-foreground: 205 65% 90%;
+    /* Express Bilar Red Accent for dark mode */
+    --accent: 0 50% 20%;
+    --accent-foreground: 0 70% 90%;
 
     --destructive: 0 65% 50%;
     --destructive-foreground: 0 0% 98%;
 
     --border: 0 0% 25%;
     --input: 0 0% 25%;
-    --ring: 205 65% 60%;
+    --ring: 0 70% 55%;
 
     /* Success states */
     --success: 120 50% 50%;
@@ -117,8 +117,8 @@ All colors MUST be HSL.
     --slack-hover: 0 0% 15%;
     --slack-tag: 0 0% 18%;
 
-    /* Autolane dark blue variant for dark mode */
-    --primary-dark: 205 70% 50%;
+    /* Express Bilar dark red variant for dark mode */
+    --primary-dark: 0 75% 45%;
 
     /* Dark gradients */
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-dark)));
@@ -126,12 +126,12 @@ All colors MUST be HSL.
 
     --sidebar-background: 0 0% 10%;
     --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 205 65% 60%;
+    --sidebar-primary: 0 70% 55%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 0 0% 18%;
     --sidebar-accent-foreground: 0 0% 95%;
     --sidebar-border: 0 0% 25%;
-    --sidebar-ring: 205 65% 60%;
+    --sidebar-ring: 0 70% 55%;
   }
 }
 

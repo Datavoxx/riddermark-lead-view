@@ -449,6 +449,24 @@ export type Database = {
         }
         Relationships: []
       }
+      report_sequence: {
+        Row: {
+          created_at: string | null
+          id: number
+          message_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: number
+          message_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: number
+          message_id?: string
+        }
+        Relationships: []
+      }
       transcripts: {
         Row: {
           confidence: number | null
