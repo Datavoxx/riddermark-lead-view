@@ -15,7 +15,8 @@ import { Lead } from "@/types/lead";
 import { 
   Search, Plus, FileX, Clock, User, Mail, 
   Phone, Car, Store, CheckCircle2, MapPin, 
-  ArrowRight, ChevronRight, MessageSquare 
+  ArrowRight, ChevronRight, MessageSquare,
+  Flame, AlertTriangle, MessageCircle, XCircle
 } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { NotificationPermissionBanner } from "@/components/NotificationPermissionBanner";
@@ -34,95 +35,111 @@ const MobileLeadCard = ({
   formatRelativeTime: (date: string) => string;
   onClaim: (id: string) => void;
   onNavigate: (id: string) => void;
-}) => (
-  <motion.div
-    initial={isNew ? { opacity: 0, y: -10, scale: 0.98 } : { opacity: 0, y: 10 }}
-    animate={{ opacity: 1, y: 0, scale: 1 }}
-    transition={{ type: "spring", stiffness: 300, damping: 25 }}
-  >
-    <div 
-      className={`flex gap-3 p-3 bg-card rounded-2xl border border-border/50 shadow-sm active:scale-[0.98] transition-all duration-200 ${
-        isNew ? 'border-primary/50 bg-primary/5 shadow-primary/10' : ''
-      }`}
-      onClick={() => onNavigate(lead.id)}
+}) => {
+  const { urgency, status } = getLeadBadges(lead);
+  
+  return (
+    <motion.div
+      initial={isNew ? { opacity: 0, y: -10, scale: 0.98 } : { opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ type: "spring", stiffness: 300, damping: 25 }}
     >
-      {/* Thumbnail */}
-      <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-muted">
-        {lead.preview_image_url ? (
-          <img 
-            src={lead.preview_image_url} 
-            alt="Fordon"
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <Car className="h-8 w-8 text-muted-foreground/40" />
-          </div>
-        )}
-      </div>
-      
-      {/* Content */}
-      <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
-        {/* Title + Summary */}
-        <div>
-          <h3 className="text-sm font-semibold line-clamp-1 text-foreground">{lead.subject}</h3>
-          {lead.summering && (
-            <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{lead.summering}</p>
+      <div 
+        className={`flex gap-3 p-3 bg-card rounded-2xl border border-border/50 shadow-sm active:scale-[0.98] transition-all duration-200 ${
+          isNew ? 'border-primary/50 bg-primary/5 shadow-primary/10' : ''
+        }`}
+        onClick={() => onNavigate(lead.id)}
+      >
+        {/* Thumbnail */}
+        <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-muted">
+          {lead.preview_image_url ? (
+            <img 
+              src={lead.preview_image_url} 
+              alt="Fordon"
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <Car className="h-8 w-8 text-muted-foreground/40" />
+            </div>
           )}
         </div>
         
-        {/* Metadata row */}
-        <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
-          <span className="truncate max-w-[100px]">{lead.lead_email}</span>
-          <span className="text-border">•</span>
-          <span className="font-mono font-semibold text-foreground/70">{lead.regnr}</span>
-        </div>
-        
-        {/* Footer row */}
-        <div className="flex items-center justify-between mt-1.5">
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] text-muted-foreground flex items-center gap-1">
-              <Clock className="h-2.5 w-2.5" />
-              {formatRelativeTime(lead.created_at)}
-            </span>
-            <Badge 
-              variant={lead.claimed ? "secondary" : "destructive"}
-              className="px-1.5 py-0 text-[10px] rounded-full h-4"
-            >
-              {lead.claimed ? "Upplockad" : "Ny"}
-            </Badge>
+        {/* Content */}
+        <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
+          {/* Title + Summary */}
+          <div>
+            <h3 className="text-sm font-semibold line-clamp-1 text-foreground">{lead.subject}</h3>
+            {lead.summering && (
+              <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{lead.summering}</p>
+            )}
           </div>
-          <div className="flex gap-1.5">
-            {!lead.claimed && (
+          
+          {/* Metadata row */}
+          <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
+            <span className="truncate max-w-[100px]">{lead.lead_email}</span>
+            <span className="text-border">•</span>
+            <span className="font-mono font-semibold text-foreground/70">{lead.regnr}</span>
+          </div>
+          
+          {/* Footer row with badges */}
+          <div className="flex items-center justify-between mt-1.5">
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                <Clock className="h-2.5 w-2.5" />
+                {formatRelativeTime(lead.created_at)}
+              </span>
+              <Badge 
+                variant={status.variant}
+                className="px-1.5 py-0 text-[10px] rounded-full h-4 gap-1"
+              >
+                {status.icon}
+                {status.label}
+              </Badge>
+              {urgency && (
+                <Badge 
+                  variant={urgency.variant}
+                  className={`px-1.5 py-0 text-[10px] rounded-full h-4 gap-1 ${
+                    urgency.label === "Hot lead" ? "bg-orange-500 hover:bg-orange-600 text-white" : ""
+                  }`}
+                >
+                  {urgency.icon}
+                  {urgency.label}
+                </Badge>
+              )}
+            </div>
+            <div className="flex gap-1.5">
+              {!lead.claimed && (
+                <Button
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onClaim(lead.id);
+                  }}
+                  className="h-7 px-2.5 text-xs rounded-lg font-medium"
+                >
+                  Ta över
+                </Button>
+              )}
               <Button
                 size="sm"
+                variant="outline"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onClaim(lead.id);
+                  onNavigate(lead.id);
                 }}
                 className="h-7 px-2.5 text-xs rounded-lg font-medium"
               >
-                Ta över
+                Visa
+                <ChevronRight className="h-3 w-3 ml-0.5" />
               </Button>
-            )}
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={(e) => {
-                e.stopPropagation();
-                onNavigate(lead.id);
-              }}
-              className="h-7 px-2.5 text-xs rounded-lg font-medium"
-            >
-              Visa
-              <ChevronRight className="h-3 w-3 ml-0.5" />
-            </Button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </motion.div>
-);
+    </motion.div>
+  );
+};
 
 // Mobile loading skeleton
 const MobileLeadSkeleton = () => (
@@ -144,6 +161,39 @@ const MobileLeadSkeleton = () => (
     </div>
   </div>
 );
+
+// Lead status pipeline types
+type LeadStatus = 'new' | 'contacted' | 'in_progress' | 'completed' | 'lost';
+
+interface LeadWithStatus extends Lead {
+  status?: LeadStatus;
+}
+
+// Helper to determine lead urgency/status
+function getLeadBadges(lead: Lead): { urgency?: { label: string; variant: "default" | "destructive" | "secondary"; icon: React.ReactNode }; status: { label: string; variant: "default" | "destructive" | "secondary" | "outline"; icon: React.ReactNode } } {
+  const createdAt = new Date(lead.created_at);
+  const now = new Date();
+  const minutesOld = (now.getTime() - createdAt.getTime()) / (1000 * 60);
+  const hoursOld = minutesOld / 60;
+  
+  let urgency: { label: string; variant: "default" | "destructive" | "secondary"; icon: React.ReactNode } | undefined;
+  
+  if (!lead.claimed) {
+    if (minutesOld < 15) {
+      urgency = { label: "Hot lead", variant: "default" as const, icon: <Flame className="h-3 w-3" /> };
+    } else if (minutesOld < 60) {
+      urgency = { label: "Svar krävs", variant: "destructive" as const, icon: <AlertTriangle className="h-3 w-3" /> };
+    } else if (hoursOld < 24) {
+      urgency = { label: `${Math.floor(hoursOld)}h obesvarad`, variant: "secondary" as const, icon: <Clock className="h-3 w-3" /> };
+    }
+  }
+
+  const status = lead.claimed 
+    ? { label: "Upplockad", variant: "secondary" as const, icon: <CheckCircle2 className="h-3 w-3" /> }
+    : { label: "Ny", variant: "destructive" as const, icon: <div className="h-1.5 w-1.5 rounded-full bg-current animate-pulse" /> };
+
+  return { urgency, status };
+}
 
 const statusFilters = [
   { key: 'all', label: 'Alla' },
@@ -476,28 +526,37 @@ export default function ArendenList() {
                   <div className="absolute inset-0 bg-gradient-to-b from-transparent to-muted/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   
                   <CardHeader className="relative pb-3 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <Badge 
-                        variant={lead.claimed ? "secondary" : "destructive"}
-                        className="gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium"
-                      >
-                        {lead.claimed ? (
-                          <>
-                            <CheckCircle2 className="h-3 w-3" />
-                            Upplockad
-                          </>
-                        ) : (
-                          <>
-                            <div className="h-1.5 w-1.5 rounded-full bg-current animate-pulse" />
-                            Obevakad
-                          </>
-                        )}
-                      </Badge>
-                      <span className="text-xs text-muted-foreground flex items-center gap-1.5">
-                        <Clock className="h-3 w-3" />
-                        {formatRelativeTime(lead.created_at)}
-                      </span>
-                    </div>
+                    {(() => {
+                      const { urgency, status } = getLeadBadges(lead);
+                      return (
+                        <div className="flex items-center justify-between flex-wrap gap-2">
+                          <div className="flex items-center gap-1.5">
+                            <Badge 
+                              variant={status.variant}
+                              className="gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium"
+                            >
+                              {status.icon}
+                              {status.label}
+                            </Badge>
+                            {urgency && (
+                              <Badge 
+                                variant={urgency.variant}
+                                className={`gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
+                                  urgency.label === "Hot lead" ? "bg-orange-500 hover:bg-orange-600 text-white border-orange-500" : ""
+                                }`}
+                              >
+                                {urgency.icon}
+                                {urgency.label}
+                              </Badge>
+                            )}
+                          </div>
+                          <span className="text-xs text-muted-foreground flex items-center gap-1.5">
+                            <Clock className="h-3 w-3" />
+                            {formatRelativeTime(lead.created_at)}
+                          </span>
+                        </div>
+                      );
+                    })()}
                     
                     <CardTitle className="text-base font-semibold line-clamp-2 leading-snug">
                       {lead.subject}
