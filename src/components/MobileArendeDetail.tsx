@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Lead } from "@/types/lead";
+import { Lead, ForvalOption, hasForvalOptions } from "@/types/lead";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { VoiceRecorder } from "@/components/VoiceRecorder";
+import { ForvalButtons } from "@/components/ForvalButtons";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { 
@@ -35,6 +36,12 @@ export function MobileArendeDetail({
   const [customerInfoOpen, setCustomerInfoOpen] = useState(false);
   const [notesOpen, setNotesOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [selectedForval, setSelectedForval] = useState<ForvalOption | null>(null);
+
+  const handleForvalSelect = (option: ForvalOption) => {
+    setSelectedForval(option);
+    setEmailText(option.directive);
+  };
 
   const handleSendText = async () => {
     if (!emailText.trim()) return;
@@ -151,6 +158,20 @@ export function MobileArendeDetail({
             <p className="text-sm text-muted-foreground leading-relaxed">
               {lead.summering || lead.summary}
             </p>
+
+            {/* AI Förval Buttons */}
+            {hasForvalOptions(lead.forval) && lead.forval.options.length > 0 && (
+              <div className="mt-4 pt-3 border-t border-border/50">
+                <div className="text-xs font-semibold text-muted-foreground mb-2">
+                  💡 FÖRESLAGNA ÅTGÄRDER
+                </div>
+                <ForvalButtons
+                  options={lead.forval.options}
+                  selectedId={selectedForval?.id}
+                  onSelect={handleForvalSelect}
+                />
+              </div>
+            )}
           </motion.div>
 
           {/* Customer Info - Collapsible */}
