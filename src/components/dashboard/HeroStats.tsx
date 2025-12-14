@@ -15,9 +15,9 @@ export function HeroStats({ activeLeads, avgResponseTime, potentialVolume, isLoa
   const volumeSparkline = [150, 180, 165, 200, 185, 220, 195, 240, 210, potentialVolume / 1000];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-1.5 md:gap-4">
+    <div className="grid grid-cols-2 md:grid-cols-3 gap-1.5 md:gap-4 min-w-0">
       {/* Active Leads */}
-      <Card className="relative overflow-hidden rounded-lg md:rounded-2xl border-0 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-2 md:p-6">
+      <Card className="relative overflow-hidden rounded-lg md:rounded-2xl border-0 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-2 md:p-6 min-w-0">
         <div className="absolute top-0 right-0 w-16 md:w-32 h-16 md:h-32 bg-primary/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
         <div className="relative">
           <div className="flex items-center gap-1 md:gap-2 mb-0.5 md:mb-1">
@@ -34,7 +34,7 @@ export function HeroStats({ activeLeads, avgResponseTime, potentialVolume, isLoa
       </Card>
 
       {/* Average Response Time */}
-      <Card className="relative overflow-hidden rounded-lg md:rounded-2xl border-0 bg-gradient-to-br from-success/10 via-success/5 to-transparent p-2 md:p-6">
+      <Card className="relative overflow-hidden rounded-lg md:rounded-2xl border-0 bg-gradient-to-br from-success/10 via-success/5 to-transparent p-2 md:p-6 min-w-0">
         <div className="absolute top-0 right-0 w-16 md:w-32 h-16 md:h-32 bg-success/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
         <div className="relative">
           <div className="flex items-center gap-1 md:gap-2 mb-0.5 md:mb-1">
@@ -51,7 +51,7 @@ export function HeroStats({ activeLeads, avgResponseTime, potentialVolume, isLoa
       </Card>
 
       {/* Potential Business Volume */}
-      <Card className="relative overflow-hidden rounded-lg md:rounded-2xl border-0 bg-gradient-to-br from-primary/10 via-accent/10 to-transparent p-2 md:p-6 col-span-2 md:col-span-1">
+      <Card className="relative overflow-hidden rounded-lg md:rounded-2xl border-0 bg-gradient-to-br from-primary/10 via-accent/10 to-transparent p-2 md:p-6 col-span-2 md:col-span-1 min-w-0">
         <div className="absolute top-0 right-0 w-16 md:w-32 h-16 md:h-32 bg-accent/20 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
         <div className="relative flex items-center justify-between">
           <div>
@@ -70,7 +70,7 @@ export function HeroStats({ activeLeads, avgResponseTime, potentialVolume, isLoa
             </div>
             <p className="text-[9px] md:text-xs text-muted-foreground">Potentiell denna vecka</p>
           </div>
-          <div className="w-14 md:w-20 h-8 md:h-12 opacity-80">
+          <div className="w-14 md:w-20 h-8 md:h-12 opacity-80 hidden sm:block">
             <SparklineChart data={volumeSparkline} color="hsl(var(--primary))" />
           </div>
         </div>
