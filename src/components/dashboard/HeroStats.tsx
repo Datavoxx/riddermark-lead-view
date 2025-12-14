@@ -16,68 +16,41 @@ export function HeroStats({ activeLeads, avgResponseTime, potentialVolume, isLoa
   const volumeSparkline = [150, 180, 165, 200, 185, 220, 195, 240, 210, potentialVolume / 1000];
 
   return (
-    <div className="grid grid-cols-3 gap-2 md:gap-4">
+    <div className="grid grid-cols-3 gap-1.5 md:gap-4">
       {/* Active Leads */}
-      <Card className="relative overflow-hidden rounded-xl md:rounded-2xl border-0 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-2.5 md:p-6">
-        <div className="absolute top-0 right-0 w-20 md:w-32 h-20 md:h-32 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-        <div className="relative">
-          <div className="flex items-center gap-1.5 md:gap-2 mb-1 md:mb-2">
-            <div className="p-1 md:p-2 rounded-lg md:rounded-xl bg-primary/20">
-              <Flame className="h-3 w-3 md:h-4 md:w-4 text-primary" />
-            </div>
-            <span className="text-[10px] md:text-sm font-medium text-muted-foreground hidden sm:inline">Aktiva leads</span>
-          </div>
-          <div className="text-xl md:text-4xl font-bold tracking-tight">
-            {isLoading ? <Loader2 className="h-5 w-5 md:h-8 md:w-8 animate-spin" /> : activeLeads}
-          </div>
-          <p className="text-[9px] md:text-xs text-muted-foreground mt-0.5">
-            <span className="hidden sm:inline">Obesvarade</span>
-            <span className="sm:hidden">Aktiva</span>
-          </p>
+      <Card className="relative overflow-hidden rounded-lg md:rounded-2xl border-0 bg-gradient-to-br from-primary/10 to-transparent p-2 md:p-6">
+        <div className="flex items-center gap-1 mb-0.5 md:mb-2">
+          <Flame className="h-3 w-3 md:h-4 md:w-4 text-primary" />
+          <span className="text-[8px] md:text-sm text-muted-foreground">Aktiva</span>
+        </div>
+        <div className="text-xl md:text-4xl font-bold">
+          {isLoading ? <Loader2 className="h-4 w-4 md:h-8 md:w-8 animate-spin" /> : activeLeads}
         </div>
       </Card>
 
       {/* Average Response Time */}
-      <Card className="relative overflow-hidden rounded-xl md:rounded-2xl border-0 bg-gradient-to-br from-success/10 via-success/5 to-transparent p-2.5 md:p-6">
-        <div className="absolute top-0 right-0 w-20 md:w-32 h-20 md:h-32 bg-success/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-        <div className="relative">
-          <div className="flex items-center gap-1.5 md:gap-2 mb-1 md:mb-2">
-            <div className="p-1 md:p-2 rounded-lg md:rounded-xl bg-success/20">
-              <Clock className="h-3 w-3 md:h-4 md:w-4 text-success" />
-            </div>
-            <span className="text-[10px] md:text-sm font-medium text-muted-foreground hidden sm:inline">Svarstid</span>
-          </div>
-          <div className="text-xl md:text-4xl font-bold tracking-tight">
-            {isLoading ? <Loader2 className="h-5 w-5 md:h-8 md:w-8 animate-spin" /> : avgResponseTime}
-          </div>
-          <p className="text-[9px] md:text-xs text-muted-foreground mt-0.5">
-            <span className="hidden sm:inline">Senaste 24h</span>
-            <span className="sm:hidden">Snitt</span>
-          </p>
+      <Card className="relative overflow-hidden rounded-lg md:rounded-2xl border-0 bg-gradient-to-br from-success/10 to-transparent p-2 md:p-6">
+        <div className="flex items-center gap-1 mb-0.5 md:mb-2">
+          <Clock className="h-3 w-3 md:h-4 md:w-4 text-success" />
+          <span className="text-[8px] md:text-sm text-muted-foreground">Svarstid</span>
+        </div>
+        <div className="text-xl md:text-4xl font-bold">
+          {isLoading ? <Loader2 className="h-4 w-4 md:h-8 md:w-8 animate-spin" /> : avgResponseTime}
         </div>
       </Card>
 
       {/* Potential Business Volume */}
-      <Card className="relative overflow-hidden rounded-xl md:rounded-2xl border-0 bg-gradient-to-br from-primary/10 via-accent/10 to-transparent p-2.5 md:p-6">
-        <div className="absolute top-0 right-0 w-20 md:w-32 h-20 md:h-32 bg-accent/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-        <div className="relative">
-          <div className="flex items-center gap-1.5 md:gap-2 mb-1 md:mb-2">
-            <div className="p-1 md:p-2 rounded-lg md:rounded-xl bg-primary/20">
-              <TrendingUp className="h-3 w-3 md:h-4 md:w-4 text-primary" />
-            </div>
-            <span className="text-[10px] md:text-sm font-medium text-muted-foreground hidden sm:inline">Volym</span>
-          </div>
-          <div className="text-xl md:text-4xl font-bold tracking-tight">
-            {isLoading ? (
-              <Loader2 className="h-5 w-5 md:h-8 md:w-8 animate-spin" />
-            ) : (
-              <>{(potentialVolume / 1000).toFixed(0)}<span className="text-xs md:text-lg font-normal">k</span></>
-            )}
-          </div>
-          <p className="text-[9px] md:text-xs text-muted-foreground mt-0.5">
-            <span className="hidden sm:inline">Potentiell kr</span>
-            <span className="sm:hidden">kr</span>
-          </p>
+      <Card className="relative overflow-hidden rounded-lg md:rounded-2xl border-0 bg-gradient-to-br from-primary/10 to-transparent p-2 md:p-6">
+        <div className="flex items-center gap-1 mb-0.5 md:mb-2">
+          <TrendingUp className="h-3 w-3 md:h-4 md:w-4 text-primary" />
+          <span className="text-[8px] md:text-sm text-muted-foreground">Volym</span>
+        </div>
+        <div className="text-xl md:text-4xl font-bold">
+          {isLoading ? (
+            <Loader2 className="h-4 w-4 md:h-8 md:w-8 animate-spin" />
+          ) : (
+            <>{(potentialVolume / 1000).toFixed(0)}<span className="text-[10px] md:text-lg">k</span></>
+          )}
         </div>
       </Card>
     </div>

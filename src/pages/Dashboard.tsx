@@ -85,72 +85,53 @@ export default function Dashboard() {
     <div className="min-h-screen bg-background">
       <TopBar title="Dashboard" />
       
-      <main className="p-3 md:p-6 space-y-4 md:space-y-6 max-w-7xl mx-auto pb-24 md:pb-6">
-        {/* Welcome Section */}
-        <div className="animate-fade-in">
-          <h1 className="text-lg md:text-2xl font-semibold tracking-tight">
+      <main className="p-2 md:p-6 space-y-2 md:space-y-6 max-w-7xl mx-auto pb-20 md:pb-6">
+        {/* Welcome Section - Hidden on mobile */}
+        <div className="animate-fade-in hidden md:block">
+          <h1 className="text-2xl font-semibold tracking-tight">
             Välkommen tillbaka, {user?.email?.split('@')[0]}
           </h1>
-          <p className="text-sm md:text-base text-muted-foreground mt-0.5 md:mt-1">
+          <p className="text-base text-muted-foreground mt-1">
             Här är din dagliga översikt
           </p>
         </div>
 
-        {/* Urgent Action Section */}
+        {/* Urgent Action Section - Compact on mobile */}
         {urgentLeads.length > 0 && (
-          <Card className="border-2 border-warning/40 bg-gradient-to-r from-warning/5 via-warning/3 to-transparent shadow-lg shadow-warning/5">
-            <CardHeader className="p-3 md:pb-3 md:p-6">
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-2 md:gap-3">
-                  <div className="p-2 md:p-2.5 bg-warning/15 rounded-lg md:rounded-xl">
-                    <AlertTriangle className="h-4 w-4 md:h-5 md:w-5 text-warning" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-base md:text-lg font-semibold">Kräver handling nu</CardTitle>
-                    <CardDescription className="text-xs md:text-sm">{urgentLeads.length} ärenden väntar på dig</CardDescription>
-                  </div>
+          <Card className="border border-warning/40 bg-gradient-to-r from-warning/5 to-transparent">
+            <CardContent className="p-2 md:p-4">
+              <div className="flex items-center justify-between mb-1.5 md:mb-3">
+                <div className="flex items-center gap-1.5">
+                  <AlertTriangle className="h-3.5 w-3.5 md:h-4 md:w-4 text-warning" />
+                  <span className="text-xs md:text-sm font-semibold">{urgentLeads.length} kräver åtgärd</span>
                 </div>
                 <Button 
-                  variant="outline" 
+                  variant="ghost" 
                   size="sm" 
-                  className="rounded-lg md:rounded-xl gap-1 text-xs md:text-sm h-8"
+                  className="h-6 px-2 text-[10px] md:text-xs"
                   onClick={() => navigate('/blocket/arenden')}
                 >
-                  <span className="hidden sm:inline">Visa alla</span>
-                  <ArrowRight className="h-4 w-4" />
+                  Visa <ArrowRight className="h-3 w-3 ml-0.5" />
                 </Button>
               </div>
-            </CardHeader>
-            <CardContent className="p-3 pt-0 md:p-6 md:pt-0">
-              <div className="space-y-2">
-                {urgentLeads.map((lead) => {
+              <div className="space-y-1">
+                {urgentLeads.slice(0, 2).map((lead) => {
                   const createdAt = new Date(lead.created_at);
                   const now = new Date();
                   const minutesAgo = Math.floor((now.getTime() - createdAt.getTime()) / (1000 * 60));
-                  const timeLabel = minutesAgo < 60 ? `${minutesAgo} min sedan` : `${Math.floor(minutesAgo / 60)}h sedan`;
+                  const timeLabel = minutesAgo < 60 ? `${minutesAgo}m` : `${Math.floor(minutesAgo / 60)}h`;
                   
                   return (
                     <div 
                       key={lead.id}
                       onClick={() => navigate(`/blocket/arenden/${lead.id}`)}
-                      className="flex items-center justify-between p-3 rounded-xl bg-card border border-border/50 hover:border-warning/30 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group"
+                      className="flex items-center justify-between p-1.5 md:p-2 rounded-lg bg-card/80 cursor-pointer"
                     >
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className="p-2 bg-primary/10 rounded-lg">
-                          <Flame className="h-4 w-4 text-primary" />
-                        </div>
-                        <div className="min-w-0">
-                          <p className="font-medium text-sm truncate">{lead.subject || 'Nytt ärende'}</p>
-                          <p className="text-xs text-muted-foreground">{lead.lead_email}</p>
-                        </div>
+                      <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                        <Flame className="h-3 w-3 text-orange-500 flex-shrink-0" />
+                        <span className="text-[11px] md:text-xs font-medium truncate">{lead.subject || 'Nytt ärende'}</span>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <Badge variant="secondary" className="rounded-full text-xs">
-                          <Clock className="h-3 w-3 mr-1" />
-                          {timeLabel}
-                        </Badge>
-                        <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-                      </div>
+                      <span className="text-[10px] text-muted-foreground ml-2">{timeLabel}</span>
                     </div>
                   );
                 })}
@@ -179,186 +160,169 @@ export default function Dashboard() {
           potentialIncrease={12}
         />
 
-        {/* KPI Cards with Sparklines */}
-        <div className="grid grid-cols-3 gap-2 md:gap-4">
-          <Card className="rounded-xl md:rounded-2xl border border-border/50 shadow-sm hover:shadow-md transition-all duration-300">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 p-2.5 md:p-6 md:pb-2">
-              <div className="flex items-center gap-1.5 md:gap-3">
-                <div className="p-1 md:p-2.5 rounded-lg md:rounded-xl bg-primary/10">
-                  <TrendingUp className="h-3 w-3 md:h-5 md:w-5 text-primary" />
-                </div>
-                <CardTitle className="text-[10px] md:text-sm font-medium hidden sm:block">Nya leads idag</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent className="p-2.5 pt-0 md:p-6 md:pt-0">
-              <div className="text-xl md:text-3xl font-bold tracking-tight">
-                {isLoading ? <Loader2 className="h-5 w-5 md:h-6 md:w-6 animate-spin" /> : metrics.newLeadsToday}
-              </div>
-              <p className="text-[9px] md:text-xs text-muted-foreground mt-0.5">
-                <span className="hidden sm:inline">{isLoading ? "Laddar..." : metrics.newLeadsChange + " från igår"}</span>
-                <span className="sm:hidden">Nya</span>
-              </p>
-            </CardContent>
+        {/* KPI Cards - Ultra compact on mobile */}
+        <div className="grid grid-cols-3 gap-1.5 md:gap-4">
+          <Card className="rounded-lg md:rounded-2xl border border-border/50 p-2 md:p-4">
+            <div className="flex items-center gap-1 mb-1">
+              <TrendingUp className="h-3 w-3 md:h-4 md:w-4 text-primary" />
+              <span className="text-[9px] md:text-xs text-muted-foreground">Nya</span>
+            </div>
+            <div className="text-lg md:text-2xl font-bold">
+              {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : metrics.newLeadsToday}
+            </div>
           </Card>
           
-          <Card className="rounded-xl md:rounded-2xl border border-border/50 shadow-sm hover:shadow-md transition-all duration-300">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 p-2.5 md:p-6 md:pb-2">
-              <div className="flex items-center gap-1.5 md:gap-3">
-                <div className="p-1 md:p-2.5 rounded-lg md:rounded-xl bg-primary/10">
-                  <Users className="h-3 w-3 md:h-5 md:w-5 text-primary" />
-                </div>
-                <CardTitle className="text-[10px] md:text-sm font-medium hidden sm:block">Upplockade</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent className="p-2.5 pt-0 md:p-6 md:pt-0">
-              <div className="text-xl md:text-3xl font-bold tracking-tight">
-                {isLoading ? <Loader2 className="h-5 w-5 md:h-6 md:w-6 animate-spin" /> : metrics.claimedLeads}
-              </div>
-              <p className="text-[9px] md:text-xs text-muted-foreground mt-0.5">
-                <span className="hidden sm:inline">{isLoading ? "Laddar..." : `${metrics.claimedPercentage}% av alla`}</span>
-                <span className="sm:hidden">Tagna</span>
-              </p>
-            </CardContent>
+          <Card className="rounded-lg md:rounded-2xl border border-border/50 p-2 md:p-4">
+            <div className="flex items-center gap-1 mb-1">
+              <Users className="h-3 w-3 md:h-4 md:w-4 text-primary" />
+              <span className="text-[9px] md:text-xs text-muted-foreground">Tagna</span>
+            </div>
+            <div className="text-lg md:text-2xl font-bold">
+              {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : metrics.claimedLeads}
+            </div>
           </Card>
           
-          <Card className="rounded-xl md:rounded-2xl border border-border/50 shadow-sm hover:shadow-md transition-all duration-300">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 p-2.5 md:p-6 md:pb-2">
-              <div className="flex items-center gap-1.5 md:gap-3">
-                <div className="p-1 md:p-2.5 rounded-lg md:rounded-xl bg-primary/10">
-                  <Clock className="h-3 w-3 md:h-5 md:w-5 text-primary" />
-                </div>
-                <CardTitle className="text-[10px] md:text-sm font-medium hidden sm:block">Svarstid</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent className="p-2.5 pt-0 md:p-6 md:pt-0">
-              <div className="text-xl md:text-3xl font-bold tracking-tight">
-                {isLoading ? <Loader2 className="h-5 w-5 md:h-6 md:w-6 animate-spin" /> : metrics.averageResponseTime}
-              </div>
-              <p className="text-[9px] md:text-xs text-muted-foreground mt-0.5">
-                <span className="hidden sm:inline">{isLoading ? "Laddar..." : metrics.responseTimeChange}</span>
-                <span className="sm:hidden">Medel</span>
-              </p>
-            </CardContent>
+          <Card className="rounded-lg md:rounded-2xl border border-border/50 p-2 md:p-4">
+            <div className="flex items-center gap-1 mb-1">
+              <Clock className="h-3 w-3 md:h-4 md:w-4 text-primary" />
+              <span className="text-[9px] md:text-xs text-muted-foreground">Tid</span>
+            </div>
+            <div className="text-lg md:text-2xl font-bold">
+              {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : metrics.averageResponseTime}
+            </div>
           </Card>
         </div>
 
-        {/* Performance Section */}
-        <Card className="rounded-2xl border border-border/50 shadow-sm">
-          <CardHeader className="p-4 md:p-6">
-            <CardTitle className="text-base md:text-lg font-semibold">Prestation</CardTitle>
-            <CardDescription className="text-xs md:text-sm">
-              Se din egna prestation och nyckeltal
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="p-4 pt-0 md:p-6 md:pt-0 space-y-4 md:space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
-              {/* Conversion Rate Card */}
-              <Card 
-                className="rounded-2xl border border-border/50 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 cursor-pointer"
+        {/* Performance Section - Hidden on mobile, show compact version */}
+        <Card className="rounded-xl md:rounded-2xl border border-border/50">
+          <CardContent className="p-2 md:p-6">
+            {/* Mobile: Simple 2-col grid */}
+            <div className="grid grid-cols-2 gap-2 md:hidden">
+              <div 
+                className="p-2 rounded-lg bg-muted/50 cursor-pointer"
                 onClick={() => navigate("/reports/conversion-rate")}
               >
-                <CardHeader className="pb-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2.5 rounded-xl bg-primary/10">
-                        <Target className="h-5 w-5 text-primary" />
-                      </div>
-                      <CardTitle className="text-sm font-medium text-muted-foreground">
-                        Konverteringsgrad
-                      </CardTitle>
-                    </div>
-                    <Badge variant="secondary" className="rounded-full gap-1 text-xs">
-                      {performanceKPIs.conversionRate.trend === "up" ? (
-                        <ArrowUpIcon className="h-3 w-3 text-success" />
-                      ) : (
-                        <ArrowDownIcon className="h-3 w-3 text-destructive" />
-                      )}
-                      <span className={performanceKPIs.conversionRate.trend === "up" ? "text-success" : "text-destructive"}>
-                        {Math.abs(performanceKPIs.conversionRate.change)}%
-                      </span>
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-end justify-between">
-                    <div>
-                      <div className="text-3xl font-bold tracking-tight text-foreground">
-                        {performanceKPIs.conversionRate.value}%
-                      </div>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Klicka för att se detaljer →
-                      </p>
-                    </div>
-                    <div className="w-24 h-12">
-                      <SparklineChart data={performanceKPIs.conversionRate.sparkline} />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Total Leads Card */}
-              <Card 
-                className="rounded-2xl border border-border/50 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 cursor-pointer"
+                <div className="flex items-center gap-1 mb-1">
+                  <Target className="h-3 w-3 text-primary" />
+                  <span className="text-[9px] text-muted-foreground">Konv.</span>
+                  <Badge variant="secondary" className="ml-auto h-4 px-1 text-[8px]">
+                    {performanceKPIs.conversionRate.trend === "down" ? "↓" : "↑"}
+                    {Math.abs(performanceKPIs.conversionRate.change)}%
+                  </Badge>
+                </div>
+                <div className="text-base font-bold">{performanceKPIs.conversionRate.value}%</div>
+              </div>
+              <div 
+                className="p-2 rounded-lg bg-muted/50 cursor-pointer"
                 onClick={() => navigate("/reports/total-leads")}
               >
-                <CardHeader className="pb-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2.5 rounded-xl bg-primary/10">
-                        <Users className="h-5 w-5 text-primary" />
+                <div className="flex items-center gap-1 mb-1">
+                  <Users className="h-3 w-3 text-primary" />
+                  <span className="text-[9px] text-muted-foreground">Leads</span>
+                  <Badge variant="secondary" className="ml-auto h-4 px-1 text-[8px]">
+                    ↑{Math.abs(performanceKPIs.totalLeads.change)}%
+                  </Badge>
+                </div>
+                <div className="text-base font-bold">{performanceKPIs.totalLeads.value.toLocaleString()}</div>
+              </div>
+            </div>
+
+            {/* Desktop: Full cards */}
+            <div className="hidden md:block space-y-4">
+              <div>
+                <CardTitle className="text-lg font-semibold">Prestation</CardTitle>
+                <CardDescription className="text-sm">Se din egna prestation och nyckeltal</CardDescription>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <Card 
+                  className="rounded-2xl border border-border/50 shadow-sm hover:shadow-md transition-all cursor-pointer"
+                  onClick={() => navigate("/reports/conversion-rate")}
+                >
+                  <CardHeader className="pb-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2.5 rounded-xl bg-primary/10">
+                          <Target className="h-5 w-5 text-primary" />
+                        </div>
+                        <CardTitle className="text-sm font-medium text-muted-foreground">Konverteringsgrad</CardTitle>
                       </div>
-                      <CardTitle className="text-sm font-medium text-muted-foreground">
-                        Totala Leads
-                      </CardTitle>
+                      <Badge variant="secondary" className="rounded-full gap-1 text-xs">
+                        {performanceKPIs.conversionRate.trend === "up" ? (
+                          <ArrowUpIcon className="h-3 w-3 text-success" />
+                        ) : (
+                          <ArrowDownIcon className="h-3 w-3 text-destructive" />
+                        )}
+                        <span className={performanceKPIs.conversionRate.trend === "up" ? "text-success" : "text-destructive"}>
+                          {Math.abs(performanceKPIs.conversionRate.change)}%
+                        </span>
+                      </Badge>
                     </div>
-                    <Badge variant="secondary" className="rounded-full gap-1 text-xs">
-                      {performanceKPIs.totalLeads.trend === "up" ? (
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-end justify-between">
+                      <div>
+                        <div className="text-3xl font-bold">{performanceKPIs.conversionRate.value}%</div>
+                        <p className="text-xs text-muted-foreground mt-1">Klicka för detaljer →</p>
+                      </div>
+                      <div className="w-24 h-12">
+                        <SparklineChart data={performanceKPIs.conversionRate.sparkline} />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card 
+                  className="rounded-2xl border border-border/50 shadow-sm hover:shadow-md transition-all cursor-pointer"
+                  onClick={() => navigate("/reports/total-leads")}
+                >
+                  <CardHeader className="pb-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2.5 rounded-xl bg-primary/10">
+                          <Users className="h-5 w-5 text-primary" />
+                        </div>
+                        <CardTitle className="text-sm font-medium text-muted-foreground">Totala Leads</CardTitle>
+                      </div>
+                      <Badge variant="secondary" className="rounded-full gap-1 text-xs">
                         <ArrowUpIcon className="h-3 w-3 text-success" />
-                      ) : (
-                        <ArrowDownIcon className="h-3 w-3 text-destructive" />
-                      )}
-                      <span className={performanceKPIs.totalLeads.trend === "up" ? "text-success" : "text-destructive"}>
-                        {Math.abs(performanceKPIs.totalLeads.change)}%
-                      </span>
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-end justify-between">
-                    <div>
-                      <div className="text-3xl font-bold tracking-tight text-foreground">
-                        {performanceKPIs.totalLeads.value.toLocaleString()}
+                        <span className="text-success">{Math.abs(performanceKPIs.totalLeads.change)}%</span>
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-end justify-between">
+                      <div>
+                        <div className="text-3xl font-bold">{performanceKPIs.totalLeads.value.toLocaleString()}</div>
+                        <p className="text-xs text-muted-foreground mt-1">Klicka för detaljer →</p>
                       </div>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Klicka för att se detaljer →
-                      </p>
+                      <div className="w-24 h-12">
+                        <SparklineChart data={performanceKPIs.totalLeads.sparkline} />
+                      </div>
                     </div>
-                    <div className="w-24 h-12">
-                      <SparklineChart data={performanceKPIs.totalLeads.sparkline} />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 pt-2">
+            <div className="flex gap-2 mt-2 md:mt-4">
               <Button 
                 onClick={() => navigate('/reports')}
-                className="rounded-xl flex items-center gap-2 font-medium h-10 text-sm"
+                className="flex-1 md:flex-none rounded-lg md:rounded-xl h-8 md:h-10 text-xs md:text-sm"
+                size="sm"
               >
-                <BarChart3 className="h-4 w-4" />
-                Se alla Rapporter
-                <ArrowRight className="h-4 w-4" />
+                <BarChart3 className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                Rapporter
               </Button>
               
               <Button 
                 variant="secondary"
                 onClick={() => setShowCreateDialog(true)}
-                className="rounded-xl flex items-center gap-2 font-medium h-10 text-sm"
+                className="rounded-lg md:rounded-xl h-8 md:h-10 text-xs md:text-sm px-3"
+                size="sm"
               >
-                <Plus className="h-4 w-4" />
-                Skapa test-lead
+                <Plus className="h-3 w-3 md:h-4 md:w-4" />
+                <span className="hidden sm:inline ml-1">Test-lead</span>
               </Button>
             </div>
           </CardContent>
