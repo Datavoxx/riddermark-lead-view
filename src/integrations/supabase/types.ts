@@ -221,11 +221,17 @@ export type Database = {
           claimed_at: string | null
           claimed_by: string | null
           claimed_by_name: string | null
+          completed_at: string | null
           created_at: string | null
+          crm_stage: string | null
+          crm_status: string | null
+          deal_value: number | null
           id: string
+          last_activity_at: string | null
           lead_email: string | null
           lead_namn: string | null
           link: string | null
+          lost_reason: string | null
           message_id: string | null
           metadata: Json | null
           preview_description: string | null
@@ -233,6 +239,7 @@ export type Database = {
           preview_title: string | null
           regnr: string | null
           resume_url: string | null
+          source_channel: string | null
           subject: string | null
           summary: string | null
           summering: string | null
@@ -244,11 +251,17 @@ export type Database = {
           claimed_at?: string | null
           claimed_by?: string | null
           claimed_by_name?: string | null
+          completed_at?: string | null
           created_at?: string | null
+          crm_stage?: string | null
+          crm_status?: string | null
+          deal_value?: number | null
           id?: string
+          last_activity_at?: string | null
           lead_email?: string | null
           lead_namn?: string | null
           link?: string | null
+          lost_reason?: string | null
           message_id?: string | null
           metadata?: Json | null
           preview_description?: string | null
@@ -256,6 +269,7 @@ export type Database = {
           preview_title?: string | null
           regnr?: string | null
           resume_url?: string | null
+          source_channel?: string | null
           subject?: string | null
           summary?: string | null
           summering?: string | null
@@ -267,11 +281,17 @@ export type Database = {
           claimed_at?: string | null
           claimed_by?: string | null
           claimed_by_name?: string | null
+          completed_at?: string | null
           created_at?: string | null
+          crm_stage?: string | null
+          crm_status?: string | null
+          deal_value?: number | null
           id?: string
+          last_activity_at?: string | null
           lead_email?: string | null
           lead_namn?: string | null
           link?: string | null
+          lost_reason?: string | null
           message_id?: string | null
           metadata?: Json | null
           preview_description?: string | null
@@ -279,6 +299,7 @@ export type Database = {
           preview_title?: string | null
           regnr?: string | null
           resume_url?: string | null
+          source_channel?: string | null
           subject?: string | null
           summary?: string | null
           summering?: string | null
