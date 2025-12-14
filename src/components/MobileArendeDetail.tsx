@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Lead, ForvalOption, hasForvalOptions } from "@/types/lead";
+import { Lead, ForvalOption, parseForval } from "@/types/lead";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
@@ -160,18 +160,21 @@ export function MobileArendeDetail({
             </p>
 
             {/* AI Förval Buttons */}
-            {hasForvalOptions(lead.forval) && lead.forval.options.length > 0 && (
-              <div className="mt-4 pt-3 border-t border-border/50">
-                <div className="text-xs font-semibold text-muted-foreground mb-2">
-                  💡 FÖRESLAGNA ÅTGÄRDER
+            {(() => {
+              const forval = parseForval(lead.forval);
+              return forval && forval.options.length > 0 ? (
+                <div className="mt-4 pt-3 border-t border-border/50">
+                  <div className="text-xs font-semibold text-muted-foreground mb-2">
+                    💡 FÖRESLAGNA ÅTGÄRDER
+                  </div>
+                  <ForvalButtons
+                    options={forval.options}
+                    selectedId={selectedForval?.id}
+                    onSelect={handleForvalSelect}
+                  />
                 </div>
-                <ForvalButtons
-                  options={lead.forval.options}
-                  selectedId={selectedForval?.id}
-                  onSelect={handleForvalSelect}
-                />
-              </div>
-            )}
+              ) : null;
+            })()}
           </motion.div>
 
           {/* Customer Info - Collapsible */}

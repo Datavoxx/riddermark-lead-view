@@ -30,14 +30,37 @@ export interface Lead {
   forval?: any;
 }
 
-// Type guard to check if forval has valid options
+// Parse forval from string or object
+export function parseForval(forval: unknown): Forval | null {
+  if (!forval) return null;
+  
+  let parsed = forval;
+  
+  // Om det är en sträng, försök parsa den
+  if (typeof forval === 'string') {
+    try {
+      parsed = JSON.parse(forval);
+    } catch {
+      return null;
+    }
+  }
+  
+  // Kontrollera att det är ett giltigt Forval-objekt
+  if (
+    typeof parsed === 'object' &&
+    parsed !== null &&
+    'options' in parsed &&
+    Array.isArray((parsed as Forval).options)
+  ) {
+    return parsed as Forval;
+  }
+  
+  return null;
+}
+
+// Type guard to check if forval has valid options (handles both string and object)
 export function hasForvalOptions(forval: unknown): forval is Forval {
-  return (
-    typeof forval === 'object' &&
-    forval !== null &&
-    'options' in forval &&
-    Array.isArray((forval as Forval).options)
-  );
+  return parseForval(forval) !== null;
 }
 
 export interface CreateTestLeadRequest {

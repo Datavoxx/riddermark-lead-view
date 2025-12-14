@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { TopBar } from "@/components/TopBar";
 import { useToast } from "@/hooks/use-toast";
-import { Lead, ForvalOption, hasForvalOptions } from "@/types/lead";
+import { Lead, ForvalOption, parseForval } from "@/types/lead";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -414,22 +414,25 @@ export default function ArendeDetail() {
                   </p>
 
                   {/* AI Förval Buttons */}
-                  {hasForvalOptions(lead.forval) && lead.forval.options.length > 0 && (
-                    <div className="border-t border-border/50 pt-4 mt-4">
-                      <h4 className="text-sm font-medium text-muted-foreground mb-3">
-                        Föreslagna åtgärder
-                      </h4>
-                      <ForvalButtons
-                        options={lead.forval.options}
-                        selectedId={selectedForval?.id}
-                        onSelect={(option) => {
-                          setSelectedForval(option);
-                          setEmailText(option.directive);
-                          setShowEmailForm(true);
-                        }}
-                      />
-                    </div>
-                  )}
+                  {(() => {
+                    const forval = parseForval(lead.forval);
+                    return forval && forval.options.length > 0 ? (
+                      <div className="border-t border-border/50 pt-4 mt-4">
+                        <h4 className="text-sm font-medium text-muted-foreground mb-3">
+                          Föreslagna åtgärder
+                        </h4>
+                        <ForvalButtons
+                          options={forval.options}
+                          selectedId={selectedForval?.id}
+                          onSelect={(option) => {
+                            setSelectedForval(option);
+                            setEmailText(option.directive);
+                            setShowEmailForm(true);
+                          }}
+                        />
+                      </div>
+                    ) : null;
+                  })()}
                 </CardContent>
                 <CardFooter className="flex flex-col gap-4 pt-0">
                   <div className="flex flex-wrap gap-2 w-full">
