@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Home, FileText, Archive, LogOut, Car, Bot, Hash, ChevronDown, Bell, Plus, Users, Wrench, ClipboardList, ShoppingCart, Inbox, FileEdit, Briefcase, PhoneCall, TrendingUp, CheckCircle2 } from "lucide-react";
+import { Home, FileText, LogOut, Car, Bot, Hash, ChevronDown, Bell, Plus, Users, Wrench, ClipboardList, Inbox, FileEdit, Briefcase, PhoneCall, TrendingUp, CheckCircle2, BarChart3, MessageCircle, Zap } from "lucide-react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -27,22 +27,29 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
-const navigation = [
+// Section: FÖRSÄLJNING
+const salesItems = [
   { title: "Hem", url: "/dashboard", icon: Home },
-  { title: "Rapporter", url: "/reports", icon: FileText },
+  { title: "Rapporter", url: "/reports", icon: BarChart3 },
+];
+
+// Section: MARKNADSFÖRING
+const marketingItems = [
   { title: "Blocket", url: "/blocket/arenden", icon: Car },
   { title: "Wayke", url: "/blocket/wayke", icon: Car },
   { title: "Bytbil", url: "/blocket/bytbil", icon: Car },
   { title: "Bilannonsgenerator", url: "/bilannonsgenerator", icon: FileEdit },
 ];
 
-const fordonsstatusItems = [
+// Section: FORDON & SYSTEM
+const vehicleItems = [
   { title: "Våra bilar", url: "/fordonstatus/bilar", icon: Car },
   { title: "Verkstad", url: "/fordonstatus/verkstad", icon: Wrench },
   { title: "Servicestatus", url: "/fordonstatus/servicestatus", icon: ClipboardList },
   { title: "Bil Agent", url: "/fordonstatus/agent", icon: Bot },
 ];
 
+// Section: CRM
 const crmItems = [
   { title: "Översikt", url: "/crm", icon: Briefcase },
   { title: "Återkopplingar", url: "/crm/callbacks", icon: PhoneCall },
@@ -73,10 +80,14 @@ export function AppSidebar() {
   const { unreadCount: unreadNotificationCount } = useNotifications(user?.id);
   const { unreadCount: unreadInboxCount } = useInboxMessages(user?.id);
 
-  // Filter navigation based on role
-  const visibleNavigation = isBlocketOnly 
+  // Filter navigation based on role - use salesItems + marketingItems for full users
+  const visibleSalesItems = isBlocketOnly 
+    ? []
+    : salesItems;
+  
+  const visibleMarketingItems = isBlocketOnly 
     ? [{ title: "Blocket", url: "/blocket/arenden", icon: Car }]
-    : navigation;
+    : marketingItems;
 
   const handleNavClick = () => {
     if (isMobile) {
@@ -189,28 +200,67 @@ export function AppSidebar() {
     navigate('/login');
   };
 
-  const getNavClassName = ({ isActive }: { isActive: boolean }) =>
-    isActive ? "bg-accent text-accent-foreground font-medium hover:bg-accent" : "hover:bg-accent/50";
+  const getActiveClassName = (isActive: boolean, isBordered = false) => {
+    if (isActive) {
+      return isBordered 
+        ? "bg-accent text-accent-foreground font-semibold hover:bg-accent border-l-2 border-primary" 
+        : "bg-accent text-accent-foreground font-semibold hover:bg-accent";
+    }
+    return "hover:bg-accent/50 text-sidebar-foreground";
+  };
 
   return (
-    <Sidebar className="border-r border-border">
-      <SidebarHeader className="p-4">
+    <Sidebar className="border-r border-sidebar-border bg-sidebar">
+      <SidebarHeader className="p-4 border-b border-sidebar-border/50">
         <div className="flex items-center justify-center">
           <Logo h={56} />
         </div>
       </SidebarHeader>
 
-      <SidebarContent>
-        <SidebarGroup>
+      <SidebarContent className="px-2">
+        {/* FÖRSÄLJNING Section */}
+        {visibleSalesItems.length > 0 && (
+          <SidebarGroup className="py-2">
+            <SidebarGroupLabel className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70 px-3 mb-1">
+              <Zap className="h-3 w-3 mr-1.5 inline" />
+              Försäljning
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {visibleSalesItems.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <NavLink 
+                        to={item.url} 
+                        end={item.url === '/dashboard'}
+                        className={({ isActive }) => getActiveClassName(isActive, true)}
+                        onClick={handleNavClick}
+                      >
+                        <item.icon className="h-4 w-4" />
+                        <span>{item.title}</span>
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
+
+        {/* MARKNADSFÖRING Section */}
+        <SidebarGroup className="py-2">
+          <SidebarGroupLabel className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70 px-3 mb-1">
+            <Car className="h-3 w-3 mr-1.5 inline" />
+            Marknadsföring
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {visibleNavigation.map((item) => (
+              {visibleMarketingItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                     <NavLink 
+                    <NavLink 
                       to={item.url} 
-                      end={item.url === '/dashboard'}
-                      className={getNavClassName}
+                      className={({ isActive }) => getActiveClassName(isActive, true)}
                       onClick={handleNavClick}
                     >
                       <item.icon className="h-4 w-4" />
@@ -222,8 +272,6 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-
-        <SidebarSeparator className="my-2" />
 
         {/* Notiser section - visible for all users */}
         <SidebarGroup>
@@ -289,16 +337,15 @@ export function AppSidebar() {
 
         {!isBlocketOnly && (
           <>
-            <SidebarSeparator className="my-2" />
-
             {/* CRM Section */}
-            <SidebarGroup>
+            <SidebarGroup className="py-2">
               <SidebarGroupLabel 
-                className="text-xs font-semibold text-muted-foreground px-2 flex items-center gap-1 cursor-pointer hover:bg-accent/50 rounded-md"
+                className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70 px-3 mb-1 flex items-center gap-1 cursor-pointer hover:bg-accent/30 rounded-md"
                 onClick={() => setCrmOpen(!crmOpen)}
               >
-                <ChevronDown className={`h-3 w-3 transition-transform ${crmOpen ? '' : '-rotate-90'}`} />
+                <Briefcase className="h-3 w-3 mr-0.5" />
                 CRM
+                <ChevronDown className={`h-3 w-3 ml-auto transition-transform ${crmOpen ? '' : '-rotate-90'}`} />
               </SidebarGroupLabel>
               {crmOpen && (
               <SidebarGroupContent>
@@ -307,7 +354,7 @@ export function AppSidebar() {
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton 
                         asChild
-                        className={location.pathname === item.url ? "bg-accent text-accent-foreground font-medium hover:bg-accent" : "hover:bg-accent/50"}
+                        className={location.pathname === item.url ? "bg-accent text-accent-foreground font-semibold hover:bg-accent border-l-2 border-primary" : "hover:bg-accent/50"}
                       >
                         <NavLink to={item.url} onClick={handleNavClick}>
                           <item.icon className="h-4 w-4" />
@@ -327,22 +374,23 @@ export function AppSidebar() {
           <>
             <SidebarSeparator className="my-2" />
 
-            <SidebarGroup>
+            <SidebarGroup className="py-2">
               <SidebarGroupLabel 
-                className="text-xs font-semibold text-muted-foreground px-2 flex items-center gap-1 cursor-pointer hover:bg-accent/50 rounded-md"
+                className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70 px-3 mb-1 flex items-center gap-1 cursor-pointer hover:bg-accent/30 rounded-md"
                 onClick={() => setFordonsstatusOpen(!fordonsstatusOpen)}
               >
-                <ChevronDown className={`h-3 w-3 transition-transform ${fordonsstatusOpen ? '' : '-rotate-90'}`} />
-                Fordonstatus
+                <Wrench className="h-3 w-3 mr-0.5" />
+                Fordon & System
+                <ChevronDown className={`h-3 w-3 ml-auto transition-transform ${fordonsstatusOpen ? '' : '-rotate-90'}`} />
               </SidebarGroupLabel>
               {fordonsstatusOpen && (
               <SidebarGroupContent>
                 <SidebarMenu>
-                  {fordonsstatusItems.map((item) => (
+                  {vehicleItems.map((item) => (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton 
                         asChild
-                        className={location.pathname === item.url ? "bg-accent text-accent-foreground font-medium hover:bg-accent" : "hover:bg-accent/50"}
+                        className={location.pathname === item.url ? "bg-accent text-accent-foreground font-semibold hover:bg-accent border-l-2 border-primary" : "hover:bg-accent/50"}
                       >
                         <NavLink to={item.url} onClick={handleNavClick}>
                           <item.icon className="h-4 w-4" />

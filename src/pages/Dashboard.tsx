@@ -13,7 +13,7 @@ import { ConversionCTA } from "@/components/dashboard/ConversionCTA";
 import { SparklineChart } from "@/components/SparklineChart";
 import { supabase } from "@/integrations/supabase/client";
 import { useDashboardSimulation } from "@/hooks/useDashboardSimulation";
-import { ArrowRight, Plus, Users, Clock, TrendingUp, BarChart3, Loader2, Target, ArrowUpIcon, ArrowDownIcon } from "lucide-react";
+import { ArrowRight, Plus, Users, Clock, TrendingUp, BarChart3, Loader2, Target, ArrowUpIcon, ArrowDownIcon, AlertTriangle, Flame, ChevronRight } from "lucide-react";
 import { Lead } from "@/types/lead";
 
 export default function Dashboard() {
@@ -68,7 +68,18 @@ export default function Dashboard() {
 
   // Calculate stats from leads
   const activeLeadsCount = availableLeads.filter(l => !l.claimed).length;
-  const potentialVolume = activeLeadsCount * 185000; // Average car value estimation
+  const potentialVolume = activeLeadsCount * 185000;
+  
+  // Get urgent unclaimed leads (less than 1 hour old)
+  const urgentLeads = availableLeads
+    .filter(l => !l.claimed)
+    .filter(l => {
+      const createdAt = new Date(l.created_at);
+      const now = new Date();
+      const hoursOld = (now.getTime() - createdAt.getTime()) / (1000 * 60 * 60);
+      return hoursOld < 2;
+    })
+    .slice(0, 3);
 
   return (
     <div className="min-h-screen bg-background">
@@ -84,6 +95,69 @@ export default function Dashboard() {
             Här är din dagliga översikt
           </p>
         </div>
+
+        {/* Urgent Action Section */}
+        {urgentLeads.length > 0 && (
+          <Card className="border-2 border-warning/40 bg-gradient-to-r from-warning/5 via-warning/3 to-transparent shadow-lg shadow-warning/5">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 bg-warning/15 rounded-xl">
+                    <AlertTriangle className="h-5 w-5 text-warning" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-lg font-semibold">Kräver handling nu</CardTitle>
+                    <CardDescription>{urgentLeads.length} ärenden väntar på dig</CardDescription>
+                  </div>
+                </div>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="rounded-xl gap-1.5"
+                  onClick={() => navigate('/blocket/arenden')}
+                >
+                  Visa alla
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="space-y-2">
+                {urgentLeads.map((lead) => {
+                  const createdAt = new Date(lead.created_at);
+                  const now = new Date();
+                  const minutesAgo = Math.floor((now.getTime() - createdAt.getTime()) / (1000 * 60));
+                  const timeLabel = minutesAgo < 60 ? `${minutesAgo} min sedan` : `${Math.floor(minutesAgo / 60)}h sedan`;
+                  
+                  return (
+                    <div 
+                      key={lead.id}
+                      onClick={() => navigate(`/blocket/arenden/${lead.id}`)}
+                      className="flex items-center justify-between p-3 rounded-xl bg-card border border-border/50 hover:border-warning/30 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="p-2 bg-primary/10 rounded-lg">
+                          <Flame className="h-4 w-4 text-primary" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="font-medium text-sm truncate">{lead.subject || 'Nytt ärende'}</p>
+                          <p className="text-xs text-muted-foreground">{lead.lead_email}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <Badge variant="secondary" className="rounded-full text-xs">
+                          <Clock className="h-3 w-3 mr-1" />
+                          {timeLabel}
+                        </Badge>
+                        <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Hero Stats Section */}
         <HeroStats 

@@ -8,130 +8,157 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Express Bilar Brand Colors */
-    --background: 0 0% 98%;
-    --foreground: 0 0% 5%;
+    /* Datavox Brand Colors - Premium Sales Platform */
+    --background: 220 20% 97%;
+    --foreground: 220 20% 10%;
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 5%;
+    --card-foreground: 220 20% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 5%;
+    --popover-foreground: 220 20% 10%;
 
-    /* Express Bilar Red Primary */
+    /* Primary Red - Bold and Sales-driven */
     --primary: 0 75% 50%;
     --primary-foreground: 0 0% 100%;
+    --primary-glow: 0 75% 60%;
 
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 75% 50%;
+    --secondary: 220 15% 96%;
+    --secondary-foreground: 220 20% 30%;
 
-    --muted: 0 0% 95%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 220 15% 94%;
+    --muted-foreground: 220 10% 45%;
 
-    /* Express Bilar Red Accent */
-    --accent: 0 50% 95%;
-    --accent-foreground: 0 75% 35%;
+    /* Accent - Subtle brand touch */
+    --accent: 0 40% 96%;
+    --accent-foreground: 0 70% 40%;
 
     --destructive: 0 70% 55%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 88%;
-    --input: 0 0% 88%;
+    --border: 220 15% 90%;
+    --input: 220 15% 90%;
     --ring: 0 75% 50%;
 
     /* Success states */
-    --success: 120 60% 45%;
+    --success: 142 70% 45%;
     --success-foreground: 0 0% 98%;
 
-    /* Slack-style card colors */
-    --slack-card: 0 0% 100%;
-    --slack-border: 0 0% 92%;
-    --slack-hover: 0 0% 98%;
-    --slack-tag: 0 0% 95%;
+    /* Warning states */
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 10%;
+
+    /* Info states */
+    --info: 210 90% 55%;
+    --info-foreground: 0 0% 98%;
+
+    /* Premium surface colors */
+    --surface-elevated: 0 0% 100%;
+    --surface-sunken: 220 15% 95%;
 
     /* Express Bilar dark red variant */
     --primary-dark: 0 80% 40%;
 
+    /* Enhanced shadows */
+    --shadow-xs: 0 1px 2px 0 hsl(220 20% 10% / 0.03);
+    --shadow-sm: 0 2px 4px 0 hsl(220 20% 10% / 0.04), 0 1px 2px -1px hsl(220 20% 10% / 0.03);
+    --shadow-md: 0 4px 8px -2px hsl(220 20% 10% / 0.06), 0 2px 4px -2px hsl(220 20% 10% / 0.04);
+    --shadow-lg: 0 12px 24px -4px hsl(220 20% 10% / 0.08), 0 4px 8px -2px hsl(220 20% 10% / 0.04);
+    --shadow-xl: 0 24px 48px -8px hsl(220 20% 10% / 0.12);
+    --shadow-glow: 0 0 20px hsl(0 75% 50% / 0.15);
+
     /* Gradients */
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-dark)));
     --gradient-surface: linear-gradient(180deg, hsl(var(--card)), hsl(var(--muted)));
+    --gradient-shine: linear-gradient(110deg, transparent 25%, hsl(0 0% 100% / 0.1) 50%, transparent 75%);
 
     --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 0 0% 15%;
-
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 220 20% 15%;
     --sidebar-primary: 0 75% 50%;
-
     --sidebar-primary-foreground: 0 0% 100%;
-
-    --sidebar-accent: 0 0% 95%;
-
-    --sidebar-accent-foreground: 0 75% 50%;
-
-    --sidebar-border: 0 0% 88%;
-
+    --sidebar-accent: 220 15% 96%;
+    --sidebar-accent-foreground: 0 75% 45%;
+    --sidebar-border: 220 15% 92%;
     --sidebar-ring: 0 75% 50%;
+    --sidebar-section-bg: 220 15% 97%;
   }
 
   .dark {
-    /* Dark mode with Express Bilar branding */
-    --background: 0 0% 8%;
-    --foreground: 0 0% 95%;
+    /* Dark mode with Premium Sales Platform branding */
+    --background: 220 20% 8%;
+    --foreground: 220 10% 95%;
 
-    --card: 0 0% 12%;
-    --card-foreground: 0 0% 95%;
+    --card: 220 20% 12%;
+    --card-foreground: 220 10% 95%;
 
-    --popover: 0 0% 12%;
-    --popover-foreground: 0 0% 95%;
+    --popover: 220 20% 12%;
+    --popover-foreground: 220 10% 95%;
 
-    /* Express Bilar Red for dark mode - slightly lighter */
+    /* Primary Red for dark mode - slightly lighter */
     --primary: 0 70% 55%;
     --primary-foreground: 0 0% 100%;
+    --primary-glow: 0 70% 65%;
 
-    --secondary: 0 0% 18%;
-    --secondary-foreground: 0 0% 90%;
+    --secondary: 220 15% 18%;
+    --secondary-foreground: 220 10% 85%;
 
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 65%;
+    --muted: 220 15% 15%;
+    --muted-foreground: 220 10% 60%;
 
-    /* Express Bilar Red Accent for dark mode */
-    --accent: 0 50% 20%;
-    --accent-foreground: 0 70% 90%;
+    /* Accent for dark mode */
+    --accent: 0 40% 18%;
+    --accent-foreground: 0 60% 80%;
 
     --destructive: 0 65% 50%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 25%;
-    --input: 0 0% 25%;
+    --border: 220 15% 22%;
+    --input: 220 15% 22%;
     --ring: 0 70% 55%;
 
     /* Success states */
-    --success: 120 50% 50%;
+    --success: 142 60% 50%;
     --success-foreground: 0 0% 98%;
 
-    /* Slack-style card colors for dark */
-    --slack-card: 0 0% 12%;
-    --slack-border: 0 0% 25%;
-    --slack-hover: 0 0% 15%;
-    --slack-tag: 0 0% 18%;
+    /* Warning states */
+    --warning: 38 90% 55%;
+    --warning-foreground: 0 0% 10%;
+
+    /* Info states */
+    --info: 210 85% 60%;
+    --info-foreground: 0 0% 98%;
+
+    /* Premium surface colors */
+    --surface-elevated: 220 20% 14%;
+    --surface-sunken: 220 20% 10%;
 
     /* Express Bilar dark red variant for dark mode */
     --primary-dark: 0 75% 45%;
 
+    /* Enhanced shadows for dark */
+    --shadow-xs: 0 1px 2px 0 hsl(0 0% 0% / 0.2);
+    --shadow-sm: 0 2px 4px 0 hsl(0 0% 0% / 0.25), 0 1px 2px -1px hsl(0 0% 0% / 0.2);
+    --shadow-md: 0 4px 8px -2px hsl(0 0% 0% / 0.3), 0 2px 4px -2px hsl(0 0% 0% / 0.2);
+    --shadow-lg: 0 12px 24px -4px hsl(0 0% 0% / 0.4), 0 4px 8px -2px hsl(0 0% 0% / 0.25);
+    --shadow-xl: 0 24px 48px -8px hsl(0 0% 0% / 0.5);
+    --shadow-glow: 0 0 20px hsl(0 70% 55% / 0.25);
+
     /* Dark gradients */
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-dark)));
     --gradient-surface: linear-gradient(180deg, hsl(var(--card)), hsl(var(--muted)));
+    --gradient-shine: linear-gradient(110deg, transparent 25%, hsl(0 0% 100% / 0.05) 50%, transparent 75%);
 
-    --sidebar-background: 0 0% 10%;
-    --sidebar-foreground: 0 0% 95%;
+    --sidebar-background: 220 20% 10%;
+    --sidebar-foreground: 220 10% 95%;
     --sidebar-primary: 0 70% 55%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 18%;
-    --sidebar-accent-foreground: 0 0% 95%;
-    --sidebar-border: 0 0% 25%;
+    --sidebar-accent: 220 15% 18%;
+    --sidebar-accent-foreground: 220 10% 90%;
+    --sidebar-border: 220 15% 22%;
     --sidebar-ring: 0 70% 55%;
+    --sidebar-section-bg: 220 15% 12%;
   }
 }
 
