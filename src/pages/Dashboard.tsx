@@ -85,7 +85,7 @@ export default function Dashboard() {
     <div className="min-h-screen bg-background">
       <TopBar title="Dashboard" />
       
-      <main className="p-3 md:p-6 space-y-4 md:space-y-6 max-w-7xl mx-auto pb-24 md:pb-6">
+      <main className="p-3 md:p-6 space-y-4 md:space-y-6 max-w-7xl mx-auto pb-24 md:pb-6 overflow-x-hidden">
         {/* Welcome Section */}
         <div className="animate-fade-in">
           <h1 className="text-lg md:text-2xl font-semibold tracking-tight">
@@ -248,7 +248,7 @@ export default function Dashboard() {
                     {isLoading ? "..." : metrics.responseTimeChange}
                   </p>
                 </div>
-                <div className="w-16 md:w-20 h-8 md:h-10">
+                <div className="w-16 md:w-20 h-8 md:h-10 hidden sm:block">
                   <SparklineChart data={[45, 42, 38, 40, 35, 38, 32, 35, 28]} color="hsl(var(--success))" />
                 </div>
               </div>
@@ -303,7 +303,7 @@ export default function Dashboard() {
                         Klicka för att se detaljer →
                       </p>
                     </div>
-                    <div className="w-24 h-12">
+                    <div className="w-24 h-12 hidden sm:block">
                       <SparklineChart data={performanceKPIs.conversionRate.sparkline} />
                     </div>
                   </div>
@@ -347,7 +347,7 @@ export default function Dashboard() {
                         Klicka för att se detaljer →
                       </p>
                     </div>
-                    <div className="w-24 h-12">
+                    <div className="w-24 h-12 hidden sm:block">
                       <SparklineChart data={performanceKPIs.totalLeads.sparkline} />
                     </div>
                   </div>
