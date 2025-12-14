@@ -36,22 +36,22 @@ export function PriorityLeads({ leads, isLoading }: PriorityLeadsProps) {
 
   if (isLoading) {
     return (
-      <Card className="rounded-2xl border border-destructive/20 bg-destructive/5">
-        <CardHeader className="pb-3">
+      <Card className="rounded-xl md:rounded-2xl border border-destructive/20 bg-destructive/5">
+        <CardHeader className="p-3 md:pb-3 md:p-6">
           <div className="flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5 text-destructive" />
-            <CardTitle className="text-base font-semibold">Leads som kräver åtgärd</CardTitle>
+            <AlertTriangle className="h-4 w-4 md:h-5 md:w-5 text-destructive" />
+            <CardTitle className="text-sm md:text-base font-semibold">Leads som kräver åtgärd</CardTitle>
           </div>
         </CardHeader>
-        <CardContent className="space-y-3">
+        <CardContent className="p-3 pt-0 md:p-6 md:pt-0 space-y-2">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-background/50">
-              <Skeleton className="h-10 w-10 rounded-full" />
-              <div className="flex-1 space-y-2">
-                <Skeleton className="h-4 w-3/4" />
-                <Skeleton className="h-3 w-1/2" />
+            <div key={i} className="flex items-center gap-2 p-2 rounded-lg bg-background/50">
+              <Skeleton className="h-8 w-8 rounded-lg" />
+              <div className="flex-1 space-y-1.5">
+                <Skeleton className="h-3 w-3/4" />
+                <Skeleton className="h-2.5 w-1/2" />
               </div>
-              <Skeleton className="h-8 w-20 rounded-lg" />
+              <Skeleton className="h-6 w-16 rounded-full" />
             </div>
           ))}
         </CardContent>
@@ -61,102 +61,91 @@ export function PriorityLeads({ leads, isLoading }: PriorityLeadsProps) {
 
   if (priorityLeads.length === 0) {
     return (
-      <Card className="rounded-2xl border border-success/20 bg-success/5">
-        <CardContent className="py-8 text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-success/20 mb-3">
-            <span className="text-2xl">✓</span>
+      <Card className="rounded-xl md:rounded-2xl border border-success/20 bg-success/5">
+        <CardContent className="py-6 md:py-8 text-center">
+          <div className="inline-flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-success/20 mb-2 md:mb-3">
+            <span className="text-xl md:text-2xl">✓</span>
           </div>
-          <p className="text-sm font-medium text-success">Alla leads är hanterade!</p>
-          <p className="text-xs text-muted-foreground mt-1">Inga ärenden kräver omedelbar åtgärd</p>
+          <p className="text-xs md:text-sm font-medium text-success">Alla leads är hanterade!</p>
+          <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5">Inga ärenden kräver omedelbar åtgärd</p>
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Card className="rounded-2xl border border-destructive/20 bg-destructive/5 animate-fade-in">
-      <CardHeader className="pb-3">
+    <Card className="rounded-xl md:rounded-2xl border border-destructive/20 bg-destructive/5 animate-fade-in">
+      <CardHeader className="p-3 md:p-6 md:pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-destructive/20">
-              <AlertTriangle className="h-4 w-4 text-destructive" />
+            <div className="p-1.5 md:p-2 rounded-lg md:rounded-xl bg-destructive/20">
+              <AlertTriangle className="h-3.5 w-3.5 md:h-4 md:w-4 text-destructive" />
             </div>
-            <CardTitle className="text-base font-semibold">Leads som kräver åtgärd</CardTitle>
+            <CardTitle className="text-sm md:text-base font-semibold">Kräver åtgärd</CardTitle>
           </div>
-          <Badge variant="destructive" className="rounded-full">
-            {priorityLeads.length} st
+          <Badge variant="destructive" className="rounded-full text-[10px] md:text-xs h-5 px-2">
+            {priorityLeads.length}
           </Badge>
         </div>
       </CardHeader>
-      <CardContent className="space-y-2">
+      <CardContent className="p-3 pt-0 md:p-6 md:pt-0 space-y-1.5 md:space-y-2">
         {priorityLeads.map((lead) => {
           const urgency = getLeadUrgency(lead);
           return (
             <div 
               key={lead.id}
               onClick={() => navigate(`/blocket/arenden/${lead.id}`)}
-              className="flex items-center gap-3 p-3 rounded-xl bg-background/80 hover:bg-background cursor-pointer transition-colors group"
+              className="flex items-center gap-2 md:gap-3 p-2 md:p-3 rounded-lg md:rounded-xl bg-background/80 hover:bg-background cursor-pointer transition-colors group"
             >
               <div className="flex-shrink-0">
                 {lead.preview_image_url ? (
                   <img 
                     src={lead.preview_image_url} 
                     alt="" 
-                    className="h-10 w-10 rounded-lg object-cover"
+                    className="h-8 w-8 md:h-10 md:w-10 rounded-lg object-cover"
                   />
                 ) : (
-                  <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center">
-                    <Car className="h-5 w-5 text-muted-foreground" />
+                  <div className="h-8 w-8 md:h-10 md:w-10 rounded-lg bg-muted flex items-center justify-center">
+                    <Car className="h-4 w-4 md:h-5 md:w-5 text-muted-foreground" />
                   </div>
                 )}
               </div>
               
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate group-hover:text-primary transition-colors">
+                <p className="text-xs md:text-sm font-medium truncate group-hover:text-primary transition-colors">
                   {lead.subject}
                 </p>
-                <div className="flex items-center gap-2 mt-0.5">
-                  <span className="text-xs text-muted-foreground flex items-center gap-1">
-                    <User className="h-3 w-3" />
-                    {lead.lead_namn}
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <span className="text-[10px] md:text-xs text-muted-foreground flex items-center gap-0.5">
+                    <User className="h-2.5 w-2.5 md:h-3 md:w-3" />
+                    <span className="truncate max-w-[60px] md:max-w-none">{lead.lead_namn}</span>
                   </span>
-                  <span className="text-xs text-muted-foreground">•</span>
-                  <span className="text-xs font-mono text-muted-foreground">{lead.regnr}</span>
+                  <span className="text-[10px] text-muted-foreground hidden sm:inline">•</span>
+                  <span className="text-[10px] md:text-xs font-mono text-muted-foreground hidden sm:inline">{lead.regnr}</span>
                 </div>
               </div>
               
               <Badge 
                 variant={urgency.level === "hot" ? "default" : "destructive"}
-                className={`rounded-full text-[10px] gap-1 ${
+                className={`rounded-full text-[9px] md:text-[10px] gap-0.5 px-1.5 h-5 ${
                   urgency.level === "hot" ? "bg-orange-500 hover:bg-orange-600" : ""
                 }`}
               >
                 {urgency.icon}
-                {urgency.label}
+                <span className="hidden sm:inline">{urgency.label}</span>
+                <span className="sm:hidden">{urgency.level === "hot" ? "🔥" : "⏰"}</span>
               </Badge>
-              
-              <Button 
-                size="sm" 
-                variant="ghost" 
-                className="rounded-lg h-8 px-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigate(`/blocket/arenden/${lead.id}`);
-                }}
-              >
-                <ArrowRight className="h-4 w-4" />
-              </Button>
             </div>
           );
         })}
         
         <Button 
           variant="ghost" 
-          className="w-full rounded-xl mt-2 text-destructive hover:text-destructive hover:bg-destructive/10"
+          className="w-full rounded-lg md:rounded-xl mt-1 md:mt-2 text-destructive hover:text-destructive hover:bg-destructive/10 h-8 md:h-10 text-xs md:text-sm"
           onClick={() => navigate('/blocket/arenden')}
         >
-          Visa alla ärenden
-          <ArrowRight className="h-4 w-4 ml-2" />
+          Visa alla
+          <ArrowRight className="h-3.5 w-3.5 md:h-4 md:w-4 ml-1.5" />
         </Button>
       </CardContent>
     </Card>
