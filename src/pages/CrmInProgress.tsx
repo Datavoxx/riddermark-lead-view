@@ -42,23 +42,24 @@ export default function CrmInProgress() {
     <div className="min-h-screen bg-background">
       <TopBar title="Pågående affärer" />
       
-      <div className="p-4 md:p-6 space-y-6">
+      <div className="p-3 md:p-6 space-y-4 md:space-y-6 pb-24 md:pb-6">
         {/* Header */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => navigate('/crm')}
+            className="h-8 w-8 md:h-10 md:w-10"
           >
-            <ArrowLeft className="h-5 w-5" />
+            <ArrowLeft className="h-4 w-4 md:h-5 md:w-5" />
           </Button>
-          <div className="flex items-center gap-3">
-            <div className="h-12 w-12 rounded-2xl bg-amber-500/10 flex items-center justify-center">
-              <TrendingUp className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+          <div className="flex items-center gap-2 md:gap-3">
+            <div className="h-10 w-10 md:h-12 md:w-12 rounded-xl md:rounded-2xl bg-amber-500/10 flex items-center justify-center">
+              <TrendingUp className="h-5 w-5 md:h-6 md:w-6 text-amber-600 dark:text-amber-400" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-foreground">Pågående affärer</h1>
-              <p className="text-sm text-muted-foreground">
+              <h1 className="text-lg md:text-2xl font-bold text-foreground">Pågående affärer</h1>
+              <p className="text-xs md:text-sm text-muted-foreground">
                 {inProgressLeads.length} affärer under bearbetning
               </p>
             </div>
@@ -67,18 +68,18 @@ export default function CrmInProgress() {
 
         {/* Stage Tabs */}
         <Tabs value={stageFilter} onValueChange={(v) => setStageFilter(v as typeof stageFilter)}>
-          <TabsList className="grid w-full max-w-xl grid-cols-4">
-            <TabsTrigger value="all" className="gap-1">
-              Alla <span className="text-xs opacity-70">({stageCounts.all})</span>
+          <TabsList className="grid w-full max-w-xl grid-cols-4 h-auto">
+            <TabsTrigger value="all" className="text-xs md:text-sm py-2">
+              Alla <span className="hidden sm:inline opacity-70">({stageCounts.all})</span>
             </TabsTrigger>
-            <TabsTrigger value="negotiation" className="gap-1">
-              🟡 Förhandling <span className="text-xs opacity-70">({stageCounts.negotiation})</span>
+            <TabsTrigger value="negotiation" className="text-xs md:text-sm py-2">
+              <span className="hidden sm:inline">🟡</span> Förhandl. <span className="hidden md:inline opacity-70">({stageCounts.negotiation})</span>
             </TabsTrigger>
-            <TabsTrigger value="test_drive" className="gap-1">
-              🔵 Provkörning <span className="text-xs opacity-70">({stageCounts.test_drive})</span>
+            <TabsTrigger value="test_drive" className="text-xs md:text-sm py-2">
+              <span className="hidden sm:inline">🔵</span> Provkör. <span className="hidden md:inline opacity-70">({stageCounts.test_drive})</span>
             </TabsTrigger>
-            <TabsTrigger value="agreement" className="gap-1">
-              🟢 Avtal <span className="text-xs opacity-70">({stageCounts.agreement})</span>
+            <TabsTrigger value="agreement" className="text-xs md:text-sm py-2">
+              <span className="hidden sm:inline">🟢</span> Avtal <span className="hidden md:inline opacity-70">({stageCounts.agreement})</span>
             </TabsTrigger>
           </TabsList>
         </Tabs>

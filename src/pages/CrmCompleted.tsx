@@ -59,23 +59,24 @@ export default function CrmCompleted() {
     <div className="min-h-screen bg-background">
       <TopBar title="Färdiga affärer" />
       
-      <div className="p-4 md:p-6 space-y-6">
+      <div className="p-3 md:p-6 space-y-4 md:space-y-6 pb-24 md:pb-6">
         {/* Header */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => navigate('/crm')}
+            className="h-8 w-8 md:h-10 md:w-10"
           >
-            <ArrowLeft className="h-5 w-5" />
+            <ArrowLeft className="h-4 w-4 md:h-5 md:w-5" />
           </Button>
-          <div className="flex items-center gap-3">
-            <div className="h-12 w-12 rounded-2xl bg-green-500/10 flex items-center justify-center">
-              <CheckCircle2 className="h-6 w-6 text-green-600 dark:text-green-400" />
+          <div className="flex items-center gap-2 md:gap-3">
+            <div className="h-10 w-10 md:h-12 md:w-12 rounded-xl md:rounded-2xl bg-green-500/10 flex items-center justify-center">
+              <CheckCircle2 className="h-5 w-5 md:h-6 md:w-6 text-green-600 dark:text-green-400" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-foreground">Färdiga affärer</h1>
-              <p className="text-sm text-muted-foreground">
+              <h1 className="text-lg md:text-2xl font-bold text-foreground">Färdiga affärer</h1>
+              <p className="text-xs md:text-sm text-muted-foreground">
                 {completedLeads.length} avslutade affärer
               </p>
             </div>
@@ -83,46 +84,46 @@ export default function CrmCompleted() {
         </div>
 
         {/* Summary Card */}
-        <Card className="p-5 bg-gradient-to-br from-green-500/10 to-emerald-500/10 border-green-200 dark:border-green-800">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Trophy className="h-8 w-8 text-green-600 dark:text-green-400" />
+        <Card className="p-4 md:p-5 bg-gradient-to-br from-green-500/10 to-emerald-500/10 border-green-200 dark:border-green-800">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-2 md:gap-3">
+              <Trophy className="h-6 w-6 md:h-8 md:w-8 text-green-600 dark:text-green-400" />
               <div>
-                <p className="text-sm text-muted-foreground">Total affärsvolym ({timeFilter === 'all' ? 'alla tider' : timeFilter === 'today' ? 'idag' : timeFilter === 'week' ? 'denna vecka' : 'denna månad'})</p>
-                <p className="text-3xl font-bold text-green-600 dark:text-green-400">
+                <p className="text-xs md:text-sm text-muted-foreground">Total volym ({timeFilter === 'all' ? 'alla tider' : timeFilter === 'today' ? 'idag' : timeFilter === 'week' ? 'vecka' : 'månad'})</p>
+                <p className="text-xl md:text-3xl font-bold text-green-600 dark:text-green-400">
                   {totalDealValue.toLocaleString('sv-SE')} kr
                 </p>
               </div>
             </div>
-            <div className="text-right">
-              <p className="text-sm text-muted-foreground">Antal affärer</p>
-              <p className="text-2xl font-bold">{completedLeads.length}</p>
+            <div className="text-left sm:text-right">
+              <p className="text-xs md:text-sm text-muted-foreground">Antal affärer</p>
+              <p className="text-xl md:text-2xl font-bold">{completedLeads.length}</p>
             </div>
           </div>
         </Card>
 
         {/* Time Filter Tabs */}
         <Tabs value={timeFilter} onValueChange={(v) => setTimeFilter(v as TimeFilter)}>
-          <TabsList className="grid w-full max-w-md grid-cols-4">
-            <TabsTrigger value="today" className="gap-1">
+          <TabsList className="grid w-full max-w-md grid-cols-4 h-auto">
+            <TabsTrigger value="today" className="text-xs md:text-sm py-2 gap-1">
               Idag
-              <Badge variant="secondary" className="ml-1 h-5 min-w-5 px-1.5">
+              <Badge variant="secondary" className="ml-1 h-4 min-w-4 px-1 text-xs hidden sm:inline-flex">
                 {stats.completedToday}
               </Badge>
             </TabsTrigger>
-            <TabsTrigger value="week" className="gap-1">
+            <TabsTrigger value="week" className="text-xs md:text-sm py-2 gap-1">
               Vecka
-              <Badge variant="secondary" className="ml-1 h-5 min-w-5 px-1.5">
+              <Badge variant="secondary" className="ml-1 h-4 min-w-4 px-1 text-xs hidden sm:inline-flex">
                 {stats.completedWeek}
               </Badge>
             </TabsTrigger>
-            <TabsTrigger value="month" className="gap-1">
+            <TabsTrigger value="month" className="text-xs md:text-sm py-2 gap-1">
               Månad
-              <Badge variant="secondary" className="ml-1 h-5 min-w-5 px-1.5">
+              <Badge variant="secondary" className="ml-1 h-4 min-w-4 px-1 text-xs hidden sm:inline-flex">
                 {stats.completedMonth}
               </Badge>
             </TabsTrigger>
-            <TabsTrigger value="all">
+            <TabsTrigger value="all" className="text-xs md:text-sm py-2">
               Alla
             </TabsTrigger>
           </TabsList>

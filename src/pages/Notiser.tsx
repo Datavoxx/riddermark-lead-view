@@ -63,40 +63,39 @@ export default function Notiser() {
   return (
     <>
       <TopBar title="Notiser" />
-      <div className="p-6 max-w-4xl mx-auto">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-foreground">Notiser</h1>
-          <p className="text-muted-foreground mt-2">
+      <div className="p-3 md:p-6 max-w-4xl mx-auto pb-24 md:pb-6">
+        <div className="mb-4 md:mb-6">
+          <h1 className="text-xl md:text-3xl font-bold text-foreground">Notiser</h1>
+          <p className="text-sm md:text-base text-muted-foreground mt-1 md:mt-2">
             Håll koll på dina uppdateringar och notifikationer
           </p>
         </div>
 
         <NotificationPermissionBanner />
 
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
+        <Card className="rounded-xl md:rounded-2xl">
+          <CardHeader className="p-3 md:p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <CardTitle>Alla notiser</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-base md:text-lg">Alla notiser</CardTitle>
+                <CardDescription className="text-xs md:text-sm">
                   {loading ? 'Laddar...' : `Du har ${unreadCount} olästa notiser`}
                 </CardDescription>
               </div>
               {unreadCount > 0 && (
-                <Button onClick={markAllAsRead} variant="outline" size="sm">
+                <Button onClick={markAllAsRead} variant="outline" size="sm" className="w-full sm:w-auto text-xs md:text-sm h-8">
                   Markera alla som lästa
                 </Button>
               )}
             </div>
           </CardHeader>
-          <CardContent>
-            <ScrollArea className="h-[600px] pr-4">
-              <div className="space-y-4">
+          <CardContent className="p-3 pt-0 md:p-6 md:pt-0">
+            <div className="max-h-[60vh] md:max-h-[600px] overflow-y-auto pr-2 space-y-3 md:space-y-4">
                 {loading ? (
                   <>
                     {[...Array(3)].map((_, i) => (
-                      <div key={i} className="flex gap-4 p-4 rounded-lg border">
-                        <Skeleton className="h-5 w-5 rounded-full flex-shrink-0 mt-1" />
+                      <div key={i} className="flex gap-3 p-3 rounded-lg border">
+                        <Skeleton className="h-5 w-5 rounded-full flex-shrink-0 mt-0.5" />
                         <div className="flex-1 space-y-2">
                           <Skeleton className="h-4 w-3/4" />
                           <Skeleton className="h-3 w-full" />
@@ -106,39 +105,39 @@ export default function Notiser() {
                     ))}
                   </>
                 ) : notifications.length === 0 ? (
-                  <div className="text-center py-12 text-muted-foreground">
-                    <Bell className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                    <p>Inga notiser ännu</p>
+                  <div className="text-center py-8 md:py-12 text-muted-foreground">
+                    <Bell className="h-10 w-10 md:h-12 md:w-12 mx-auto mb-3 opacity-50" />
+                    <p className="text-sm md:text-base">Inga notiser ännu</p>
                   </div>
                 ) : (
                   notifications.map((notification) => (
                     <div
                       key={notification.id}
                       onClick={() => handleNotificationClick(notification)}
-                      className={`flex gap-4 p-4 rounded-lg border transition-colors cursor-pointer hover:bg-accent/30 ${
+                      className={`flex gap-3 p-3 rounded-lg border transition-colors cursor-pointer hover:bg-accent/30 ${
                         notification.read
                           ? 'bg-background border-border'
                           : 'bg-accent/50 border-primary/20'
                       }`}
                     >
-                      <div className="flex-shrink-0 mt-1">
+                      <div className="flex-shrink-0 mt-0.5">
                         {getIcon(notification.type)}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between gap-2 mb-1">
-                          <h3 className="font-semibold text-foreground">
+                        <div className="flex items-start justify-between gap-2 mb-0.5">
+                          <h3 className="font-semibold text-foreground text-sm md:text-base line-clamp-1">
                             {notification.title}
                           </h3>
                           {!notification.read && (
-                            <Badge variant="default" className="ml-2">
+                            <Badge variant="default" className="text-xs flex-shrink-0">
                               Ny
                             </Badge>
                           )}
                         </div>
-                        <p className="text-sm text-muted-foreground mb-2">
+                        <p className="text-xs md:text-sm text-muted-foreground mb-1.5 line-clamp-2">
                           {notification.message}
                         </p>
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                           <Clock className="h-3 w-3" />
                           <span>{formatRelativeTime(notification.created_at)}</span>
                         </div>
@@ -146,8 +145,7 @@ export default function Notiser() {
                     </div>
                   ))
                 )}
-              </div>
-            </ScrollArea>
+            </div>
           </CardContent>
         </Card>
       </div>
