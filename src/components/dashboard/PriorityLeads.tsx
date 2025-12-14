@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AlertTriangle, Clock, ChevronRight, Car, Flame, CheckCircle } from "lucide-react";
+import { AlertTriangle, Clock, ArrowRight, User, Car, Flame } from "lucide-react";
 import { Lead } from "@/types/lead";
 
 interface PriorityLeadsProps {
@@ -11,36 +11,49 @@ interface PriorityLeadsProps {
   isLoading: boolean;
 }
 
-function getLeadUrgency(lead: Lead) {
+function getLeadUrgency(lead: Lead): { level: "critical" | "warning" | "hot"; label: string; icon: React.ReactNode } {
   const createdAt = new Date(lead.created_at);
   const now = new Date();
-  const minutesAgo = Math.floor((now.getTime() - createdAt.getTime()) / (1000 * 60));
+  const hoursOld = (now.getTime() - createdAt.getTime()) / (1000 * 60 * 60);
   
-  if (minutesAgo < 15) {
-    return { level: "hot", label: "Nu", color: "text-orange-500" };
-  } else if (minutesAgo < 60) {
-    return { level: "critical", label: `${minutesAgo}m`, color: "text-warning" };
+  if (hoursOld < 0.25) { // < 15 min
+    return { level: "hot", label: "Hot lead 🔥", icon: <Flame className="h-3 w-3" /> };
+  } else if (hoursOld < 1) { // < 1 hour
+    return { level: "critical", label: "Svar krävs < 15 min", icon: <AlertTriangle className="h-3 w-3" /> };
+  } else {
+    return { level: "warning", label: `${Math.floor(hoursOld)}h utan svar`, icon: <Clock className="h-3 w-3" /> };
   }
-  return { level: "warning", label: `${Math.floor(minutesAgo / 60)}h`, color: "text-muted-foreground" };
 }
 
 export function PriorityLeads({ leads, isLoading }: PriorityLeadsProps) {
   const navigate = useNavigate();
   
-  // Filter to unclaimed leads and sort by newest first
+  // Filter to unclaimed leads and sort by oldest first (most urgent)
   const priorityLeads = leads
     .filter(lead => !lead.claimed)
-    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-    .slice(0, 3);
+    .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+    .slice(0, 5);
 
   if (isLoading) {
     return (
-      <Card className="rounded-xl md:rounded-2xl border border-warning/30">
-        <CardContent className="p-3 md:p-6">
-          <div className="space-y-2">
-            <Skeleton className="h-10 w-full rounded-lg" />
-            <Skeleton className="h-10 w-full rounded-lg" />
+      <Card className="rounded-2xl border border-destructive/20 bg-destructive/5">
+        <CardHeader className="pb-3">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="h-5 w-5 text-destructive" />
+            <CardTitle className="text-base font-semibold">Leads som kräver åtgärd</CardTitle>
           </div>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-background/50">
+              <Skeleton className="h-10 w-10 rounded-full" />
+              <div className="flex-1 space-y-2">
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-3 w-1/2" />
+              </div>
+              <Skeleton className="h-8 w-20 rounded-lg" />
+            </div>
+          ))}
         </CardContent>
       </Card>
     );
@@ -48,84 +61,103 @@ export function PriorityLeads({ leads, isLoading }: PriorityLeadsProps) {
 
   if (priorityLeads.length === 0) {
     return (
-      <Card className="rounded-xl md:rounded-2xl border border-success/30 bg-success/5">
-        <CardContent className="p-3 md:p-6 flex items-center gap-3">
-          <CheckCircle className="h-5 w-5 text-success flex-shrink-0" />
-          <span className="text-sm font-medium">Alla leads hanterade</span>
+      <Card className="rounded-2xl border border-success/20 bg-success/5">
+        <CardContent className="py-8 text-center">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-success/20 mb-3">
+            <span className="text-2xl">✓</span>
+          </div>
+          <p className="text-sm font-medium text-success">Alla leads är hanterade!</p>
+          <p className="text-xs text-muted-foreground mt-1">Inga ärenden kräver omedelbar åtgärd</p>
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Card className="rounded-xl md:rounded-2xl border border-warning/30 bg-gradient-to-r from-warning/5 to-transparent">
-      <CardContent className="p-3 md:p-6">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-2 md:mb-4">
+    <Card className="rounded-2xl border border-destructive/20 bg-destructive/5 animate-fade-in">
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <AlertTriangle className="h-4 w-4 text-warning" />
-            <span className="text-sm font-semibold">Kräver åtgärd</span>
-            <Badge variant="secondary" className="h-5 px-1.5 text-xs">
-              {priorityLeads.length}
-            </Badge>
+            <div className="p-2 rounded-xl bg-destructive/20">
+              <AlertTriangle className="h-4 w-4 text-destructive" />
+            </div>
+            <CardTitle className="text-base font-semibold">Leads som kräver åtgärd</CardTitle>
           </div>
-          <Button 
-            variant="ghost" 
-            size="sm"
-            className="h-7 px-2 text-xs"
-            onClick={() => navigate('/blocket/arenden')}
-          >
-            Alla
-            <ChevronRight className="h-3 w-3 ml-0.5" />
-          </Button>
+          <Badge variant="destructive" className="rounded-full">
+            {priorityLeads.length} st
+          </Badge>
         </div>
-        
-        {/* Lead list - show 2 on mobile, 3 on desktop */}
-        <div className="space-y-1.5 md:space-y-2">
-          {priorityLeads.map((lead, index) => {
-            const urgency = getLeadUrgency(lead);
-            const isHot = urgency.level === "hot";
-            
-            return (
-              <div 
-                key={lead.id}
-                onClick={() => navigate(`/blocket/arenden/${lead.id}`)}
-                className={`flex items-center gap-2 md:gap-3 p-2 md:p-3 rounded-lg bg-card/80 hover:bg-card cursor-pointer transition-colors ${index >= 2 ? 'hidden md:flex' : ''}`}
-              >
-                {/* Image */}
-                <div className="flex-shrink-0">
-                  {lead.preview_image_url ? (
-                    <img 
-                      src={lead.preview_image_url} 
-                      alt="" 
-                      className="h-9 w-9 md:h-11 md:w-11 rounded-lg object-cover"
-                    />
-                  ) : (
-                    <div className="h-9 w-9 md:h-11 md:w-11 rounded-lg bg-muted flex items-center justify-center">
-                      <Car className="h-4 w-4 text-muted-foreground" />
-                    </div>
-                  )}
-                </div>
-                
-                {/* Content */}
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">{lead.subject || 'Nytt ärende'}</p>
-                  <p className="text-xs text-muted-foreground truncate">{lead.lead_namn || 'Okänd'}</p>
-                </div>
-                
-                {/* Urgency indicator */}
-                <div className={`flex items-center gap-1 flex-shrink-0 ${urgency.color}`}>
-                  {isHot ? (
-                    <Flame className="h-4 w-4" />
-                  ) : (
-                    <Clock className="h-3.5 w-3.5" />
-                  )}
-                  <span className="text-xs font-medium">{urgency.label}</span>
+      </CardHeader>
+      <CardContent className="space-y-2">
+        {priorityLeads.map((lead) => {
+          const urgency = getLeadUrgency(lead);
+          return (
+            <div 
+              key={lead.id}
+              onClick={() => navigate(`/blocket/arenden/${lead.id}`)}
+              className="flex items-center gap-3 p-3 rounded-xl bg-background/80 hover:bg-background cursor-pointer transition-colors group"
+            >
+              <div className="flex-shrink-0">
+                {lead.preview_image_url ? (
+                  <img 
+                    src={lead.preview_image_url} 
+                    alt="" 
+                    className="h-10 w-10 rounded-lg object-cover"
+                  />
+                ) : (
+                  <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center">
+                    <Car className="h-5 w-5 text-muted-foreground" />
+                  </div>
+                )}
+              </div>
+              
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium truncate group-hover:text-primary transition-colors">
+                  {lead.subject}
+                </p>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <span className="text-xs text-muted-foreground flex items-center gap-1">
+                    <User className="h-3 w-3" />
+                    {lead.lead_namn}
+                  </span>
+                  <span className="text-xs text-muted-foreground">•</span>
+                  <span className="text-xs font-mono text-muted-foreground">{lead.regnr}</span>
                 </div>
               </div>
-            );
-          })}
-        </div>
+              
+              <Badge 
+                variant={urgency.level === "hot" ? "default" : "destructive"}
+                className={`rounded-full text-[10px] gap-1 ${
+                  urgency.level === "hot" ? "bg-orange-500 hover:bg-orange-600" : ""
+                }`}
+              >
+                {urgency.icon}
+                {urgency.label}
+              </Badge>
+              
+              <Button 
+                size="sm" 
+                variant="ghost" 
+                className="rounded-lg h-8 px-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/blocket/arenden/${lead.id}`);
+                }}
+              >
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </div>
+          );
+        })}
+        
+        <Button 
+          variant="ghost" 
+          className="w-full rounded-xl mt-2 text-destructive hover:text-destructive hover:bg-destructive/10"
+          onClick={() => navigate('/blocket/arenden')}
+        >
+          Visa alla ärenden
+          <ArrowRight className="h-4 w-4 ml-2" />
+        </Button>
       </CardContent>
     </Card>
   );

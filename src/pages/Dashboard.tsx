@@ -85,19 +85,82 @@ export default function Dashboard() {
     <div className="min-h-screen bg-background">
       <TopBar title="Dashboard" />
       
-      <main className="p-2 md:p-6 space-y-2 md:space-y-6 max-w-7xl mx-auto pb-20 md:pb-6">
-        {/* Welcome Section - Hidden on mobile */}
-        <div className="animate-fade-in hidden md:block">
-          <h1 className="text-2xl font-semibold tracking-tight">
+      <main className="p-3 md:p-6 space-y-4 md:space-y-6 max-w-7xl mx-auto pb-24 md:pb-6">
+        {/* Welcome Section */}
+        <div className="animate-fade-in">
+          <h1 className="text-lg md:text-2xl font-semibold tracking-tight">
             Välkommen tillbaka, {user?.email?.split('@')[0]}
           </h1>
-          <p className="text-base text-muted-foreground mt-1">
+          <p className="text-sm md:text-base text-muted-foreground mt-0.5 md:mt-1">
             Här är din dagliga översikt
           </p>
         </div>
 
+        {/* Urgent Action Section */}
+        {urgentLeads.length > 0 && (
+          <Card className="border-2 border-warning/40 bg-gradient-to-r from-warning/5 via-warning/3 to-transparent shadow-lg shadow-warning/5">
+            <CardHeader className="p-3 md:pb-3 md:p-6">
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2 md:gap-3">
+                  <div className="p-2 md:p-2.5 bg-warning/15 rounded-lg md:rounded-xl">
+                    <AlertTriangle className="h-4 w-4 md:h-5 md:w-5 text-warning" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-base md:text-lg font-semibold">Kräver handling nu</CardTitle>
+                    <CardDescription className="text-xs md:text-sm">{urgentLeads.length} ärenden väntar på dig</CardDescription>
+                  </div>
+                </div>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="rounded-lg md:rounded-xl gap-1 text-xs md:text-sm h-8"
+                  onClick={() => navigate('/blocket/arenden')}
+                >
+                  <span className="hidden sm:inline">Visa alla</span>
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="p-3 pt-0 md:p-6 md:pt-0">
+              <div className="space-y-2">
+                {urgentLeads.map((lead) => {
+                  const createdAt = new Date(lead.created_at);
+                  const now = new Date();
+                  const minutesAgo = Math.floor((now.getTime() - createdAt.getTime()) / (1000 * 60));
+                  const timeLabel = minutesAgo < 60 ? `${minutesAgo} min sedan` : `${Math.floor(minutesAgo / 60)}h sedan`;
+                  
+                  return (
+                    <div 
+                      key={lead.id}
+                      onClick={() => navigate(`/blocket/arenden/${lead.id}`)}
+                      className="flex items-center justify-between p-3 rounded-xl bg-card border border-border/50 hover:border-warning/30 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="p-2 bg-primary/10 rounded-lg">
+                          <Flame className="h-4 w-4 text-primary" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="font-medium text-sm truncate">{lead.subject || 'Nytt ärende'}</p>
+                          <p className="text-xs text-muted-foreground">{lead.lead_email}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <Badge variant="secondary" className="rounded-full text-xs">
+                          <Clock className="h-3 w-3 mr-1" />
+                          {timeLabel}
+                        </Badge>
+                        <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Hero Stats Section */}
-        <HeroStats
+        <HeroStats 
           activeLeads={activeLeadsCount}
           avgResponseTime={metrics.averageResponseTime}
           potentialVolume={potentialVolume}
@@ -110,129 +173,210 @@ export default function Dashboard() {
           isLoading={loadingLeads}
         />
 
-        {/* Conversion CTA - Desktop only */}
-        <div className="hidden md:block">
-          <ConversionCTA 
-            currentResponseTime={metrics.averageResponseTime}
-            potentialIncrease={12}
-          />
-        </div>
+        {/* Conversion CTA */}
+        <ConversionCTA 
+          currentResponseTime={metrics.averageResponseTime}
+          potentialIncrease={12}
+        />
 
-        {/* Mobile Quick Actions */}
-        <div className="grid grid-cols-2 gap-2 md:hidden">
-          <Button 
-            onClick={() => navigate('/reports')}
-            className="h-11 rounded-xl"
-          >
-            <BarChart3 className="h-4 w-4 mr-1.5" />
-            Rapporter
-          </Button>
-          <Button 
-            variant="secondary"
-            onClick={() => navigate('/blocket/arenden')}
-            className="h-11 rounded-xl"
-          >
-            <Flame className="h-4 w-4 mr-1.5" />
-            Blocket
-          </Button>
-        </div>
-
-        {/* Performance Section - Desktop only */}
-        <Card className="hidden md:block rounded-2xl border border-border/50">
-          <CardContent className="p-6">
-            <div className="space-y-4">
-              <div>
-                <CardTitle className="text-lg font-semibold">Prestation</CardTitle>
-                <CardDescription className="text-sm">Se din egna prestation och nyckeltal</CardDescription>
+        {/* KPI Cards with Sparklines */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+          <Card className="rounded-2xl border border-border/50 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-primary/10">
+                  <TrendingUp className="h-5 w-5 text-primary" />
+                </div>
+                <CardTitle className="text-sm font-medium">Nya leads idag</CardTitle>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <Card 
-                  className="rounded-2xl border border-border/50 shadow-sm hover:shadow-md transition-all cursor-pointer"
-                  onClick={() => navigate("/reports/conversion-rate")}
-                >
-                  <CardHeader className="pb-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2.5 rounded-xl bg-primary/10">
-                          <Target className="h-5 w-5 text-primary" />
-                        </div>
-                        <CardTitle className="text-sm font-medium text-muted-foreground">Konverteringsgrad</CardTitle>
-                      </div>
-                      <Badge variant="secondary" className="rounded-full gap-1 text-xs">
-                        {performanceKPIs.conversionRate.trend === "up" ? (
-                          <ArrowUpIcon className="h-3 w-3 text-success" />
-                        ) : (
-                          <ArrowDownIcon className="h-3 w-3 text-destructive" />
-                        )}
-                        <span className={performanceKPIs.conversionRate.trend === "up" ? "text-success" : "text-destructive"}>
-                          {Math.abs(performanceKPIs.conversionRate.change)}%
-                        </span>
-                      </Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-end justify-between">
-                      <div>
-                        <div className="text-3xl font-bold">{performanceKPIs.conversionRate.value}%</div>
-                        <p className="text-xs text-muted-foreground mt-1">Klicka för detaljer →</p>
-                      </div>
-                      <div className="w-24 h-12">
-                        <SparklineChart data={performanceKPIs.conversionRate.sparkline} />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-end justify-between">
+                <div>
+                  <div className="text-3xl font-bold tracking-tight">
+                    {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : metrics.newLeadsToday}
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {isLoading ? "Laddar..." : metrics.newLeadsChange + " från igår"}
+                  </p>
+                </div>
+                <div className="w-20 h-10">
+                  <SparklineChart data={[3, 5, 4, 6, 5, 7, 6, 8, metrics.newLeadsToday]} />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="rounded-2xl border border-border/50 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-primary/10">
+                  <Users className="h-5 w-5 text-primary" />
+                </div>
+                <CardTitle className="text-sm font-medium">Upplockade</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-end justify-between">
+                <div>
+                  <div className="text-3xl font-bold tracking-tight">
+                    {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : metrics.claimedLeads}
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {isLoading ? "Laddar..." : `${metrics.claimedPercentage}% av alla leads`}
+                  </p>
+                </div>
+                <div className="w-20 h-10">
+                  <SparklineChart data={[4, 5, 6, 5, 7, 6, 8, 7, metrics.claimedLeads]} color="hsl(var(--success))" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="rounded-2xl border border-border/50 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-primary/10">
+                  <Clock className="h-5 w-5 text-primary" />
+                </div>
+                <CardTitle className="text-sm font-medium">Svarstid medel</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-end justify-between">
+                <div>
+                  <div className="text-3xl font-bold tracking-tight">
+                    {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : metrics.averageResponseTime}
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {isLoading ? "Laddar..." : metrics.responseTimeChange}
+                  </p>
+                </div>
+                <div className="w-20 h-10">
+                  <SparklineChart data={[45, 42, 38, 40, 35, 38, 32, 35, 28]} color="hsl(var(--success))" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-                <Card 
-                  className="rounded-2xl border border-border/50 shadow-sm hover:shadow-md transition-all cursor-pointer"
-                  onClick={() => navigate("/reports/total-leads")}
-                >
-                  <CardHeader className="pb-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2.5 rounded-xl bg-primary/10">
-                          <Users className="h-5 w-5 text-primary" />
-                        </div>
-                        <CardTitle className="text-sm font-medium text-muted-foreground">Totala Leads</CardTitle>
+        {/* Performance Section */}
+        <Card className="rounded-2xl border border-border/50 shadow-sm">
+          <CardHeader className="p-4 md:p-6">
+            <CardTitle className="text-base md:text-lg font-semibold">Prestation</CardTitle>
+            <CardDescription className="text-xs md:text-sm">
+              Se din egna prestation och nyckeltal
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-4 pt-0 md:p-6 md:pt-0 space-y-4 md:space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+              {/* Conversion Rate Card */}
+              <Card 
+                className="rounded-2xl border border-border/50 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 cursor-pointer"
+                onClick={() => navigate("/reports/conversion-rate")}
+              >
+                <CardHeader className="pb-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2.5 rounded-xl bg-primary/10">
+                        <Target className="h-5 w-5 text-primary" />
                       </div>
-                      <Badge variant="secondary" className="rounded-full gap-1 text-xs">
+                      <CardTitle className="text-sm font-medium text-muted-foreground">
+                        Konverteringsgrad
+                      </CardTitle>
+                    </div>
+                    <Badge variant="secondary" className="rounded-full gap-1 text-xs">
+                      {performanceKPIs.conversionRate.trend === "up" ? (
                         <ArrowUpIcon className="h-3 w-3 text-success" />
-                        <span className="text-success">{Math.abs(performanceKPIs.totalLeads.change)}%</span>
-                      </Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-end justify-between">
-                      <div>
-                        <div className="text-3xl font-bold">{performanceKPIs.totalLeads.value.toLocaleString()}</div>
-                        <p className="text-xs text-muted-foreground mt-1">Klicka för detaljer →</p>
+                      ) : (
+                        <ArrowDownIcon className="h-3 w-3 text-destructive" />
+                      )}
+                      <span className={performanceKPIs.conversionRate.trend === "up" ? "text-success" : "text-destructive"}>
+                        {Math.abs(performanceKPIs.conversionRate.change)}%
+                      </span>
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-end justify-between">
+                    <div>
+                      <div className="text-3xl font-bold tracking-tight text-foreground">
+                        {performanceKPIs.conversionRate.value}%
                       </div>
-                      <div className="w-24 h-12">
-                        <SparklineChart data={performanceKPIs.totalLeads.sparkline} />
-                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Klicka för att se detaljer →
+                      </p>
                     </div>
-                  </CardContent>
-                </Card>
-              </div>
+                    <div className="w-24 h-12">
+                      <SparklineChart data={performanceKPIs.conversionRate.sparkline} />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Total Leads Card */}
+              <Card 
+                className="rounded-2xl border border-border/50 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 cursor-pointer"
+                onClick={() => navigate("/reports/total-leads")}
+              >
+                <CardHeader className="pb-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2.5 rounded-xl bg-primary/10">
+                        <Users className="h-5 w-5 text-primary" />
+                      </div>
+                      <CardTitle className="text-sm font-medium text-muted-foreground">
+                        Totala Leads
+                      </CardTitle>
+                    </div>
+                    <Badge variant="secondary" className="rounded-full gap-1 text-xs">
+                      {performanceKPIs.totalLeads.trend === "up" ? (
+                        <ArrowUpIcon className="h-3 w-3 text-success" />
+                      ) : (
+                        <ArrowDownIcon className="h-3 w-3 text-destructive" />
+                      )}
+                      <span className={performanceKPIs.totalLeads.trend === "up" ? "text-success" : "text-destructive"}>
+                        {Math.abs(performanceKPIs.totalLeads.change)}%
+                      </span>
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-end justify-between">
+                    <div>
+                      <div className="text-3xl font-bold tracking-tight text-foreground">
+                        {performanceKPIs.totalLeads.value.toLocaleString()}
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Klicka för att se detaljer →
+                      </p>
+                    </div>
+                    <div className="w-24 h-12">
+                      <SparklineChart data={performanceKPIs.totalLeads.sparkline} />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-2 mt-4">
+            <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <Button 
                 onClick={() => navigate('/reports')}
-                className="rounded-xl h-10"
+                className="rounded-xl flex items-center gap-2 font-medium h-10 text-sm"
               >
-                <BarChart3 className="h-4 w-4 mr-1" />
-                Rapporter
+                <BarChart3 className="h-4 w-4" />
+                Se alla Rapporter
+                <ArrowRight className="h-4 w-4" />
               </Button>
               
               <Button 
                 variant="secondary"
                 onClick={() => setShowCreateDialog(true)}
-                className="rounded-xl h-10"
+                className="rounded-xl flex items-center gap-2 font-medium h-10 text-sm"
               >
-                <Plus className="h-4 w-4 mr-1" />
-                Test-lead
+                <Plus className="h-4 w-4" />
+                Skapa test-lead
               </Button>
             </div>
           </CardContent>

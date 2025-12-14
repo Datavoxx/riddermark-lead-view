@@ -12,22 +12,31 @@ export function ConversionCTA({ currentResponseTime, potentialIncrease }: Conver
   const navigate = useNavigate();
   
   return (
-    <Card className="rounded-lg md:rounded-2xl border-0 bg-gradient-to-r from-primary/10 to-accent/10 p-2 md:p-6">
-      <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-1.5 md:gap-3 min-w-0">
-          <Zap className="h-3.5 w-3.5 md:h-5 md:w-5 text-primary flex-shrink-0" />
-          <p className="text-[10px] md:text-sm text-muted-foreground truncate">
-            <span className="font-medium text-primary">10 min snabbare</span> = <span className="font-medium text-primary">+{potentialIncrease}%</span> konv.
-          </p>
+    <Card className="relative overflow-hidden rounded-2xl border-0 bg-gradient-to-r from-primary/10 via-primary/5 to-accent/10 p-4 md:p-6">
+      <div className="absolute -right-8 -bottom-8 w-32 h-32 bg-primary/20 rounded-full blur-2xl" />
+      <div className="absolute -left-4 -top-4 w-24 h-24 bg-accent/20 rounded-full blur-2xl" />
+      
+      <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div className="flex items-start gap-3">
+          <div className="p-2.5 rounded-xl bg-primary/20 shrink-0">
+            <Zap className="h-5 w-5 text-primary" />
+          </div>
+          <div>
+            <h3 className="font-semibold text-foreground">Öka din konvertering</h3>
+            <p className="text-sm text-muted-foreground mt-1">
+              Svarar du <span className="font-semibold text-primary">10 min snabbare</span> kan du öka konverteringen med upp till{" "}
+              <span className="font-semibold text-primary">+{potentialIncrease}%</span>
+            </p>
+          </div>
         </div>
         
         <Button 
           onClick={() => navigate('/reports/response-time')}
-          className="rounded-lg h-6 md:h-10 text-[10px] md:text-sm px-2 md:px-4 flex-shrink-0"
-          size="sm"
+          className="rounded-xl gap-2 shrink-0"
         >
-          <TrendingUp className="h-3 w-3 md:h-4 md:w-4 md:mr-1" />
-          <span className="hidden md:inline">Svarstidsrapport</span>
+          <TrendingUp className="h-4 w-4" />
+          Se svarstidsrapport
+          <ArrowRight className="h-4 w-4" />
         </Button>
       </div>
     </Card>
