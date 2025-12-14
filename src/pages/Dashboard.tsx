@@ -180,79 +180,79 @@ export default function Dashboard() {
         />
 
         {/* KPI Cards with Sparklines */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-          <Card className="rounded-2xl border border-border/50 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-primary/10">
-                  <TrendingUp className="h-5 w-5 text-primary" />
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-4">
+          <Card className="rounded-xl md:rounded-2xl border border-border/50 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 p-3 md:p-6 pb-1.5 md:pb-2">
+              <div className="flex items-center gap-2 md:gap-3">
+                <div className="p-1.5 md:p-2.5 rounded-lg md:rounded-xl bg-primary/10">
+                  <TrendingUp className="h-3.5 w-3.5 md:h-5 md:w-5 text-primary" />
                 </div>
-                <CardTitle className="text-sm font-medium">Nya leads idag</CardTitle>
+                <CardTitle className="text-xs md:text-sm font-medium">Nya leads</CardTitle>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-3 pt-0 md:p-6 md:pt-0">
               <div className="flex items-end justify-between">
                 <div>
-                  <div className="text-3xl font-bold tracking-tight">
-                    {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : metrics.newLeadsToday}
+                  <div className="text-xl md:text-3xl font-bold tracking-tight">
+                    {isLoading ? <Loader2 className="h-5 w-5 md:h-6 md:w-6 animate-spin" /> : metrics.newLeadsToday}
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {isLoading ? "Laddar..." : metrics.newLeadsChange + " från igår"}
+                  <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5 md:mt-1">
+                    {isLoading ? "..." : metrics.newLeadsChange + " från igår"}
                   </p>
                 </div>
-                <div className="w-20 h-10">
+                <div className="w-12 md:w-20 h-6 md:h-10 hidden sm:block">
                   <SparklineChart data={[3, 5, 4, 6, 5, 7, 6, 8, metrics.newLeadsToday]} />
                 </div>
               </div>
             </CardContent>
           </Card>
           
-          <Card className="rounded-2xl border border-border/50 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-primary/10">
-                  <Users className="h-5 w-5 text-primary" />
+          <Card className="rounded-xl md:rounded-2xl border border-border/50 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 p-3 md:p-6 pb-1.5 md:pb-2">
+              <div className="flex items-center gap-2 md:gap-3">
+                <div className="p-1.5 md:p-2.5 rounded-lg md:rounded-xl bg-primary/10">
+                  <Users className="h-3.5 w-3.5 md:h-5 md:w-5 text-primary" />
                 </div>
-                <CardTitle className="text-sm font-medium">Upplockade</CardTitle>
+                <CardTitle className="text-xs md:text-sm font-medium">Upplockade</CardTitle>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-3 pt-0 md:p-6 md:pt-0">
               <div className="flex items-end justify-between">
                 <div>
-                  <div className="text-3xl font-bold tracking-tight">
-                    {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : metrics.claimedLeads}
+                  <div className="text-xl md:text-3xl font-bold tracking-tight">
+                    {isLoading ? <Loader2 className="h-5 w-5 md:h-6 md:w-6 animate-spin" /> : metrics.claimedLeads}
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {isLoading ? "Laddar..." : `${metrics.claimedPercentage}% av alla leads`}
+                  <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5 md:mt-1">
+                    {isLoading ? "..." : `${metrics.claimedPercentage}%`}
                   </p>
                 </div>
-                <div className="w-20 h-10">
+                <div className="w-12 md:w-20 h-6 md:h-10 hidden sm:block">
                   <SparklineChart data={[4, 5, 6, 5, 7, 6, 8, 7, metrics.claimedLeads]} color="hsl(var(--success))" />
                 </div>
               </div>
             </CardContent>
           </Card>
           
-          <Card className="rounded-2xl border border-border/50 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-primary/10">
-                  <Clock className="h-5 w-5 text-primary" />
+          <Card className="rounded-xl md:rounded-2xl border border-border/50 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 col-span-2 md:col-span-1">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 p-3 md:p-6 pb-1.5 md:pb-2">
+              <div className="flex items-center gap-2 md:gap-3">
+                <div className="p-1.5 md:p-2.5 rounded-lg md:rounded-xl bg-primary/10">
+                  <Clock className="h-3.5 w-3.5 md:h-5 md:w-5 text-primary" />
                 </div>
-                <CardTitle className="text-sm font-medium">Svarstid medel</CardTitle>
+                <CardTitle className="text-xs md:text-sm font-medium">Svarstid medel</CardTitle>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-3 pt-0 md:p-6 md:pt-0">
               <div className="flex items-end justify-between">
                 <div>
-                  <div className="text-3xl font-bold tracking-tight">
-                    {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : metrics.averageResponseTime}
+                  <div className="text-xl md:text-3xl font-bold tracking-tight">
+                    {isLoading ? <Loader2 className="h-5 w-5 md:h-6 md:w-6 animate-spin" /> : metrics.averageResponseTime}
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {isLoading ? "Laddar..." : metrics.responseTimeChange}
+                  <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5 md:mt-1">
+                    {isLoading ? "..." : metrics.responseTimeChange}
                   </p>
                 </div>
-                <div className="w-20 h-10">
+                <div className="w-16 md:w-20 h-8 md:h-10">
                   <SparklineChart data={[45, 42, 38, 40, 35, 38, 32, 35, 28]} color="hsl(var(--success))" />
                 </div>
               </div>
