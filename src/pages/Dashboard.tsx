@@ -85,13 +85,13 @@ export default function Dashboard() {
     <div className="min-h-screen bg-background">
       <TopBar title="Dashboard" />
       
-      <main className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto">
+      <main className="p-3 md:p-6 space-y-4 md:space-y-6 max-w-7xl mx-auto pb-24 md:pb-6">
         {/* Welcome Section */}
         <div className="animate-fade-in">
-          <h1 className="text-2xl font-semibold tracking-tight">
+          <h1 className="text-lg md:text-2xl font-semibold tracking-tight">
             Välkommen tillbaka, {user?.email?.split('@')[0]}
           </h1>
-          <p className="text-muted-foreground mt-1">
+          <p className="text-sm md:text-base text-muted-foreground mt-0.5 md:mt-1">
             Här är din dagliga översikt
           </p>
         </div>
@@ -99,29 +99,29 @@ export default function Dashboard() {
         {/* Urgent Action Section */}
         {urgentLeads.length > 0 && (
           <Card className="border-2 border-warning/40 bg-gradient-to-r from-warning/5 via-warning/3 to-transparent shadow-lg shadow-warning/5">
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="p-2.5 bg-warning/15 rounded-xl">
-                    <AlertTriangle className="h-5 w-5 text-warning" />
+            <CardHeader className="p-3 md:pb-3 md:p-6">
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2 md:gap-3">
+                  <div className="p-2 md:p-2.5 bg-warning/15 rounded-lg md:rounded-xl">
+                    <AlertTriangle className="h-4 w-4 md:h-5 md:w-5 text-warning" />
                   </div>
                   <div>
-                    <CardTitle className="text-lg font-semibold">Kräver handling nu</CardTitle>
-                    <CardDescription>{urgentLeads.length} ärenden väntar på dig</CardDescription>
+                    <CardTitle className="text-base md:text-lg font-semibold">Kräver handling nu</CardTitle>
+                    <CardDescription className="text-xs md:text-sm">{urgentLeads.length} ärenden väntar på dig</CardDescription>
                   </div>
                 </div>
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="rounded-xl gap-1.5"
+                  className="rounded-lg md:rounded-xl gap-1 text-xs md:text-sm h-8"
                   onClick={() => navigate('/blocket/arenden')}
                 >
-                  Visa alla
+                  <span className="hidden sm:inline">Visa alla</span>
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </div>
             </CardHeader>
-            <CardContent className="pt-0">
+            <CardContent className="p-3 pt-0 md:p-6 md:pt-0">
               <div className="space-y-2">
                 {urgentLeads.map((lead) => {
                   const createdAt = new Date(lead.created_at);
@@ -180,7 +180,7 @@ export default function Dashboard() {
         />
 
         {/* KPI Cards with Sparklines */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
           <Card className="rounded-2xl border border-border/50 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <div className="flex items-center gap-3">
@@ -262,14 +262,14 @@ export default function Dashboard() {
 
         {/* Performance Section */}
         <Card className="rounded-2xl border border-border/50 shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold">Prestation</CardTitle>
-            <CardDescription>
+          <CardHeader className="p-4 md:p-6">
+            <CardTitle className="text-base md:text-lg font-semibold">Prestation</CardTitle>
+            <CardDescription className="text-xs md:text-sm">
               Se din egna prestation och nyckeltal
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <CardContent className="p-4 pt-0 md:p-6 md:pt-0 space-y-4 md:space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
               {/* Conversion Rate Card */}
               <Card 
                 className="rounded-2xl border border-border/50 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 cursor-pointer"
@@ -360,10 +360,10 @@ export default function Dashboard() {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 pt-2">
+            <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <Button 
                 onClick={() => navigate('/reports')}
-                className="rounded-xl flex items-center gap-2 font-medium h-10"
+                className="rounded-xl flex items-center gap-2 font-medium h-10 text-sm"
               >
                 <BarChart3 className="h-4 w-4" />
                 Se alla Rapporter
@@ -373,7 +373,7 @@ export default function Dashboard() {
               <Button 
                 variant="secondary"
                 onClick={() => setShowCreateDialog(true)}
-                className="rounded-xl flex items-center gap-2 font-medium h-10"
+                className="rounded-xl flex items-center gap-2 font-medium h-10 text-sm"
               >
                 <Plus className="h-4 w-4" />
                 Skapa test-lead

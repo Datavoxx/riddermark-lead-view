@@ -6,11 +6,11 @@ export default function IVerkstad() {
   return (
     <div className="min-h-screen bg-background">
       <TopBar title="Verkstad" />
-      <div className="container mx-auto p-6 space-y-6">
-        <div className="flex justify-between items-center">
+      <div className="container mx-auto p-3 md:p-6 space-y-4 md:space-y-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <div>
-            <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">Verkstad</h1>
-            <p className="text-muted-foreground mt-1">Hantera bilar som är på verkstad</p>
+            <h1 className="text-xl md:text-3xl font-semibold tracking-tight">Verkstad</h1>
+            <p className="text-sm md:text-base text-muted-foreground mt-0.5 md:mt-1">Hantera bilar som är på verkstad</p>
           </div>
           <AddCarToWorkshopDialog />
         </div>
