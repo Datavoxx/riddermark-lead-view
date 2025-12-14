@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Home, FileText, Archive, LogOut, Car, Bot, Hash, ChevronDown, Bell, Plus, Users, Wrench, ClipboardList, ShoppingCart, Inbox, FileEdit } from "lucide-react";
+import { Home, FileText, Archive, LogOut, Car, Bot, Hash, ChevronDown, Bell, Plus, Users, Wrench, ClipboardList, ShoppingCart, Inbox, FileEdit, Briefcase, PhoneCall, TrendingUp, CheckCircle2 } from "lucide-react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -43,6 +43,13 @@ const fordonsstatusItems = [
   { title: "Bil Agent", url: "/fordonstatus/agent", icon: Bot },
 ];
 
+const crmItems = [
+  { title: "Översikt", url: "/crm", icon: Briefcase },
+  { title: "Återkopplingar", url: "/crm/callbacks", icon: PhoneCall },
+  { title: "Pågående", url: "/crm/in-progress", icon: TrendingUp },
+  { title: "Färdiga", url: "/crm/completed", icon: CheckCircle2 },
+];
+
 type ConversationWithUser = {
   conversation_id: string;
   other_user_id: string;
@@ -58,6 +65,7 @@ export function AppSidebar() {
   const { isMobile, setOpen, setOpenMobile } = useSidebar();
   const [channelsOpen, setChannelsOpen] = useState(true);
   const [fordonsstatusOpen, setFordonsstatusOpen] = useState(true);
+  const [crmOpen, setCrmOpen] = useState(true);
   const [conversations, setConversations] = useState<ConversationWithUser[]>([]);
   const [showCreateChannelDialog, setShowCreateChannelDialog] = useState(false);
   const [groupChannels, setGroupChannels] = useState<any[]>([]);
@@ -278,6 +286,42 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {!isBlocketOnly && (
+          <>
+            <SidebarSeparator className="my-2" />
+
+            {/* CRM Section */}
+            <SidebarGroup>
+              <SidebarGroupLabel 
+                className="text-xs font-semibold text-muted-foreground px-2 flex items-center gap-1 cursor-pointer hover:bg-accent/50 rounded-md"
+                onClick={() => setCrmOpen(!crmOpen)}
+              >
+                <ChevronDown className={`h-3 w-3 transition-transform ${crmOpen ? '' : '-rotate-90'}`} />
+                CRM
+              </SidebarGroupLabel>
+              {crmOpen && (
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {crmItems.map((item) => (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton 
+                        asChild
+                        className={location.pathname === item.url ? "bg-accent text-accent-foreground font-medium hover:bg-accent" : "hover:bg-accent/50"}
+                      >
+                        <NavLink to={item.url} onClick={handleNavClick}>
+                          <item.icon className="h-4 w-4" />
+                          <span>{item.title}</span>
+                        </NavLink>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+              )}
+            </SidebarGroup>
+          </>
+        )}
 
         {!isBlocketOnly && (
           <>

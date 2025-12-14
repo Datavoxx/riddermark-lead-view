@@ -35,6 +35,10 @@ import Bytbil from "./pages/Bytbil";
 import Inkorg from "./pages/Inkorg";
 import InkorgDetail from "./pages/InkorgDetail";
 import Bilannonsgenerator from "./pages/Bilannonsgenerator";
+import CrmOverview from "./pages/CrmOverview";
+import CrmCallbacks from "./pages/CrmCallbacks";
+import CrmInProgress from "./pages/CrmInProgress";
+import CrmCompleted from "./pages/CrmCompleted";
 
 const queryClient = new QueryClient();
 
@@ -81,6 +85,10 @@ const App = () => (
                         <Route path="/inkorg" element={<RoleProtectedRoute><Inkorg /></RoleProtectedRoute>} />
                         <Route path="/inkorg/:id" element={<RoleProtectedRoute><InkorgDetail /></RoleProtectedRoute>} />
                         <Route path="/bilannonsgenerator" element={<RoleProtectedRoute><Bilannonsgenerator /></RoleProtectedRoute>} />
+                        <Route path="/crm" element={<RoleProtectedRoute><CrmOverview /></RoleProtectedRoute>} />
+                        <Route path="/crm/callbacks" element={<RoleProtectedRoute><CrmCallbacks /></RoleProtectedRoute>} />
+                        <Route path="/crm/in-progress" element={<RoleProtectedRoute><CrmInProgress /></RoleProtectedRoute>} />
+                        <Route path="/crm/completed" element={<RoleProtectedRoute><CrmCompleted /></RoleProtectedRoute>} />
                         <Route path="/channel/:id" element={<RoleProtectedRoute><Channel /></RoleProtectedRoute>} />
                         <Route path="*" element={<NotFound />} />
                       </Routes>
