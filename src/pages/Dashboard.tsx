@@ -98,58 +98,54 @@ export default function Dashboard() {
 
         {/* Urgent Action Section */}
         {urgentLeads.length > 0 && (
-          <Card className="border-2 border-warning/40 bg-gradient-to-r from-warning/5 via-warning/3 to-transparent shadow-lg shadow-warning/5">
-            <CardHeader className="p-3 md:pb-3 md:p-6">
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-2 md:gap-3">
-                  <div className="p-2 md:p-2.5 bg-warning/15 rounded-lg md:rounded-xl">
-                    <AlertTriangle className="h-4 w-4 md:h-5 md:w-5 text-warning" />
+          <Card className="border border-warning/40 bg-gradient-to-r from-warning/5 via-warning/3 to-transparent shadow-sm">
+            <CardHeader className="p-2 md:p-6 pb-1.5 md:pb-3">
+              <div className="flex items-center justify-between gap-1.5">
+                <div className="flex items-center gap-1.5 md:gap-3">
+                  <div className="p-1.5 md:p-2.5 bg-warning/15 rounded-md md:rounded-xl">
+                    <AlertTriangle className="h-3 w-3 md:h-5 md:w-5 text-warning" />
                   </div>
                   <div>
-                    <CardTitle className="text-base md:text-lg font-semibold">Kräver handling nu</CardTitle>
-                    <CardDescription className="text-xs md:text-sm">{urgentLeads.length} ärenden väntar på dig</CardDescription>
+                    <CardTitle className="text-xs md:text-lg font-semibold">Kräver handling</CardTitle>
+                    <CardDescription className="text-[10px] md:text-sm">{urgentLeads.length} ärenden</CardDescription>
                   </div>
                 </div>
                 <Button 
-                  variant="outline" 
+                  variant="ghost" 
                   size="sm" 
-                  className="rounded-lg md:rounded-xl gap-1 text-xs md:text-sm h-8"
+                  className="rounded-md h-6 md:h-8 px-2 text-[10px] md:text-sm"
                   onClick={() => navigate('/blocket/arenden')}
                 >
-                  <span className="hidden sm:inline">Visa alla</span>
-                  <ArrowRight className="h-4 w-4" />
+                  Alla
+                  <ArrowRight className="h-3 w-3 ml-0.5" />
                 </Button>
               </div>
             </CardHeader>
-            <CardContent className="p-3 pt-0 md:p-6 md:pt-0">
-              <div className="space-y-2">
+            <CardContent className="p-2 pt-0 md:p-6 md:pt-0">
+              <div className="space-y-1 md:space-y-2">
                 {urgentLeads.map((lead) => {
                   const createdAt = new Date(lead.created_at);
                   const now = new Date();
                   const minutesAgo = Math.floor((now.getTime() - createdAt.getTime()) / (1000 * 60));
-                  const timeLabel = minutesAgo < 60 ? `${minutesAgo} min sedan` : `${Math.floor(minutesAgo / 60)}h sedan`;
+                  const timeLabel = minutesAgo < 60 ? `${minutesAgo}m` : `${Math.floor(minutesAgo / 60)}h`;
                   
                   return (
                     <div 
                       key={lead.id}
                       onClick={() => navigate(`/blocket/arenden/${lead.id}`)}
-                      className="flex items-center justify-between p-3 rounded-xl bg-card border border-border/50 hover:border-warning/30 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group"
+                      className="flex items-center justify-between p-1.5 md:p-3 rounded-md md:rounded-xl bg-card border border-border/50 hover:border-warning/30 transition-all cursor-pointer group"
                     >
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className="p-2 bg-primary/10 rounded-lg">
-                          <Flame className="h-4 w-4 text-primary" />
+                      <div className="flex items-center gap-1.5 md:gap-3 min-w-0 flex-1">
+                        <div className="p-1 md:p-2 bg-primary/10 rounded-md shrink-0">
+                          <Flame className="h-2.5 w-2.5 md:h-4 md:w-4 text-primary" />
                         </div>
-                        <div className="min-w-0">
-                          <p className="font-medium text-sm truncate">{lead.subject || 'Nytt ärende'}</p>
-                          <p className="text-xs text-muted-foreground">{lead.lead_email}</p>
-                        </div>
+                        <p className="font-medium text-[11px] md:text-sm truncate">{lead.subject || 'Nytt ärende'}</p>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <Badge variant="secondary" className="rounded-full text-xs">
-                          <Clock className="h-3 w-3 mr-1" />
+                      <div className="flex items-center gap-1 shrink-0">
+                        <Badge variant="secondary" className="rounded-full text-[9px] md:text-xs h-4 md:h-5 px-1.5">
                           {timeLabel}
                         </Badge>
-                        <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                        <ChevronRight className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" />
                       </div>
                     </div>
                   );
