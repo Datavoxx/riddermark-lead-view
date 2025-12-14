@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AlertTriangle, Clock, ArrowRight, User, Car, Flame } from "lucide-react";
+import { AlertTriangle, Clock, ChevronRight, Car, Flame, CheckCircle } from "lucide-react";
 import { Lead } from "@/types/lead";
 
 interface PriorityLeadsProps {
@@ -11,42 +11,36 @@ interface PriorityLeadsProps {
   isLoading: boolean;
 }
 
-function getLeadUrgency(lead: Lead): { level: "critical" | "warning" | "hot"; label: string; icon: React.ReactNode } {
+function getLeadUrgency(lead: Lead) {
   const createdAt = new Date(lead.created_at);
   const now = new Date();
-  const hoursOld = (now.getTime() - createdAt.getTime()) / (1000 * 60 * 60);
+  const minutesAgo = Math.floor((now.getTime() - createdAt.getTime()) / (1000 * 60));
   
-  if (hoursOld < 0.25) { // < 15 min
-    return { level: "hot", label: "Hot lead 🔥", icon: <Flame className="h-3 w-3" /> };
-  } else if (hoursOld < 1) { // < 1 hour
-    return { level: "critical", label: "Svar krävs < 15 min", icon: <AlertTriangle className="h-3 w-3" /> };
-  } else {
-    return { level: "warning", label: `${Math.floor(hoursOld)}h utan svar`, icon: <Clock className="h-3 w-3" /> };
+  if (minutesAgo < 15) {
+    return { level: "hot", label: "Nu", color: "text-orange-500" };
+  } else if (minutesAgo < 60) {
+    return { level: "critical", label: `${minutesAgo}m`, color: "text-warning" };
   }
+  return { level: "warning", label: `${Math.floor(minutesAgo / 60)}h`, color: "text-muted-foreground" };
 }
 
 export function PriorityLeads({ leads, isLoading }: PriorityLeadsProps) {
   const navigate = useNavigate();
   
-  // Filter to unclaimed leads and sort by oldest first (most urgent)
+  // Filter to unclaimed leads and sort by newest first
   const priorityLeads = leads
     .filter(lead => !lead.claimed)
-    .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
-    .slice(0, 5);
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    .slice(0, 3);
 
   if (isLoading) {
     return (
-      <Card className="rounded-lg md:rounded-2xl border border-destructive/20 bg-destructive/5">
-        <CardContent className="p-2 md:p-6 space-y-1.5">
-          {Array.from({ length: 2 }).map((_, i) => (
-            <div key={i} className="flex items-center gap-2 p-1.5 rounded-lg bg-background/50">
-              <Skeleton className="h-6 w-6 rounded" />
-              <div className="flex-1 space-y-1">
-                <Skeleton className="h-3 w-3/4" />
-                <Skeleton className="h-2 w-1/2" />
-              </div>
-            </div>
-          ))}
+      <Card className="rounded-xl md:rounded-2xl border border-warning/30">
+        <CardContent className="p-3 md:p-6">
+          <div className="space-y-2">
+            <Skeleton className="h-10 w-full rounded-lg" />
+            <Skeleton className="h-10 w-full rounded-lg" />
+          </div>
         </CardContent>
       </Card>
     );
@@ -54,70 +48,84 @@ export function PriorityLeads({ leads, isLoading }: PriorityLeadsProps) {
 
   if (priorityLeads.length === 0) {
     return (
-      <Card className="rounded-lg md:rounded-2xl border border-success/20 bg-success/5">
-        <CardContent className="py-4 md:py-8 text-center">
-          <span className="text-lg md:text-2xl">✓</span>
-          <p className="text-[10px] md:text-sm font-medium text-success mt-1">Alla leads hanterade!</p>
+      <Card className="rounded-xl md:rounded-2xl border border-success/30 bg-success/5">
+        <CardContent className="p-3 md:p-6 flex items-center gap-3">
+          <CheckCircle className="h-5 w-5 text-success flex-shrink-0" />
+          <span className="text-sm font-medium">Alla leads hanterade</span>
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Card className="rounded-lg md:rounded-2xl border border-destructive/20 bg-destructive/5">
-      <CardContent className="p-2 md:p-6">
-        <div className="flex items-center justify-between mb-1.5 md:mb-3">
-          <div className="flex items-center gap-1.5">
-            <AlertTriangle className="h-3.5 w-3.5 md:h-4 md:w-4 text-destructive" />
-            <span className="text-xs md:text-base font-semibold">Kräver åtgärd</span>
+    <Card className="rounded-xl md:rounded-2xl border border-warning/30 bg-gradient-to-r from-warning/5 to-transparent">
+      <CardContent className="p-3 md:p-6">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-2 md:mb-4">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="h-4 w-4 text-warning" />
+            <span className="text-sm font-semibold">Kräver åtgärd</span>
+            <Badge variant="secondary" className="h-5 px-1.5 text-xs">
+              {priorityLeads.length}
+            </Badge>
           </div>
-          <Badge variant="destructive" className="h-5 px-1.5 text-[10px] md:text-xs">
-            {priorityLeads.length}
-          </Badge>
+          <Button 
+            variant="ghost" 
+            size="sm"
+            className="h-7 px-2 text-xs"
+            onClick={() => navigate('/blocket/arenden')}
+          >
+            Alla
+            <ChevronRight className="h-3 w-3 ml-0.5" />
+          </Button>
         </div>
         
-        <div className="space-y-1 md:space-y-2">
-          {priorityLeads.slice(0, 3).map((lead) => {
+        {/* Lead list - show 2 on mobile, 3 on desktop */}
+        <div className="space-y-1.5 md:space-y-2">
+          {priorityLeads.map((lead, index) => {
             const urgency = getLeadUrgency(lead);
+            const isHot = urgency.level === "hot";
+            
             return (
               <div 
                 key={lead.id}
                 onClick={() => navigate(`/blocket/arenden/${lead.id}`)}
-                className="flex items-center gap-1.5 md:gap-3 p-1.5 md:p-3 rounded-lg bg-background/80 cursor-pointer"
+                className={`flex items-center gap-2 md:gap-3 p-2 md:p-3 rounded-lg bg-card/80 hover:bg-card cursor-pointer transition-colors ${index >= 2 ? 'hidden md:flex' : ''}`}
               >
+                {/* Image */}
                 <div className="flex-shrink-0">
                   {lead.preview_image_url ? (
-                    <img src={lead.preview_image_url} alt="" className="h-6 w-6 md:h-10 md:w-10 rounded object-cover" />
+                    <img 
+                      src={lead.preview_image_url} 
+                      alt="" 
+                      className="h-9 w-9 md:h-11 md:w-11 rounded-lg object-cover"
+                    />
                   ) : (
-                    <div className="h-6 w-6 md:h-10 md:w-10 rounded bg-muted flex items-center justify-center">
-                      <Car className="h-3 w-3 md:h-5 md:w-5 text-muted-foreground" />
+                    <div className="h-9 w-9 md:h-11 md:w-11 rounded-lg bg-muted flex items-center justify-center">
+                      <Car className="h-4 w-4 text-muted-foreground" />
                     </div>
                   )}
                 </div>
                 
+                {/* Content */}
                 <div className="flex-1 min-w-0">
-                  <p className="text-[11px] md:text-sm font-medium truncate">{lead.subject}</p>
-                  <p className="text-[9px] md:text-xs text-muted-foreground truncate">{lead.lead_namn}</p>
+                  <p className="text-sm font-medium truncate">{lead.subject || 'Nytt ärende'}</p>
+                  <p className="text-xs text-muted-foreground truncate">{lead.lead_namn || 'Okänd'}</p>
                 </div>
                 
-                <Badge 
-                  variant={urgency.level === "hot" ? "default" : "destructive"}
-                  className={`text-[8px] md:text-[10px] h-4 md:h-5 px-1 ${urgency.level === "hot" ? "bg-orange-500" : ""}`}
-                >
-                  {urgency.level === "hot" ? "🔥" : "⏰"}
-                </Badge>
+                {/* Urgency indicator */}
+                <div className={`flex items-center gap-1 flex-shrink-0 ${urgency.color}`}>
+                  {isHot ? (
+                    <Flame className="h-4 w-4" />
+                  ) : (
+                    <Clock className="h-3.5 w-3.5" />
+                  )}
+                  <span className="text-xs font-medium">{urgency.label}</span>
+                </div>
               </div>
             );
           })}
         </div>
-        
-        <Button 
-          variant="ghost" 
-          className="w-full mt-1.5 md:mt-2 h-7 md:h-10 text-[10px] md:text-sm text-destructive hover:text-destructive"
-          onClick={() => navigate('/blocket/arenden')}
-        >
-          Visa alla <ArrowRight className="h-3 w-3 md:h-4 md:w-4 ml-1" />
-        </Button>
       </CardContent>
     </Card>
   );
