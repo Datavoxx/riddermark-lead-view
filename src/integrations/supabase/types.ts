@@ -226,6 +226,7 @@ export type Database = {
           crm_stage: string | null
           crm_status: string | null
           deal_value: number | null
+          forval: Json | null
           id: string
           last_activity_at: string | null
           lead_email: string | null
@@ -256,6 +257,7 @@ export type Database = {
           crm_stage?: string | null
           crm_status?: string | null
           deal_value?: number | null
+          forval?: Json | null
           id?: string
           last_activity_at?: string | null
           lead_email?: string | null
@@ -286,6 +288,7 @@ export type Database = {
           crm_stage?: string | null
           crm_status?: string | null
           deal_value?: number | null
+          forval?: Json | null
           id?: string
           last_activity_at?: string | null
           lead_email?: string | null

@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { TopBar } from "@/components/TopBar";
 import { useToast } from "@/hooks/use-toast";
-import { Lead } from "@/types/lead";
+import { Lead, ForvalOption, hasForvalOptions } from "@/types/lead";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,6 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { VoiceRecorder } from "@/components/VoiceRecorder";
 import { MobileArendeDetail } from "@/components/MobileArendeDetail";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { ForvalButtons } from "@/components/ForvalButtons";
 import { 
   ArrowLeft, Clock, Car, Store, CheckCircle2, 
   Mail, ExternalLink, FileText, MapPin, 
@@ -34,6 +35,7 @@ export default function ArendeDetail() {
   const [showEmailForm, setShowEmailForm] = useState(false);
   const [emailText, setEmailText] = useState("");
   const [sendingText, setSendingText] = useState(false);
+  const [selectedForval, setSelectedForval] = useState<ForvalOption | null>(null);
   const { toast } = useToast();
 
   const fetchLead = async () => {
@@ -410,6 +412,24 @@ export default function ArendeDetail() {
                   <p className="leading-relaxed text-foreground">
                     {lead.summering || lead.summary}
                   </p>
+
+                  {/* AI Förval Buttons */}
+                  {hasForvalOptions(lead.forval) && lead.forval.options.length > 0 && (
+                    <div className="border-t border-border/50 pt-4 mt-4">
+                      <h4 className="text-sm font-medium text-muted-foreground mb-3">
+                        Föreslagna åtgärder
+                      </h4>
+                      <ForvalButtons
+                        options={lead.forval.options}
+                        selectedId={selectedForval?.id}
+                        onSelect={(option) => {
+                          setSelectedForval(option);
+                          setEmailText(option.directive);
+                          setShowEmailForm(true);
+                        }}
+                      />
+                    </div>
+                  )}
                 </CardContent>
                 <CardFooter className="flex flex-col gap-4 pt-0">
                   <div className="flex flex-wrap gap-2 w-full">
