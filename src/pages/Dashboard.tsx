@@ -85,7 +85,7 @@ export default function Dashboard() {
     <div className="min-h-screen bg-background">
       <TopBar title="Dashboard" />
       
-      <main className="p-3 md:p-6 space-y-4 md:space-y-6 max-w-7xl mx-auto pb-24 md:pb-6 overflow-x-hidden">
+      <main className="p-3 md:p-6 space-y-4 md:space-y-6 max-w-7xl mx-auto pb-24 md:pb-6">
         {/* Welcome Section */}
         <div className="animate-fade-in">
           <h1 className="text-lg md:text-2xl font-semibold tracking-tight">
@@ -98,54 +98,58 @@ export default function Dashboard() {
 
         {/* Urgent Action Section */}
         {urgentLeads.length > 0 && (
-          <Card className="border border-warning/40 bg-gradient-to-r from-warning/5 via-warning/3 to-transparent shadow-sm">
-            <CardHeader className="p-2 md:p-6 pb-1.5 md:pb-3">
-              <div className="flex items-center justify-between gap-1.5">
-                <div className="flex items-center gap-1.5 md:gap-3">
-                  <div className="p-1.5 md:p-2.5 bg-warning/15 rounded-md md:rounded-xl">
-                    <AlertTriangle className="h-3 w-3 md:h-5 md:w-5 text-warning" />
+          <Card className="border-2 border-warning/40 bg-gradient-to-r from-warning/5 via-warning/3 to-transparent shadow-lg shadow-warning/5">
+            <CardHeader className="p-3 md:pb-3 md:p-6">
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2 md:gap-3">
+                  <div className="p-2 md:p-2.5 bg-warning/15 rounded-lg md:rounded-xl">
+                    <AlertTriangle className="h-4 w-4 md:h-5 md:w-5 text-warning" />
                   </div>
                   <div>
-                    <CardTitle className="text-xs md:text-lg font-semibold">Kräver handling</CardTitle>
-                    <CardDescription className="text-[10px] md:text-sm">{urgentLeads.length} ärenden</CardDescription>
+                    <CardTitle className="text-base md:text-lg font-semibold">Kräver handling nu</CardTitle>
+                    <CardDescription className="text-xs md:text-sm">{urgentLeads.length} ärenden väntar på dig</CardDescription>
                   </div>
                 </div>
                 <Button 
-                  variant="ghost" 
+                  variant="outline" 
                   size="sm" 
-                  className="rounded-md h-6 md:h-8 px-2 text-[10px] md:text-sm"
+                  className="rounded-lg md:rounded-xl gap-1 text-xs md:text-sm h-8"
                   onClick={() => navigate('/blocket/arenden')}
                 >
-                  Alla
-                  <ArrowRight className="h-3 w-3 ml-0.5" />
+                  <span className="hidden sm:inline">Visa alla</span>
+                  <ArrowRight className="h-4 w-4" />
                 </Button>
               </div>
             </CardHeader>
-            <CardContent className="p-2 pt-0 md:p-6 md:pt-0">
-              <div className="space-y-1 md:space-y-2">
+            <CardContent className="p-3 pt-0 md:p-6 md:pt-0">
+              <div className="space-y-2">
                 {urgentLeads.map((lead) => {
                   const createdAt = new Date(lead.created_at);
                   const now = new Date();
                   const minutesAgo = Math.floor((now.getTime() - createdAt.getTime()) / (1000 * 60));
-                  const timeLabel = minutesAgo < 60 ? `${minutesAgo}m` : `${Math.floor(minutesAgo / 60)}h`;
+                  const timeLabel = minutesAgo < 60 ? `${minutesAgo} min sedan` : `${Math.floor(minutesAgo / 60)}h sedan`;
                   
                   return (
                     <div 
                       key={lead.id}
                       onClick={() => navigate(`/blocket/arenden/${lead.id}`)}
-                      className="flex items-center justify-between p-1.5 md:p-3 rounded-md md:rounded-xl bg-card border border-border/50 hover:border-warning/30 transition-all cursor-pointer group"
+                      className="flex items-center justify-between p-3 rounded-xl bg-card border border-border/50 hover:border-warning/30 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group"
                     >
-                      <div className="flex items-center gap-1.5 md:gap-3 min-w-0 flex-1">
-                        <div className="p-1 md:p-2 bg-primary/10 rounded-md shrink-0">
-                          <Flame className="h-2.5 w-2.5 md:h-4 md:w-4 text-primary" />
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="p-2 bg-primary/10 rounded-lg">
+                          <Flame className="h-4 w-4 text-primary" />
                         </div>
-                        <p className="font-medium text-[11px] md:text-sm truncate">{lead.subject || 'Nytt ärende'}</p>
+                        <div className="min-w-0">
+                          <p className="font-medium text-sm truncate">{lead.subject || 'Nytt ärende'}</p>
+                          <p className="text-xs text-muted-foreground">{lead.lead_email}</p>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-1 shrink-0">
-                        <Badge variant="secondary" className="rounded-full text-[9px] md:text-xs h-4 md:h-5 px-1.5">
+                      <div className="flex items-center gap-3">
+                        <Badge variant="secondary" className="rounded-full text-xs">
+                          <Clock className="h-3 w-3 mr-1" />
                           {timeLabel}
                         </Badge>
-                        <ChevronRight className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" />
+                        <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                       </div>
                     </div>
                   );
@@ -176,79 +180,79 @@ export default function Dashboard() {
         />
 
         {/* KPI Cards with Sparklines */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-4">
-          <Card className="rounded-xl md:rounded-2xl border border-border/50 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 p-3 md:p-6 pb-1.5 md:pb-2">
-              <div className="flex items-center gap-2 md:gap-3">
-                <div className="p-1.5 md:p-2.5 rounded-lg md:rounded-xl bg-primary/10">
-                  <TrendingUp className="h-3.5 w-3.5 md:h-5 md:w-5 text-primary" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+          <Card className="rounded-2xl border border-border/50 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-primary/10">
+                  <TrendingUp className="h-5 w-5 text-primary" />
                 </div>
-                <CardTitle className="text-xs md:text-sm font-medium">Nya leads</CardTitle>
+                <CardTitle className="text-sm font-medium">Nya leads idag</CardTitle>
               </div>
             </CardHeader>
-            <CardContent className="p-3 pt-0 md:p-6 md:pt-0">
+            <CardContent>
               <div className="flex items-end justify-between">
                 <div>
-                  <div className="text-xl md:text-3xl font-bold tracking-tight">
-                    {isLoading ? <Loader2 className="h-5 w-5 md:h-6 md:w-6 animate-spin" /> : metrics.newLeadsToday}
+                  <div className="text-3xl font-bold tracking-tight">
+                    {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : metrics.newLeadsToday}
                   </div>
-                  <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5 md:mt-1">
-                    {isLoading ? "..." : metrics.newLeadsChange + " från igår"}
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {isLoading ? "Laddar..." : metrics.newLeadsChange + " från igår"}
                   </p>
                 </div>
-                <div className="w-12 md:w-20 h-6 md:h-10 hidden sm:block">
+                <div className="w-20 h-10">
                   <SparklineChart data={[3, 5, 4, 6, 5, 7, 6, 8, metrics.newLeadsToday]} />
                 </div>
               </div>
             </CardContent>
           </Card>
           
-          <Card className="rounded-xl md:rounded-2xl border border-border/50 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 p-3 md:p-6 pb-1.5 md:pb-2">
-              <div className="flex items-center gap-2 md:gap-3">
-                <div className="p-1.5 md:p-2.5 rounded-lg md:rounded-xl bg-primary/10">
-                  <Users className="h-3.5 w-3.5 md:h-5 md:w-5 text-primary" />
+          <Card className="rounded-2xl border border-border/50 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-primary/10">
+                  <Users className="h-5 w-5 text-primary" />
                 </div>
-                <CardTitle className="text-xs md:text-sm font-medium">Upplockade</CardTitle>
+                <CardTitle className="text-sm font-medium">Upplockade</CardTitle>
               </div>
             </CardHeader>
-            <CardContent className="p-3 pt-0 md:p-6 md:pt-0">
+            <CardContent>
               <div className="flex items-end justify-between">
                 <div>
-                  <div className="text-xl md:text-3xl font-bold tracking-tight">
-                    {isLoading ? <Loader2 className="h-5 w-5 md:h-6 md:w-6 animate-spin" /> : metrics.claimedLeads}
+                  <div className="text-3xl font-bold tracking-tight">
+                    {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : metrics.claimedLeads}
                   </div>
-                  <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5 md:mt-1">
-                    {isLoading ? "..." : `${metrics.claimedPercentage}%`}
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {isLoading ? "Laddar..." : `${metrics.claimedPercentage}% av alla leads`}
                   </p>
                 </div>
-                <div className="w-12 md:w-20 h-6 md:h-10 hidden sm:block">
+                <div className="w-20 h-10">
                   <SparklineChart data={[4, 5, 6, 5, 7, 6, 8, 7, metrics.claimedLeads]} color="hsl(var(--success))" />
                 </div>
               </div>
             </CardContent>
           </Card>
           
-          <Card className="rounded-xl md:rounded-2xl border border-border/50 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 col-span-2 md:col-span-1">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 p-3 md:p-6 pb-1.5 md:pb-2">
-              <div className="flex items-center gap-2 md:gap-3">
-                <div className="p-1.5 md:p-2.5 rounded-lg md:rounded-xl bg-primary/10">
-                  <Clock className="h-3.5 w-3.5 md:h-5 md:w-5 text-primary" />
+          <Card className="rounded-2xl border border-border/50 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-primary/10">
+                  <Clock className="h-5 w-5 text-primary" />
                 </div>
-                <CardTitle className="text-xs md:text-sm font-medium">Svarstid medel</CardTitle>
+                <CardTitle className="text-sm font-medium">Svarstid medel</CardTitle>
               </div>
             </CardHeader>
-            <CardContent className="p-3 pt-0 md:p-6 md:pt-0">
+            <CardContent>
               <div className="flex items-end justify-between">
                 <div>
-                  <div className="text-xl md:text-3xl font-bold tracking-tight">
-                    {isLoading ? <Loader2 className="h-5 w-5 md:h-6 md:w-6 animate-spin" /> : metrics.averageResponseTime}
+                  <div className="text-3xl font-bold tracking-tight">
+                    {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : metrics.averageResponseTime}
                   </div>
-                  <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5 md:mt-1">
-                    {isLoading ? "..." : metrics.responseTimeChange}
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {isLoading ? "Laddar..." : metrics.responseTimeChange}
                   </p>
                 </div>
-                <div className="w-16 md:w-20 h-8 md:h-10 hidden sm:block">
+                <div className="w-20 h-10">
                   <SparklineChart data={[45, 42, 38, 40, 35, 38, 32, 35, 28]} color="hsl(var(--success))" />
                 </div>
               </div>
@@ -303,7 +307,7 @@ export default function Dashboard() {
                         Klicka för att se detaljer →
                       </p>
                     </div>
-                    <div className="w-24 h-12 hidden sm:block">
+                    <div className="w-24 h-12">
                       <SparklineChart data={performanceKPIs.conversionRate.sparkline} />
                     </div>
                   </div>
@@ -347,7 +351,7 @@ export default function Dashboard() {
                         Klicka för att se detaljer →
                       </p>
                     </div>
-                    <div className="w-24 h-12 hidden sm:block">
+                    <div className="w-24 h-12">
                       <SparklineChart data={performanceKPIs.totalLeads.sparkline} />
                     </div>
                   </div>
