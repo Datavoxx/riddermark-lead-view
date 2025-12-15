@@ -50,8 +50,25 @@ export default function Notiser() {
     }
 
     // Navigate based on notification type
-    if (notification.reference_type === 'follow_up_reminder' && notification.reference_id) {
-      navigate(`/notiser/uppfoljning/${notification.reference_id}`);
+    if (notification.type === 'follow_up') {
+      // For follow_up notifications, check reference_type first (new format), then fallback
+      if (notification.reference_type === 'follow_up_reminder' && notification.reference_id) {
+        navigate(`/notiser/uppfoljning/${notification.reference_id}`);
+      } else {
+        // For older notifications without proper reference, fetch the reminder
+        const { data: reminder } = await supabase
+          .from('follow_up_reminders')
+          .select('id')
+          .eq('user_id', userId)
+          .eq('status', 'sent')
+          .order('remind_at', { ascending: false })
+          .limit(1)
+          .single();
+        
+        if (reminder) {
+          navigate(`/notiser/uppfoljning/${reminder.id}`);
+        }
+      }
     } else if (notification.reference_type === 'lead' && notification.reference_id) {
       navigate(`/blocket/arenden/${notification.reference_id}`);
     }
