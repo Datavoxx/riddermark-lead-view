@@ -52,7 +52,7 @@ const vehicleItems = [
 // Section: CRM
 const crmItems = [
   { title: "Översikt", url: "/crm", icon: Briefcase },
-  { title: "Återkopplingar", url: "/crm/callbacks", icon: PhoneCall },
+  { title: "Kräver åtgärd", url: "/crm/callbacks", icon: PhoneCall },
   { title: "Pågående", url: "/crm/in-progress", icon: TrendingUp },
   { title: "Färdiga", url: "/crm/completed", icon: CheckCircle2 },
 ];

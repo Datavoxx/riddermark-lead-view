@@ -14,7 +14,7 @@ export function CrmStatsCards({ stats, isLoading }: CrmStatsCardsProps) {
 
   const cards = [
     {
-      title: 'Nya återkopplingar',
+      title: 'Kräver åtgärd',
       value: stats.newCallbacks,
       icon: Bell,
       gradient: 'from-blue-500/20 to-blue-600/20',
