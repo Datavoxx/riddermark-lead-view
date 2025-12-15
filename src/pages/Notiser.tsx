@@ -1,4 +1,4 @@
-import { Bell, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Bell, Clock, CheckCircle2, AlertCircle, CalendarClock } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -19,6 +19,8 @@ const getIcon = (type: string) => {
       return <Bell className="h-5 w-5 text-primary" />;
     case 'mention':
       return <Bell className="h-5 w-5 text-primary" />;
+    case 'follow_up':
+      return <CalendarClock className="h-5 w-5 text-blue-500" />;
     case 'task':
       return <Clock className="h-5 w-5 text-blue-500" />;
     case 'success':

@@ -139,6 +139,47 @@ export type Database = {
         }
         Relationships: []
       }
+      follow_up_reminders: {
+        Row: {
+          created_at: string | null
+          id: string
+          lead_id: string | null
+          original_message: string | null
+          remind_at: string
+          sent_email_text: string | null
+          status: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          lead_id?: string | null
+          original_message?: string | null
+          remind_at: string
+          sent_email_text?: string | null
+          status?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          lead_id?: string | null
+          original_message?: string | null
+          remind_at?: string
+          sent_email_text?: string | null
+          status?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "follow_up_reminders_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       group_channels: {
         Row: {
           created_at: string | null
