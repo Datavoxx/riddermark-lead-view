@@ -29,7 +29,7 @@ export default function CrmCallbacks() {
 
   return (
     <div className="min-h-screen bg-background">
-      <TopBar title="Återkopplingar" />
+      <TopBar title="Kräver åtgärd" />
       
       <div className="p-4 md:p-6 space-y-6">
         {/* Header */}
@@ -46,7 +46,7 @@ export default function CrmCallbacks() {
               <PhoneCall className="h-6 w-6 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-foreground">Nya återkopplingar</h1>
+              <h1 className="text-2xl font-bold text-foreground">Kräver åtgärd</h1>
               <p className="text-sm text-muted-foreground">
                 {callbackLeads.length} leads väntar på uppföljning
               </p>
@@ -89,7 +89,7 @@ export default function CrmCallbacks() {
                 <PhoneCall className="h-8 w-8 text-green-600 dark:text-green-400" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold">Alla återkopplingar hanterade!</h3>
+                <h3 className="text-lg font-semibold">Alla ärenden hanterade!</h3>
                 <p className="text-muted-foreground">
                   {search ? 'Inga matchande leads hittades' : 'Det finns inga leads som väntar på uppföljning'}
                 </p>

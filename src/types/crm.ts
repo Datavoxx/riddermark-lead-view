@@ -37,7 +37,7 @@ export interface CrmStats {
 }
 
 export const CRM_STATUS_LABELS: Record<CrmStatus, string> = {
-  new_callback: 'Ny återkoppling',
+  new_callback: 'Kräver åtgärd',
   in_progress: 'Pågående',
   completed: 'Färdig',
   lost: 'Förlorad',
