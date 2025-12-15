@@ -49,8 +49,10 @@ export default function Notiser() {
       await markAsRead(notification.id);
     }
 
-    // Navigate to the referenced lead if it exists
-    if (notification.reference_type === 'lead' && notification.reference_id) {
+    // Navigate based on notification type
+    if (notification.reference_type === 'follow_up_reminder' && notification.reference_id) {
+      navigate(`/notiser/uppfoljning/${notification.reference_id}`);
+    } else if (notification.reference_type === 'lead' && notification.reference_id) {
       navigate(`/blocket/arenden/${notification.reference_id}`);
     }
   };

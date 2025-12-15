@@ -28,6 +28,7 @@ import NotFound from "./pages/NotFound";
 import Bilar from "./pages/Bilar";
 import Agent from "./pages/Agent";
 import Notiser from "./pages/Notiser";
+import FollowUpDetail from "./pages/FollowUpDetail";
 import IVerkstad from "./pages/IVerkstad";
 import Servicestatus from "./pages/Servicestatus";
 import Wayke from "./pages/Wayke";
@@ -82,6 +83,7 @@ const App = () => (
                         <Route path="/agent" element={<RoleProtectedRoute><Agent /></RoleProtectedRoute>} />
                         <Route path="/agent/:agentId" element={<RoleProtectedRoute><Agent /></RoleProtectedRoute>} />
                         <Route path="/notiser" element={<RoleProtectedRoute><Notiser /></RoleProtectedRoute>} />
+                        <Route path="/notiser/uppfoljning/:reminderId" element={<RoleProtectedRoute><FollowUpDetail /></RoleProtectedRoute>} />
                         <Route path="/inkorg" element={<RoleProtectedRoute><Inkorg /></RoleProtectedRoute>} />
                         <Route path="/inkorg/:id" element={<RoleProtectedRoute><InkorgDetail /></RoleProtectedRoute>} />
                         <Route path="/bilannonsgenerator" element={<RoleProtectedRoute><Bilannonsgenerator /></RoleProtectedRoute>} />
