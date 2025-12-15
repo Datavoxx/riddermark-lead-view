@@ -64,14 +64,14 @@ serve(async (req) => {
       const leadName = lead?.lead_namn || 'Okänd kund';
       const subject = lead?.subject || 'Ärende';
 
-      // Create notification
+      // Create notification with reminder_id as reference
       notifications.push({
         user_id: reminder.user_id,
         type: 'follow_up',
         title: 'Dags att följa upp',
         message: `Påminnelse: ${leadName} - ${subject}`,
-        reference_id: reminder.lead_id,
-        reference_type: 'lead',
+        reference_id: reminder.id,
+        reference_type: 'follow_up_reminder',
         read: false,
       });
 
