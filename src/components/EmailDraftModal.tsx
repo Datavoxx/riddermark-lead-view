@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Mail, Send, RotateCcw, Loader2, Phone } from "lucide-react";
+import { FollowUpReminderDialog } from "./FollowUpReminderDialog";
 
 interface EmailDraft {
   id: string;
@@ -21,6 +22,9 @@ export const EmailDraftModal = () => {
   const [draftText, setDraftText] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [isRedoing, setIsRedoing] = useState(false);
+  const [showFollowUpDialog, setShowFollowUpDialog] = useState(false);
+  const [sentLeadId, setSentLeadId] = useState<string | null>(null);
+  const [sentEmailText, setSentEmailText] = useState("");
 
   const insertPhoneNumber = () => {
     const phoneSignature = "\n\nDu når mig på 0707747731";
@@ -90,10 +94,18 @@ export const EmailDraftModal = () => {
       }
 
       if (action === 'send') {
+        // Store the sent email info for follow-up dialog
+        setSentLeadId(draft.lead_id);
+        setSentEmailText(draftText);
+        
+        // Close email modal and show follow-up dialog
         setIsOpen(false);
         setDraft(null);
         setDraftText("");
         toast.success("Meddelandet skickat!");
+        
+        // Show follow-up reminder dialog
+        setShowFollowUpDialog(true);
       } else {
         toast.info("Genererar nytt utkast...");
       }
@@ -106,7 +118,14 @@ export const EmailDraftModal = () => {
     }
   };
 
+  const handleFollowUpClose = () => {
+    setShowFollowUpDialog(false);
+    setSentLeadId(null);
+    setSentEmailText("");
+  };
+
   return (
+    <>
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden rounded-2xl gap-0">
         {/* Gradient Header */}
@@ -187,5 +206,14 @@ export const EmailDraftModal = () => {
         </div>
       </DialogContent>
     </Dialog>
+
+    {/* Follow-up reminder dialog */}
+    <FollowUpReminderDialog
+      isOpen={showFollowUpDialog}
+      onClose={handleFollowUpClose}
+      leadId={sentLeadId}
+      sentEmailText={sentEmailText}
+    />
+  </>
   );
 };

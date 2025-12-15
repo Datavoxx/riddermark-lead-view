@@ -23,3 +23,6 @@ verify_jwt = false
 
 [functions.agent-chat]
 verify_jwt = false
+
+[functions.check-reminders]
+verify_jwt = false
