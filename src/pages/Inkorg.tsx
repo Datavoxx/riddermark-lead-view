@@ -18,7 +18,8 @@ import {
   Search,
   RefreshCw,
   PenLine,
-  ChevronDown
+  ChevronDown,
+  CloudDownload
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -29,6 +30,7 @@ import {
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useEmailClient } from '@/hooks/useEmailClient';
 
 type StatusFilter = 'all' | 'unread' | 'starred' | 'archived';
 
@@ -49,6 +51,16 @@ export default function Inkorg() {
   const [isComposeOpen, setIsComposeOpen] = useState(false);
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const { syncing, syncEmails } = useEmailClient();
+
+  const handleSyncEmails = async () => {
+    try {
+      await syncEmails(50);
+      fetchMessages();
+    } catch (error) {
+      // Error already handled in hook
+    }
+  };
 
   const fetchMessages = async () => {
     try {
@@ -391,14 +403,28 @@ export default function Inkorg() {
               </span>
             </div>
           ) : (
-            <Button 
-              variant="ghost" 
-              size="sm"
-              className="h-8 w-8 p-0"
-              onClick={fetchMessages}
-            >
-              <RefreshCw className="h-4 w-4" />
-            </Button>
+            <div className="flex items-center gap-1">
+              <Button 
+                variant="ghost" 
+                size="sm"
+                className="h-8 w-8 p-0"
+                onClick={fetchMessages}
+                title="Uppdatera"
+              >
+                <RefreshCw className="h-4 w-4" />
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                className={cn("h-8 gap-1.5 px-2", syncing && "animate-pulse")}
+                onClick={handleSyncEmails}
+                disabled={syncing}
+                title="Synka från one.com"
+              >
+                <CloudDownload className={cn("h-4 w-4", syncing && "animate-spin")} />
+                {!isMobile && <span className="text-xs">Synka</span>}
+              </Button>
+            </div>
           )}
 
           {/* Search - hidden on mobile, show icon instead */}

@@ -18,6 +18,7 @@ import {
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { z } from 'zod';
+import { useEmailClient } from '@/hooks/useEmailClient';
 
 const emailSchema = z.object({
   to: z.string().email({ message: 'Ange en giltig e-postadress' }),
@@ -42,6 +43,7 @@ export function ComposeEmailModal({ open, onOpenChange }: ComposeEmailModalProps
   const [showBcc, setShowBcc] = useState(false);
   const [sending, setSending] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const { sendEmail } = useEmailClient();
 
   const resetForm = () => {
     setTo('');
@@ -88,13 +90,18 @@ export function ComposeEmailModal({ open, onOpenChange }: ComposeEmailModalProps
 
     setSending(true);
     
-    // Simulate sending - replace with actual email sending logic
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      toast.success('E-post skickat!');
+      await sendEmail({
+        to,
+        subject,
+        body,
+        cc: cc || undefined,
+        bcc: bcc || undefined,
+      });
+      toast.success('E-post skickat via one.com!');
       handleClose();
-    } catch (error) {
-      toast.error('Kunde inte skicka e-post');
+    } catch (error: any) {
+      toast.error(error.message || 'Kunde inte skicka e-post');
     } finally {
       setSending(false);
     }
