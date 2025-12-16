@@ -69,7 +69,6 @@ serve(async (req: Request): Promise<Response> => {
           uid: true,
           envelope: true,
           bodyStructure: true,
-          source: true,
           flags: true,
         }, { uid: true });
 
@@ -80,20 +79,49 @@ serve(async (req: Request): Promise<Response> => {
           );
         }
 
-        const bodyText = message.source?.toString() || "";
-        
-        // Extract plain text body from source
+        // Fetch body parts separately - much faster than fetching full source
+        let htmlBody = "";
         let plainBody = "";
-        const textMatch = bodyText.match(/Content-Type: text\/plain[\s\S]*?\r\n\r\n([\s\S]*?)(?=\r\n--|\r\n\r\n--)/i);
-        if (textMatch) {
-          plainBody = textMatch[1].trim();
-        } else {
-          // Try to get body after headers
-          const parts = bodyText.split("\r\n\r\n");
-          if (parts.length > 1) {
-            plainBody = parts.slice(1).join("\r\n\r\n").substring(0, 5000);
+        
+        try {
+          // Try to get HTML body first
+          const htmlPart = await client.download(uid, "1.2", { uid: true });
+          if (htmlPart) {
+            const chunks: Uint8Array[] = [];
+            for await (const chunk of htmlPart.content) {
+              chunks.push(chunk);
+            }
+            htmlBody = new TextDecoder().decode(Buffer.concat(chunks));
+          }
+        } catch (e) {
+          console.log("No HTML part or error fetching HTML:", e);
+        }
+
+        if (!htmlBody) {
+          try {
+            // Fallback to plain text
+            const textPart = await client.download(uid, "1", { uid: true });
+            if (textPart) {
+              const chunks: Uint8Array[] = [];
+              for await (const chunk of textPart.content) {
+                chunks.push(chunk);
+              }
+              plainBody = new TextDecoder().decode(Buffer.concat(chunks));
+            }
+          } catch (e) {
+            console.log("No plain text part or error fetching text:", e);
           }
         }
+
+        // Mark as Seen on IMAP server
+        try {
+          await client.messageFlagsAdd(uid, ["\\Seen"], { uid: true });
+          console.log(`Marked email ${uid} as Seen on IMAP server`);
+        } catch (e) {
+          console.error("Error marking email as seen:", e);
+        }
+
+        const finalBody = htmlBody || plainBody || "";
 
         const email: EmailMessage = {
           uid: message.uid,
@@ -101,9 +129,9 @@ serve(async (req: Request): Promise<Response> => {
           from: message.envelope?.from?.[0]?.address || "unknown",
           fromName: message.envelope?.from?.[0]?.name || null,
           date: message.envelope?.date?.toISOString() || new Date().toISOString(),
-          snippet: plainBody.substring(0, 200),
-          seen: message.flags?.has("\\Seen") || false,
-          body: plainBody,
+          snippet: plainBody.substring(0, 200) || htmlBody.replace(/<[^>]*>/g, '').substring(0, 200),
+          seen: true, // We just marked it as seen
+          body: finalBody,
         };
 
         return new Response(

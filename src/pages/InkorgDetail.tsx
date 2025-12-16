@@ -51,17 +51,25 @@ export default function InkorgDetail() {
         if (error) throw error;
 
         if (data) {
-          setMessage(data as InboxMessage);
-          
-          // Mark as read if unread
+          // Mark as read if unread and update local state immediately
           if (data.status === 'unread') {
+            const now = new Date().toISOString();
             await supabase
               .from('inbox_messages')
               .update({ 
-                status: 'read',
-                read_at: new Date().toISOString()
+                status: 'read', 
+                read_at: now 
               })
               .eq('id', id);
+            
+            // Update local state to show "Läst" immediately
+            setMessage({ 
+              ...data, 
+              status: 'read', 
+              read_at: now 
+            } as InboxMessage);
+          } else {
+            setMessage(data as InboxMessage);
           }
 
           // Fetch full email body from IMAP if available
