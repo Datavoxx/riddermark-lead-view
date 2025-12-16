@@ -26,6 +26,7 @@ export interface Lead {
   claimed_by_name?: string;
   summering?: string;
   resume_url?: string | null;
+  has_reminder?: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   forval?: any;
 }

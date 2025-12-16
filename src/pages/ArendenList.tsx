@@ -109,7 +109,7 @@ const MobileLeadCard = ({
               )}
             </div>
             <div className="flex gap-1.5">
-              {!lead.claimed && (
+              {!lead.has_reminder && (
                 <Button
                   size="sm"
                   onClick={(e) => {
@@ -178,7 +178,7 @@ function getLeadBadges(lead: Lead): { urgency?: { label: string; variant: "defau
   
   let urgency: { label: string; variant: "default" | "destructive" | "secondary"; icon: React.ReactNode } | undefined;
   
-  if (!lead.claimed) {
+  if (!lead.has_reminder) {
     if (minutesOld < 15) {
       urgency = { label: "Hot lead", variant: "default" as const, icon: <Flame className="h-3 w-3" /> };
     } else if (minutesOld < 60) {
@@ -188,8 +188,8 @@ function getLeadBadges(lead: Lead): { urgency?: { label: string; variant: "defau
     }
   }
 
-  const status = lead.claimed 
-    ? { label: "Upplockad", variant: "secondary" as const, icon: <CheckCircle2 className="h-3 w-3" /> }
+  const status = lead.has_reminder 
+    ? { label: "Hanterad", variant: "secondary" as const, icon: <CheckCircle2 className="h-3 w-3" /> }
     : { label: "Ny", variant: "destructive" as const, icon: <div className="h-1.5 w-1.5 rounded-full bg-current animate-pulse" /> };
 
   return { urgency, status };
@@ -197,8 +197,8 @@ function getLeadBadges(lead: Lead): { urgency?: { label: string; variant: "defau
 
 const statusFilters = [
   { key: 'all', label: 'Alla' },
-  { key: 'unclaimed', label: 'Obevakade' },
-  { key: 'claimed', label: 'Upplockade' },
+  { key: 'unhandled', label: 'Obevakade' },
+  { key: 'handled', label: 'Hanterade' },
 ];
 
 export default function ArendenList() {
@@ -402,8 +402,8 @@ export default function ArendenList() {
                   {filter.key !== 'all' && (
                     <span className="ml-1 md:ml-1.5 text-[10px] md:text-xs opacity-70">
                       {leads.filter(l => {
-                        if (filter.key === 'unclaimed') return !l.claimed;
-                        if (filter.key === 'claimed') return l.claimed;
+                        if (filter.key === 'unhandled') return !l.has_reminder;
+                        if (filter.key === 'handled') return l.has_reminder;
                         return true;
                       }).length}
                     </span>
@@ -597,7 +597,7 @@ export default function ArendenList() {
                   </CardContent>
 
                   <CardFooter className="relative pt-3 pb-4 px-4 border-t border-border/50 flex gap-2">
-                    {!lead.claimed && (
+                    {!lead.has_reminder && (
                       <Button
                         size="sm"
                         onClick={(e) => {
@@ -611,7 +611,7 @@ export default function ArendenList() {
                     )}
                     <Button
                       size="sm"
-                      variant={lead.claimed ? "default" : "outline"}
+                      variant={lead.has_reminder ? "default" : "outline"}
                       onClick={(e) => {
                         e.stopPropagation();
                         navigate(`/blocket/arenden/${lead.id}`);
