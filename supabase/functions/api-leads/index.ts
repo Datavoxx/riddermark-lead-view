@@ -56,18 +56,45 @@ serve(async (req) => {
       const order = url.searchParams.get('order') || 'created_at.desc';
       const limit = parseInt(url.searchParams.get('limit') || '50');
       const offset = parseInt(url.searchParams.get('offset') || '0');
-      const status = url.searchParams.get('status'); // all, claimed, unclaimed
+      const status = url.searchParams.get('status'); // all, claimed, unclaimed, handled, unhandled
       const q = url.searchParams.get('q'); // search query
 
       console.log('Fetching leads with params:', { order, limit, offset, status, q });
 
+      // First, get all lead IDs that have reminders
+      const { data: reminders } = await supabase
+        .from('follow_up_reminders')
+        .select('lead_id');
+      
+      const leadIdsWithReminders = new Set(
+        (reminders || []).map(r => r.lead_id).filter(Boolean)
+      );
+
       let query = supabase.from('leads').select('*');
 
-      // Apply status filter
+      // Apply status filter - now supports handled/unhandled based on reminders
       if (status === 'claimed') {
         query = query.eq('claimed', true);
       } else if (status === 'unclaimed') {
         query = query.eq('claimed', false);
+      } else if (status === 'handled') {
+        // Filter for leads WITH reminders - use IN filter
+        const handledIds = Array.from(leadIdsWithReminders);
+        if (handledIds.length > 0) {
+          query = query.in('id', handledIds);
+        } else {
+          // No handled leads, return empty
+          return new Response(JSON.stringify([]), {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+      } else if (status === 'unhandled') {
+        // Filter for leads WITHOUT reminders - use NOT IN filter
+        const handledIds = Array.from(leadIdsWithReminders);
+        if (handledIds.length > 0) {
+          query = query.not('id', 'in', `(${handledIds.join(',')})`);
+        }
+        // If no reminders exist, all leads are unhandled - no filter needed
       }
 
       // Apply search filter
@@ -94,9 +121,15 @@ serve(async (req) => {
         });
       }
 
-      console.log(`Found ${leads?.length || 0} leads`);
+      // Add has_reminder flag to each lead
+      const leadsWithReminderFlag = (leads || []).map(lead => ({
+        ...lead,
+        has_reminder: leadIdsWithReminders.has(lead.id)
+      }));
+
+      console.log(`Found ${leadsWithReminderFlag.length} leads`);
       
-      return new Response(JSON.stringify(leads || []), {
+      return new Response(JSON.stringify(leadsWithReminderFlag), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
