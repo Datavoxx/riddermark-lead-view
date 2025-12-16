@@ -132,23 +132,50 @@ export function useEmailClient() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return emails;
 
+      let syncedCount = 0;
       for (const email of emails) {
-        await supabase
+        // Check if email already exists by IMAP UID in metadata
+        const { data: existing } = await supabase
           .from('inbox_messages')
-          .upsert({
-            id: `imap-${email.uid}`,
-            from_email: email.from,
-            from_name: email.fromName,
-            subject: email.subject,
-            body: email.snippet || '',
-            status: email.seen ? 'read' : 'unread',
-            source: 'other',
-            received_at: email.date,
-            metadata: { imap_uid: email.uid },
-          }, { onConflict: 'id' });
+          .select('id')
+          .eq('metadata->>imap_uid', email.uid.toString())
+          .maybeSingle();
+
+        if (existing) {
+          // Update existing email
+          await supabase
+            .from('inbox_messages')
+            .update({
+              from_email: email.from,
+              from_name: email.fromName,
+              subject: email.subject,
+              body: email.snippet || '',
+              status: email.seen ? 'read' : 'unread',
+              received_at: email.date,
+            })
+            .eq('id', existing.id);
+        } else {
+          // Insert new email - let database generate UUID
+          const { error } = await supabase
+            .from('inbox_messages')
+            .insert({
+              from_email: email.from,
+              from_name: email.fromName,
+              subject: email.subject,
+              body: email.snippet || '',
+              status: email.seen ? 'read' : 'unread',
+              source: 'other',
+              received_at: email.date,
+              metadata: { imap_uid: email.uid },
+            });
+          
+          if (!error) syncedCount++;
+        }
       }
 
-      toast.success(`Synkade ${emails.length} emails`);
+      if (syncedCount > 0) {
+        toast.success(`${syncedCount} nya emails synkade`);
+      }
       return emails;
     } catch (error: any) {
       toast.error(error.message || 'Kunde inte synka emails');
