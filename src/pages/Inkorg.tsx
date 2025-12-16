@@ -95,6 +95,11 @@ export default function Inkorg() {
     }
   };
 
+  // Auto-sync emails on mount
+  useEffect(() => {
+    syncEmails(50).catch(console.error);
+  }, []);
+
   useEffect(() => {
     fetchMessages();
 
