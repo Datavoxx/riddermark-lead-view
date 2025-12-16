@@ -9,9 +9,10 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { 
   ArrowLeft, Mail, User, Clock, Archive, 
-  CheckCircle2, MessageSquare 
+  CheckCircle2, MessageSquare, Loader2
 } from "lucide-react";
 import { toast } from "sonner";
+import { useEmailClient } from "@/hooks/useEmailClient";
 
 const statusConfig = {
   unread: { label: 'Oläst', color: 'bg-primary text-primary-foreground' },
@@ -31,7 +32,10 @@ export default function InkorgDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [message, setMessage] = useState<InboxMessage | null>(null);
+  const [fullBody, setFullBody] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadingFullBody, setLoadingFullBody] = useState(false);
+  const { fetchEmailByUid } = useEmailClient();
 
   useEffect(() => {
     if (!id) return;
@@ -59,6 +63,22 @@ export default function InkorgDetail() {
               })
               .eq('id', id);
           }
+
+          // Fetch full email body from IMAP if available
+          const metadata = data.metadata as { imap_uid?: number } | null;
+          if (metadata?.imap_uid) {
+            setLoadingFullBody(true);
+            try {
+              const fullEmail = await fetchEmailByUid(metadata.imap_uid);
+              if (fullEmail?.body) {
+                setFullBody(fullEmail.body);
+              }
+            } catch (err) {
+              console.error('Could not fetch full email body:', err);
+            } finally {
+              setLoadingFullBody(false);
+            }
+          }
         }
       } catch (error) {
         console.error('Error fetching message:', error);
@@ -69,7 +89,7 @@ export default function InkorgDetail() {
     };
 
     fetchMessage();
-  }, [id]);
+  }, [id, fetchEmailByUid]);
 
   const handleArchive = async () => {
     if (!message) return;
@@ -202,9 +222,21 @@ export default function InkorgDetail() {
             <CardContent className="space-y-6">
               <div className="prose prose-sm dark:prose-invert max-w-none">
                 <div className="bg-muted/20 rounded-lg p-6 border">
-                  <p className="whitespace-pre-wrap leading-relaxed">
-                    {message.body}
-                  </p>
+                  {loadingFullBody ? (
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span>Hämtar fullständigt meddelande...</span>
+                    </div>
+                  ) : fullBody ? (
+                    <div 
+                      className="email-content leading-relaxed"
+                      dangerouslySetInnerHTML={{ __html: fullBody }}
+                    />
+                  ) : (
+                    <p className="whitespace-pre-wrap leading-relaxed">
+                      {message.body}
+                    </p>
+                  )}
                 </div>
               </div>
 
